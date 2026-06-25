@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { sendMessage } from '../../lib/anthropic';
+import { sendMessageStream } from '../../lib/anthropic';
 import type { ChatMessage } from '../../types';
 import { ChatBubble } from './ChatBubble';
 
@@ -11,7 +12,7 @@ interface ChatModalProps {
 }
 
 export function ChatModal({ open, onClose }: ChatModalProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [typing, setTyping] = useState(false);
@@ -37,44 +38,51 @@ export function ChatModal({ open, onClose }: ChatModalProps) {
       content: text,
       timestamp: new Date(),
     };
-    setMessages((prev) => [...prev, userMsg]);
+
+    const aiId = (Date.now() + 1).toString();
+    const aiMsg: ChatMessage = { id: aiId, role: 'assistant', content: '', timestamp: new Date() };
+
+    setMessages((prev) => [...prev, userMsg, aiMsg]);
     setTyping(true);
 
     try {
-      const reply = await sendMessage(messages, text);
-      const aiMsg: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: reply,
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, aiMsg]);
+      let firstChunk = true;
+      await sendMessageStream(messages, text, i18n.language, (chunk) => {
+        if (firstChunk) { setTyping(false); firstChunk = false; }
+        setMessages((prev) =>
+          prev.map((m) => m.id === aiId ? { ...m, content: m.content + chunk } : m)
+        );
+      });
     } catch {
-      const errMsg: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: t('ai.errorMessage'),
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, errMsg]);
+      setMessages((prev) =>
+        prev.map((m) => m.id === aiId ? { ...m, content: t('ai.errorMessage') } : m)
+      );
     } finally {
       setTyping(false);
     }
   }
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {open && (
+        <div style={{
+          position: 'fixed',
+          top: 0, left: '50%', transform: 'translateX(-50%)',
+          width: '100%', maxWidth: 430,
+          height: '100dvh',
+          zIndex: 9999,
+          display: 'flex', flexDirection: 'column',
+          background: 'var(--modal-bg, #FAF6F2)',
+        }}>
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex flex-col bg-[var(--bg-primary)]"
-          style={{ maxWidth: 430, margin: '0 auto' }}
+          style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}
         >
           {/* Header */}
-          <div className="flex items-center gap-3 px-5 py-4 border-b border-white/10 bg-[var(--bg-card)]">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#E91E8C] to-purple-600 flex items-center justify-center">
+          <div className="flex items-center gap-3 px-5 py-4" style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-card)' }}>
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, var(--accent) 0%, var(--lavender) 100%)' }}>
               🤖
             </div>
             <div className="flex-1">
@@ -104,7 +112,7 @@ export function ChatModal({ open, onClose }: ChatModalProps) {
                 animate={{ opacity: 1 }}
                 className="flex items-center gap-2 text-sm text-[var(--text-secondary)] mb-3"
               >
-                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#E91E8C] to-purple-600 flex items-center justify-center text-xs">🤖</div>
+                <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs" style={{ background: 'linear-gradient(135deg, var(--accent) 0%, var(--lavender) 100%)' }}>🤖</div>
                 <div className="flex gap-1">
                   {[0, 1, 2].map((i) => (
                     <motion.span
@@ -121,7 +129,7 @@ export function ChatModal({ open, onClose }: ChatModalProps) {
           </div>
 
           {/* Input */}
-          <div className="px-4 py-4 border-t border-white/10 bg-[var(--bg-card)]">
+          <div className="px-4 py-4" style={{ borderTop: '1px solid var(--border)', background: 'var(--bg-card)', paddingBottom: 'calc(16px + env(safe-area-inset-bottom, 0px))' }}>
             <div className="flex gap-3 items-center">
               <input
                 ref={inputRef}
@@ -129,12 +137,14 @@ export function ChatModal({ open, onClose }: ChatModalProps) {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
                 placeholder={t('ai.placeholder')}
-                className="flex-1 bg-[var(--bg-primary)] border border-white/10 rounded-2xl px-4 py-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:outline-none focus:border-[#E91E8C]"
+                className="flex-1 rounded-2xl px-4 py-3 text-sm placeholder:text-[var(--text-secondary)] focus:outline-none"
+                style={{ background: 'var(--bg-primary)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
               />
               <button
                 onClick={handleSend}
                 disabled={!input.trim() || typing}
-                className="w-11 h-11 rounded-2xl bg-[#E91E8C] flex items-center justify-center disabled:opacity-40 flex-shrink-0"
+                className="w-11 h-11 rounded-2xl flex items-center justify-center disabled:opacity-40 flex-shrink-0"
+                style={{ background: 'linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%)' }}
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
                   <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
@@ -143,7 +153,8 @@ export function ChatModal({ open, onClose }: ChatModalProps) {
             </div>
           </div>
         </motion.div>
+        </div>
       )}
     </AnimatePresence>
-  );
+  , document.body);
 }

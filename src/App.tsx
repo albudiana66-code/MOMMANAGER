@@ -18,12 +18,12 @@ import './i18n';
 
 function AppRoutes() {
   const { user, loading } = useAuth();
-  const { hasAccess, state } = useSubscription();
+  const { hasAccess } = useSubscription();
 
-  if (loading || state === 'loading') {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--bg-primary)]">
-        <div className="w-8 h-8 border-2 border-[#E91E8C] border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'var(--accent)', borderTopColor: 'transparent' }} />
       </div>
     );
   }

@@ -12,20 +12,42 @@ export function AICard() {
       <motion.div
         whileTap={{ scale: 0.97 }}
         onClick={() => setOpen(true)}
-        className="mx-4 mt-3 rounded-2xl p-4 cursor-pointer"
+        className="mx-4 mt-3 cursor-pointer"
         style={{
-          background: 'linear-gradient(135deg, #E91E8C 0%, #c2185b 50%, #7b1fa2 100%)',
-          boxShadow: '0 8px 32px rgba(233,30,140,0.3)',
+          background: 'rgba(255,255,255,0.82)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          borderRadius: 18,
+          border: '1px solid rgba(212,168,67,0.22)',
+          boxShadow: '0 2px 16px rgba(212,168,67,0.08)',
+          padding: '12px 16px',
         }}
       >
         <div className="flex items-center gap-3">
-          <span className="text-3xl">🤖</span>
-          <div className="flex-1">
-            <h3 className="font-bold text-white text-sm">{t('dashboard.aiAssistant')}</h3>
-            <p className="text-white/70 text-xs mt-0.5">{t('dashboard.aiSubtitle')}</p>
+          {/* Subtle gold sparkle icon */}
+          <div style={{
+            width: 34, height: 34, borderRadius: '50%',
+            background: 'linear-gradient(135deg, #F5EDD8 0%, #EDE0C4 100%)',
+            border: '1px solid rgba(212,168,67,0.3)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 16, flexShrink: 0,
+          }}>✨</div>
+          <div className="flex-1 min-w-0">
+            <h3 style={{ fontSize: 12, fontWeight: 600, color: '#3D2B1F', letterSpacing: '0.04em', margin: 0 }}>
+              {t('dashboard.aiAssistant')}
+            </h3>
+            <p style={{ fontSize: 11, color: '#9A8880', margin: '2px 0 0', letterSpacing: '0.02em' }}>
+              {t('dashboard.aiSubtitle')}
+            </p>
           </div>
-          <div className="bg-white/20 rounded-xl px-3 py-1.5">
-            <span className="text-white text-xs font-medium">{t('dashboard.askMeAnything')}</span>
+          <div style={{
+            background: 'linear-gradient(135deg, #D4A843 0%, #E8C870 100%)',
+            borderRadius: 50, paddingLeft: 12, paddingRight: 12, paddingTop: 6, paddingBottom: 6,
+            boxShadow: '0 2px 8px rgba(212,168,67,0.25)',
+          }}>
+            <span style={{ color: '#fff', fontSize: 11, fontWeight: 600, letterSpacing: '0.04em' }}>
+              {t('dashboard.askMeAnything')}
+            </span>
           </div>
         </div>
       </motion.div>

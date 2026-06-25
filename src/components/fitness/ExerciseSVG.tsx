@@ -1,6 +1,6 @@
 import React from 'react';
 
-const P = '#E91E8C';
+const P = '#C4788A';
 const W = 'rgba(255,255,255,0.90)';
 const D = 'rgba(255,255,255,0.28)';
 

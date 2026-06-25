@@ -2,12 +2,21 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
+// CSS is inlined into index.html after build via scripts/inline-css.mjs
+// This guarantees styles load in Capacitor's Android WebView.
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     tailwindcss(),
     react(),
   ],
+  base: './',
+  build: {
+    outDir: 'dist',
+    target: 'es2015',
+    cssCodeSplit: false,
+  },
   server: {
     proxy: {
       '/api/anthropic': {

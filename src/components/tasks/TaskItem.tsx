@@ -5,6 +5,36 @@ import { format, parseISO } from 'date-fns';
 import { Badge } from '../ui/Badge';
 import type { Task } from '../../types';
 
+function downloadTaskICS(task: Task) {
+  const dateStr = task.due_date?.replace(/-/g, '') ?? format(new Date(), 'yyyyMMdd');
+  const timeStr = task.time?.replace(':', '') ?? '090000';
+  const dtStart = `${dateStr}T${timeStr}00`;
+  const endHour = String((parseInt(timeStr.slice(0, 2)) + 1) % 24).padStart(2, '0');
+  const dtEnd = `${dateStr}T${endHour}${timeStr.slice(2, 4)}00`;
+  const ics = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//MomManager//EN',
+    'BEGIN:VEVENT',
+    `UID:${task.id}@mommanager`,
+    `DTSTART:${dtStart}`,
+    `DTEND:${dtEnd}`,
+    `SUMMARY:${task.title}`,
+    `DESCRIPTION:${task.description ?? 'From MomManager'}`,
+    'END:VEVENT',
+    'END:VCALENDAR',
+  ].join('\r\n');
+  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${task.title.replace(/\s+/g, '-')}.ics`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 interface TaskItemProps {
   task: Task;
   onToggle: (id: string) => void;
@@ -19,7 +49,7 @@ const priorityDot: Record<Task['priority'], string> = {
 
 const categoryColor: Record<Task['category'], string> = {
   work: '#6366f1',
-  personal: '#E91E8C',
+  personal: '#C4788A',
   kids: '#f59e0b',
   medical: '#ef4444',
   other: '#6b7280',
@@ -42,7 +72,8 @@ export function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, x: -40, height: 0, marginBottom: 0 }}
           transition={{ duration: 0.25 }}
-          className="bg-[var(--bg-card)] rounded-2xl p-4 mb-3 flex items-start gap-3"
+          className="rounded-2xl p-4 mb-3 flex items-start gap-3"
+          style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', boxShadow: 'var(--shadow)' }}
         >
           {/* Priority dot */}
           <div className="mt-1 flex-shrink-0">
@@ -70,10 +101,26 @@ export function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
               </Badge>
               {task.due_date && (
                 <span className="text-xs text-[var(--text-secondary)]">
-                  {format(parseISO(task.due_date), 'MMM d')}
+                  {format(parseISO(task.due_date), 'MMM d')}{task.time ? ` · ${task.time}` : ''}
                 </span>
               )}
+              {task.has_reminder && (
+                <span style={{ fontSize: 11, color: 'var(--accent)' }} title="Reminder set">🔔</span>
+              )}
             </div>
+            {/* ICS export */}
+            {task.due_date && (
+              <button
+                onClick={(e) => { e.stopPropagation(); downloadTaskICS(task); }}
+                style={{
+                  marginTop: 6, fontSize: 11, fontWeight: 600,
+                  color: 'var(--accent)', background: 'var(--accent-soft)',
+                  border: 'none', borderRadius: 8, padding: '3px 8px', cursor: 'pointer',
+                }}
+              >
+                📅 Add to Phone Calendar
+              </button>
+            )}
           </div>
 
           {/* Actions */}
@@ -81,11 +128,10 @@ export function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
             <button
               onClick={() => onToggle(task.id)}
               aria-label={t('tasks.markComplete')}
-              className={`w-7 h-7 rounded-full border-2 flex items-center justify-center transition-colors ${
-                task.completed
-                  ? 'bg-[#E91E8C] border-[#E91E8C] text-white'
-                  : 'border-white/20 text-transparent'
-              }`}
+              className="w-7 h-7 rounded-full border-2 flex items-center justify-center transition-colors"
+              style={task.completed
+                ? { background: 'var(--accent)', borderColor: 'var(--accent)', color: '#fff' }
+                : { borderColor: 'var(--border-strong)', color: 'transparent' }}
             >
               {task.completed && (
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none">

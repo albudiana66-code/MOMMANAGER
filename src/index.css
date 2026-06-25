@@ -1,18 +1,79 @@
 @import "tailwindcss";
 
 :root {
-  --bg-primary: #0f0f1a;
-  --bg-card: #1a1a2e;
-  --accent: #E91E8C;
-  --text-primary: #ffffff;
-  --text-secondary: #a0a0b0;
+  --bg-primary: rgba(255,255,255,0.55);
+  --bg-secondary: rgba(255,255,255,0.40);
+  --bg-card: rgba(255,255,255,0.72);
+  --accent: #C4788A;
+  --accent-hover: #B5697B;
+  --accent-soft: rgba(242,228,232,0.75);
+  --accent-gold: #C9A96E;
+  --accent-gold-soft: rgba(247,240,228,0.75);
+  --sage: #8FA888;
+  --sage-soft: rgba(234,240,232,0.75);
+  --peach: #E8B89A;
+  --peach-soft: rgba(251,240,232,0.75);
+  --lavender: #C4B8D8;
+  --lavender-soft: rgba(242,238,248,0.75);
+  --text-primary: #2C2A35;
+  --text-secondary: #5A5260;
+  --text-muted: #8A8490;
+  --border: rgba(255,255,255,0.55);
+  --border-strong: rgba(255,255,255,0.80);
+  --shadow: 0 2px 16px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 24px rgba(0,0,0,0.08);
+  --modal-bg: #FAF6F2;
 }
 
+/* Light mode is the default — .light class also explicitly sets light vars */
 .light {
-  --bg-primary: #f5f5f5;
-  --bg-card: #ffffff;
-  --text-primary: #1a1a2e;
-  --text-secondary: #666680;
+  --bg-primary: rgba(255,255,255,0.55);
+  --bg-secondary: rgba(255,255,255,0.40);
+  --bg-card: rgba(255,255,255,0.72);
+  --accent: #C4788A;
+  --accent-hover: #B5697B;
+  --accent-soft: rgba(242,228,232,0.75);
+  --accent-gold: #C9A96E;
+  --accent-gold-soft: rgba(247,240,228,0.75);
+  --sage: #8FA888;
+  --sage-soft: rgba(234,240,232,0.75);
+  --peach: #E8B89A;
+  --peach-soft: rgba(251,240,232,0.75);
+  --lavender: #C4B8D8;
+  --lavender-soft: rgba(242,238,248,0.75);
+  --text-primary: #2C2A35;
+  --text-secondary: #5A5260;
+  --text-muted: #8A8490;
+  --border: rgba(255,255,255,0.55);
+  --border-strong: rgba(255,255,255,0.80);
+  --shadow: 0 2px 16px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 24px rgba(0,0,0,0.08);
+  --modal-bg: #FAF6F2;
+}
+
+.dark {
+  --bg-primary: rgba(40,28,24,0.55);
+  --bg-secondary: rgba(44,32,28,0.50);
+  --bg-card: rgba(50,36,30,0.58);
+  --accent: #D4889A;
+  --accent-hover: #C4788A;
+  --accent-soft: rgba(80,48,52,0.55);
+  --accent-gold: #D4B07E;
+  --accent-gold-soft: rgba(70,52,30,0.55);
+  --sage: #9AB893;
+  --sage-soft: rgba(40,58,44,0.55);
+  --peach: #E8C0A8;
+  --peach-soft: rgba(64,44,32,0.55);
+  --lavender: #C8C0DC;
+  --lavender-soft: rgba(52,44,66,0.55);
+  --text-primary: #F5EEE8;
+  --text-secondary: #C8B8A8;
+  --text-muted: #9A8878;
+  --border: rgba(255,220,190,0.14);
+  --border-strong: rgba(255,220,190,0.24);
+  --shadow: 0 2px 16px rgba(0,0,0,0.15);
+  --shadow-md: 0 4px 24px rgba(0,0,0,0.20);
+  --modal-bg: #1E140E;
 }
 
 * {
@@ -22,12 +83,20 @@
 }
 
 body {
-  background-color: var(--bg-primary);
+  background-color: transparent;
   color: var(--text-primary);
   margin: 0;
   padding: 0;
   min-height: 100vh;
   overflow-x: hidden;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+/* Glass morphism for all standard cards */
+.rounded-2xl, .rounded-xl {
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }
 
 #root {
@@ -41,6 +110,6 @@ body {
 
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+::-webkit-scrollbar-thumb { background: var(--accent-soft); border-radius: 2px; }
 
 [dir="rtl"] { text-align: right; }

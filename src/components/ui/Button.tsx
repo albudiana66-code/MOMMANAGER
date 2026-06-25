@@ -1,7 +1,7 @@
 import { type ButtonHTMLAttributes, type ReactNode } from 'react';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'gold';
   size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
   children: ReactNode;
@@ -16,13 +16,28 @@ export function Button({
   disabled,
   ...props
 }: ButtonProps) {
-  const base = 'rounded-2xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50';
+  const base = 'rounded-[50px] font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 active:scale-[0.98]';
 
   const variants = {
-    primary: 'bg-[#E91E8C] text-white active:scale-95 shadow-lg shadow-pink-500/20',
-    secondary: 'bg-[var(--bg-card)] text-[var(--text-primary)] border border-white/10',
+    primary: 'text-white shadow-md',
+    secondary: 'bg-transparent text-[#C4788A] border border-[#C4788A]',
     ghost: 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]',
-    danger: 'bg-red-500/20 text-red-400 border border-red-500/30',
+    danger: 'bg-red-500/10 text-red-500 border border-red-500/20',
+    gold: 'text-white shadow-md',
+  };
+
+  const variantStyles: Record<string, React.CSSProperties> = {
+    primary: {
+      background: 'linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%)',
+      boxShadow: '0 4px 14px rgba(196,120,138,0.25)',
+    },
+    gold: {
+      background: 'linear-gradient(135deg, var(--accent-gold) 0%, #B8935A 100%)',
+      boxShadow: '0 4px 14px rgba(201,169,110,0.3)',
+    },
+    secondary: {},
+    ghost: {},
+    danger: {},
   };
 
   const sizes = {
@@ -34,6 +49,7 @@ export function Button({
   return (
     <button
       className={`${base} ${variants[variant]} ${sizes[size]} ${className}`}
+      style={variantStyles[variant]}
       disabled={disabled || loading}
       {...props}
     >

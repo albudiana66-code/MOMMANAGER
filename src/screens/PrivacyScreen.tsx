@@ -8,7 +8,7 @@ export function PrivacyScreen() {
   return (
     <Layout>
       <Header title="Privacy Policy" left={
-        <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-xl bg-[var(--bg-card)] flex items-center justify-center text-[var(--text-secondary)] border border-white/10">
+        <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-xl flex items-center justify-center text-[var(--text-secondary)]" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
           ‹
         </button>
       } />

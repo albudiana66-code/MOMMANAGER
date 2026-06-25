@@ -6,7 +6,7 @@ interface BadgeProps {
   className?: string;
 }
 
-export function Badge({ children, color = '#E91E8C', className = '' }: BadgeProps) {
+export function Badge({ children, color = '#C4788A', className = '' }: BadgeProps) {
   return (
     <span
       className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${className}`}

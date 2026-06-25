@@ -3,9 +3,8 @@
   "configurations": [
     {
       "name": "mommanager",
-      "runtimeExecutable": "/Users/dianaalbu/.nvm/versions/node/v20.20.2/bin/npm",
+      "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
-      "cwd": "/Users/dianaalbu/Desktop/aplicatie noua/mommanager",
       "port": 5173
     }
   ]

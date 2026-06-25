@@ -1,138 +1,268 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import { addDays } from 'date-fns';
+import type { User, Session } from '@supabase/supabase-js';
+import { supabase } from './supabaseAuth';
 import type { Profile } from '../types';
-import {
-  type LocalUser,
-  getLocalSession,
-  localSignIn,
-  localSignOut,
-  localSignUp,
-} from '../lib/localAuth';
 
-const PROFILE_KEY = 'mm_local_profile';
+// ─────────────────────────────────────────────
+// Dev bypass — set VITE_DEV_BYPASS=true in .env.local
+// to skip Supabase auth in local preview
+// ─────────────────────────────────────────────
 
-function loadLocalProfile(userId: string): Profile | null {
-  try {
-    const raw = localStorage.getItem(`${PROFILE_KEY}_${userId}`);
-    return raw ? (JSON.parse(raw) as Profile) : null;
-  } catch {
-    return null;
-  }
+const DEV_BYPASS = import.meta.env.VITE_DEV_BYPASS === 'true';
+
+const DEV_USER: User = {
+  id: 'dev-user-001',
+  email: 'dev@mommanager.app',
+  app_metadata: {},
+  user_metadata: { full_name: 'Dev User' },
+  aud: 'authenticated',
+  created_at: new Date().toISOString(),
+} as unknown as User;
+
+const DEV_PROFILE: Profile = {
+  id: 'dev-user-001',
+  email: 'dev@mommanager.app',
+  name: 'Dev User',
+  avatar_url: '',
+  language: 'en',
+  currency: 'GBP',
+  theme: 'light',
+  subscription_status: 'pro_monthly',
+  created_at: new Date().toISOString(),
+};
+
+// ─────────────────────────────────────────────
+// Profile helpers
+// ─────────────────────────────────────────────
+
+async function fetchProfile(userId: string): Promise<Profile | null> {
+  const { data } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', userId)
+    .single();
+  return data ?? null;
 }
 
-function saveLocalProfile(profile: Profile) {
-  localStorage.setItem(`${PROFILE_KEY}_${profile.id}`, JSON.stringify(profile));
-}
+async function createProfile(user: User): Promise<Profile | null> {
+  const meta = user.user_metadata ?? {};
+  const name =
+    (typeof meta.full_name === 'string' && meta.full_name) ||
+    (typeof meta.name === 'string' && meta.name) ||
+    user.email?.split('@')[0] ||
+    'User';
 
-function createLocalProfile(user: LocalUser): Profile {
-  const now = new Date();
-  const profile: Profile = {
+  const profile = {
     id: user.id,
-    email: user.email,
-    name: user.name,
-    avatar_url: '',
-    language: localStorage.getItem('mm_language') || 'en',
+    email: user.email ?? '',
+    name,
+    avatar_url: typeof meta.avatar_url === 'string' ? meta.avatar_url : '',
+    language: 'en',
     currency: 'GBP',
-    theme: 'dark',
+    theme: 'light',
     subscription_status: null,
-    created_at: now.toISOString(),
+    created_at: new Date().toISOString(),
   };
-  saveLocalProfile(profile);
-  return profile;
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .insert(profile)
+    .select()
+    .single();
+
+  if (error) {
+    // Profile may already exist — re-fetch
+    return fetchProfile(user.id);
+  }
+  return data ?? null;
 }
+
+async function getOrCreateProfile(user: User): Promise<Profile | null> {
+  const existing = await fetchProfile(user.id);
+  if (existing) return existing;
+  return createProfile(user);
+}
+
+// ─────────────────────────────────────────────
+// Context type
+// ─────────────────────────────────────────────
 
 interface AuthContextType {
-  user: LocalUser | null;
-  session: null;
+  user: User | null;
+  session: Session | null;
   profile: Profile | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
+  signInWithApple: () => Promise<string | null>;
+  signInWithAppleWeb: () => Promise<string | null>;
   signInWithEmail: (email: string, password: string) => Promise<string | null>;
   signUpWithEmail: (email: string, password: string) => Promise<string | null>;
   signOut: () => Promise<void>;
+  deleteAccount: () => Promise<string | null>;
   updateProfile: (updates: Partial<Profile>) => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+// ─────────────────────────────────────────────
+// Provider
+// ─────────────────────────────────────────────
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<LocalUser | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(DEV_BYPASS ? DEV_USER : null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(DEV_BYPASS ? DEV_PROFILE : null);
+  const [loading, setLoading] = useState(!DEV_BYPASS);
 
   useEffect(() => {
-    const existing = getLocalSession();
-    if (existing) {
-      setUser(existing);
-      let p = loadLocalProfile(existing.id);
-      if (!p) p = createLocalProfile(existing);
-      setProfile(p);
-    }
-    setLoading(false);
+    if (DEV_BYPASS) return; // skip Supabase in dev bypass mode
+
+    // 1. Restore existing session on mount
+    supabase.auth.getSession().then(async ({ data: { session: s } }) => {
+      setSession(s);
+      setUser(s?.user ?? null);
+      if (s?.user) {
+        const p = await getOrCreateProfile(s.user);
+        setProfile(p);
+      }
+      setLoading(false);
+      // Clean OAuth tokens from URL after redirect-back
+      if (window.location.hash.includes('access_token') || window.location.search.includes('code=')) {
+        window.history.replaceState(null, '', window.location.pathname);
+      }
+    });
+
+    // 2. Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, s) => {
+        setSession(s);
+        setUser(s?.user ?? null);
+
+        if (s?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED')) {
+          const p = await getOrCreateProfile(s.user);
+          setProfile(p);
+        }
+
+        if (event === 'SIGNED_OUT') {
+          setProfile(null);
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  async function signInWithGoogle() {
-    const GOOGLE_EMAIL = 'albudiana66@gmail.com';
-    const GOOGLE_NAME = 'Diana';
-    // Try existing account first, create if not found
-    let result = localSignIn(GOOGLE_EMAIL, '__google__');
-    if (!result.user) {
-      result = localSignUp(GOOGLE_EMAIL, '__google__');
-      // Fix name to Diana (localSignUp derives name from email)
-      if (result.user) {
-        const users = JSON.parse(localStorage.getItem('mm_local_users') || '[]');
-        const fixed = users.map((u: LocalUser & { password: string }) =>
-          u.email === GOOGLE_EMAIL ? { ...u, name: GOOGLE_NAME } : u
-        );
-        localStorage.setItem('mm_local_users', JSON.stringify(fixed));
-        const fixedUser = { ...result.user, name: GOOGLE_NAME };
-        localStorage.setItem('mm_local_session', JSON.stringify(fixedUser));
-        result = { user: fixedUser };
-      }
-    }
-    if (!result.user) return;
-    setUser(result.user);
-    let p = loadLocalProfile(result.user.id);
-    if (!p) p = createLocalProfile({ ...result.user, name: GOOGLE_NAME });
-    setProfile(p);
+  // ── Sign in with Google ──────────────────────────────────────────────────
+  async function signInWithGoogle(): Promise<void> {
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin },
+    });
+    // Browser redirects away — session picked up on return via onAuthStateChange
   }
 
+  // ── Sign in with Apple (web OAuth) ──────────────────────────────────────
+  async function signInWithApple(): Promise<string | null> {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'apple',
+      options: { redirectTo: window.location.origin },
+    });
+    if (error) return error.message;
+    return null;
+  }
+
+  async function signInWithAppleWeb(): Promise<string | null> {
+    return signInWithApple();
+  }
+
+  // ── Email sign-in ────────────────────────────────────────────────────────
   async function signInWithEmail(email: string, password: string): Promise<string | null> {
-    const { user: u, error } = localSignIn(email, password);
-    if (error || !u) return error || 'Eroare necunoscută.';
-    setUser(u);
-    let p = loadLocalProfile(u.id);
-    if (!p) p = createLocalProfile(u);
-    setProfile(p);
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      if (error.message.includes('Invalid login credentials') || error.message.includes('invalid_credentials')) {
+        return 'Email or password is incorrect.';
+      }
+      if (error.message.includes('Email not confirmed')) {
+        return 'Please confirm your email address before signing in.';
+      }
+      return error.message;
+    }
     return null;
   }
 
+  // ── Email sign-up ────────────────────────────────────────────────────────
   async function signUpWithEmail(email: string, password: string): Promise<string | null> {
-    const { user: u, error } = localSignUp(email, password);
-    if (error || !u) return error || 'Eroare necunoscută.';
-    const p = createLocalProfile(u);
-    setUser(u);
-    setProfile(p);
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { emailRedirectTo: window.location.origin },
+    });
+    if (error) {
+      if (error.message.includes('already registered') || error.message.includes('user_already_exists')) {
+        return 'An account with this email already exists. Try signing in.';
+      }
+      if (error.message.includes('Password should be')) {
+        return 'Password must be at least 6 characters.';
+      }
+      return error.message;
+    }
+    // Email confirmation required — session is null until confirmed
+    if (!data.session) {
+      return 'Check your email to confirm your account, then sign in.';
+    }
     return null;
   }
 
-  async function signOut() {
-    localSignOut();
+  // ── Sign out ─────────────────────────────────────────────────────────────
+  async function signOut(): Promise<void> {
+    await supabase.auth.signOut();
     setUser(null);
+    setSession(null);
     setProfile(null);
   }
 
-  async function updateProfile(updates: Partial<Profile>) {
-    if (!profile) return;
-    const updated = { ...profile, ...updates };
-    saveLocalProfile(updated);
-    setProfile(updated);
+  // ── Delete account ───────────────────────────────────────────────────────
+  async function deleteAccount(): Promise<string | null> {
+    if (!user) return 'Not signed in.';
+    try {
+      // Delete profile row (RLS ensures user can only delete their own)
+      await supabase.from('profiles').delete().eq('id', user.id);
+      // Request auth user deletion via Edge Function (if available)
+      await supabase.functions.invoke('delete-user').catch(() => {
+        // Edge function optional — profile deletion is sufficient for compliance
+      });
+      await supabase.auth.signOut();
+      setUser(null);
+      setSession(null);
+      setProfile(null);
+      return null;
+    } catch (e) {
+      return e instanceof Error ? e.message : 'Could not delete account.';
+    }
   }
 
-  async function refreshProfile() {
+  // ── Update profile ───────────────────────────────────────────────────────
+  async function updateProfile(updates: Partial<Profile>): Promise<void> {
+    if (!user || !profile) return;
+    const optimistic = { ...profile, ...updates };
+    setProfile(optimistic);
+
+    const { error } = await supabase
+      .from('profiles')
+      .update(updates)
+      .eq('id', user.id);
+
+    if (error) {
+      console.error('updateProfile error:', error.message);
+      setProfile(profile); // revert
+    }
+  }
+
+  // ── Refresh profile from DB ──────────────────────────────────────────────
+  async function refreshProfile(): Promise<void> {
     if (!user) return;
-    const p = loadLocalProfile(user.id);
+    const p = await fetchProfile(user.id);
     if (p) setProfile(p);
   }
 
@@ -140,13 +270,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider
       value={{
         user,
-        session: null,
+        session,
         profile,
         loading,
         signInWithGoogle,
+        signInWithApple,
+        signInWithAppleWeb,
         signInWithEmail,
         signUpWithEmail,
         signOut,
+        deleteAccount,
         updateProfile,
         refreshProfile,
       }}

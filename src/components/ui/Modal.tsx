@@ -39,10 +39,10 @@ export function Modal({ open, onClose, title, children, fullScreen }: ModalProps
             className={`relative w-full bg-[var(--bg-card)] rounded-t-3xl z-10 ${fullScreen ? 'h-[90vh]' : 'max-h-[85vh]'} overflow-y-auto`}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="w-10 h-1 bg-white/20 rounded-full mx-auto mt-3 mb-4" />
+            <div className="w-10 h-1 rounded-full mx-auto mt-3 mb-4" style={{ background: 'var(--border-strong)' }} />
             {title && (
               <div className="flex items-center justify-between px-5 pb-4">
-                <h2 className="text-lg font-bold text-[var(--text-primary)]">{title}</h2>
+                <h2 className="text-lg text-[var(--text-primary)]" style={{ fontWeight: 600, letterSpacing: '-0.02em' }}>{title}</h2>
                 <button
                   onClick={onClose}
                   className="text-[var(--text-secondary)] p-1"

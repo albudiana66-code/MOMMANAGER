@@ -1,3 +1,13 @@
+export type SubscriptionPlan =
+  | 'free_trial'
+  | 'standard_monthly'
+  | 'standard_yearly'
+  | 'pro_monthly'
+  | 'pro_yearly'
+  | null;
+
+export type BillingPeriod = 'monthly' | 'yearly';
+
 export interface Profile {
   id: string;
   email: string;
@@ -6,10 +16,13 @@ export interface Profile {
   language: string;
   currency: string;
   theme: 'dark' | 'light';
-  subscription_status: 'trial' | 'active' | 'expired' | null;
+  subscription_status: SubscriptionPlan;
+  subscription_expires_at?: string;
   trial_start?: string;
   trial_end?: string;
   stripe_customer_id?: string;
+  stripe_subscription_id?: string;
+  subscription_end_date?: string;
   created_at: string;
 }
 
@@ -22,6 +35,9 @@ export interface Task {
   completed: boolean;
   category: 'work' | 'personal' | 'kids' | 'medical' | 'other';
   priority: 'high' | 'medium' | 'low';
+  plan?: 'mom' | 'kids' | 'family';
+  time?: string;
+  has_reminder?: boolean;
   created_at: string;
 }
 
@@ -31,6 +47,8 @@ export interface CalendarEvent {
   title: string;
   date: string;
   time?: string;
+  allDay?: boolean;
+  plan?: 'mom' | 'kids' | 'family';
   category?: string;
   color?: string;
   created_at: string;
@@ -71,7 +89,8 @@ export interface BudgetTransaction {
   user_id: string;
   amount: number;
   currency: string;
-  category: 'food' | 'transport' | 'kids' | 'health' | 'entertainment' | 'other';
+  category: 'food' | 'groceries' | 'housing' | 'transport' | 'eating_out' | 'shopping' | 'kids' | 'health' | 'entertainment' | 'savings' | 'other';
+  account_id?: string;
   type: 'income' | 'expense';
   description?: string;
   date: string;

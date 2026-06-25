@@ -11,12 +11,14 @@ export function DashboardScreen() {
   const navigate = useNavigate();
 
   return (
-    <Layout>
+    <Layout background="url('/bg-dashboard.jpg') center/cover no-repeat" style={{}}>
+
       <Header
         right={
           <button
             onClick={() => navigate('/settings')}
-            className="w-9 h-9 rounded-xl bg-[var(--bg-card)] flex items-center justify-center text-base border border-white/10"
+            className="w-9 h-9 rounded-xl flex items-center justify-center text-base"
+            style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
           >
             ⚙️
           </button>

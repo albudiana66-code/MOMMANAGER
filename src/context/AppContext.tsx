@@ -18,18 +18,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const { profile, updateProfile } = useAuth();
 
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
-    return (localStorage.getItem('mm_theme') as 'dark' | 'light') || 'dark';
+    return (localStorage.getItem('mm_theme') as 'dark' | 'light') || 'light';
   });
   const [currency, setCurrencyState] = useState<Currency>(() => {
     return (localStorage.getItem('mm_currency') as Currency) || 'GBP';
   });
   const [language, setLanguageState] = useState<Language>(() => {
-    return (localStorage.getItem('mm_language') as Language) || 'ro';
+    return (localStorage.getItem('mm_language') as Language) || 'en';
   });
 
   useEffect(() => {
     if (profile) {
-      setTheme(profile.theme || 'dark');
+      setTheme(profile.theme || 'light');
       setCurrencyState((profile.currency as Currency) || 'GBP');
       setLanguageState((profile.language as Language) || 'ro');
     }
@@ -37,10 +37,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const root = document.documentElement;
-    if (theme === 'light') {
-      root.classList.add('light');
-    } else {
+    if (theme === 'dark') {
+      root.classList.add('dark');
       root.classList.remove('light');
+    } else {
+      root.classList.remove('dark');
+      root.classList.add('light');
     }
     localStorage.setItem('mm_theme', theme);
   }, [theme]);
