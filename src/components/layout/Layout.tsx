@@ -13,7 +13,7 @@ export function Layout({ children, noNav, style, background }: LayoutProps) {
   const { theme } = useApp();
 
   return (
-    <div className="flex flex-col min-h-screen pb-20" style={{ position: 'relative', ...style }}>
+    <div className="flex flex-col min-h-screen pb-16" style={{ position: 'relative', ...style }}>
       {/* Fixed full-screen background */}
       {background && (
         <div style={{

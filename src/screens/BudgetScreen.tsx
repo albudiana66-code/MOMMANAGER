@@ -34,6 +34,7 @@ type BudgetLimits = Partial<Record<TxCategory, number>>;
 const TX_KEY = (uid: string) => `mm_transactions_${uid}`;
 const ACCOUNTS_KEY = (uid: string) => `mm_accounts_${uid}`;
 const BUDGETS_KEY = (uid: string) => `mm_budgets_${uid}`;
+const MONTHLY_BUDGET_KEY = (uid: string) => `mm_monthly_budget_${uid}`;
 // legacy key migration
 const LEGACY_KEY = (uid: string) => `mm_budget_${uid}`;
 
@@ -91,6 +92,8 @@ function loadBudgets(uid: string): BudgetLimits {
   try { return JSON.parse(localStorage.getItem(BUDGETS_KEY(uid)) || '{}'); } catch { return {}; }
 }
 function saveBudgets(uid: string, b: BudgetLimits) { localStorage.setItem(BUDGETS_KEY(uid), JSON.stringify(b)); }
+function loadMonthlyBudget(uid: string): number { return parseFloat(localStorage.getItem(MONTHLY_BUDGET_KEY(uid)) || '0') || 0; }
+function saveMonthlyBudget(uid: string, v: number) { localStorage.setItem(MONTHLY_BUDGET_KEY(uid), String(v)); }
 
 // ─────────────────────────────────────────────
 // SVG Donut Chart
@@ -179,8 +182,8 @@ function DonutChart({ slices, total }: { slices: Slice[]; total: number }) {
 // OVERVIEW TAB
 // ─────────────────────────────────────────────
 
-function OverviewTab({ txs, budgets, saveBudgetsLocal, currency, currentMonth, setCurrentMonth }:
-  { txs: BudgetTransaction[]; budgets: BudgetLimits; saveBudgetsLocal: (b: BudgetLimits) => void; currency: string; currentMonth: Date; setCurrentMonth: (d: Date) => void }) {
+function OverviewTab({ txs, budgets, saveBudgetsLocal, monthlyBudget, saveMonthlyBudgetLocal, currency, currentMonth, setCurrentMonth }:
+  { txs: BudgetTransaction[]; budgets: BudgetLimits; saveBudgetsLocal: (b: BudgetLimits) => void; monthlyBudget: number; saveMonthlyBudgetLocal: (v: number) => void; currency: string; currentMonth: Date; setCurrentMonth: (d: Date) => void }) {
 
   const monthStart = format(startOfMonth(currentMonth), 'yyyy-MM-dd');
   const monthEnd = format(endOfMonth(currentMonth), 'yyyy-MM-dd');
@@ -217,6 +220,8 @@ function OverviewTab({ txs, budgets, saveBudgetsLocal, currency, currentMonth, s
 
   const [editingBudget, setEditingBudget] = useState<TxCategory | null>(null);
   const [budgetInput, setBudgetInput] = useState('');
+  const [editingMonthly, setEditingMonthly] = useState(false);
+  const [monthlyInput, setMonthlyInput] = useState('');
 
   function saveBudgetLimit(cat: TxCategory) {
     const val = parseFloat(budgetInput);
@@ -269,32 +274,71 @@ function OverviewTab({ txs, budgets, saveBudgetsLocal, currency, currentMonth, s
           </div>
         </div>
 
-        {/* Total budget summary bar */}
-        {(() => {
-          const totalBudget = Object.values(budgets).reduce((s, v) => s + (v || 0), 0);
-          if (totalBudget === 0) return null;
-          const pct = Math.min((totalExpense / totalBudget) * 100, 100);
-          const over = totalExpense > totalBudget;
-          const barColor = pct >= 90 ? '#ef4444' : pct >= 70 ? '#f97316' : '#8FA888';
-          return (
-            <div style={{ marginTop: 4 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>Total budget</span>
-                <span style={{ fontSize: 12, fontWeight: 700, color: over ? '#ef4444' : 'var(--text-primary)' }}>
-                  {formatCurrency(totalExpense, currency)} / {formatCurrency(totalBudget, currency)}
-                </span>
-              </div>
-              <div style={{ height: 8, borderRadius: 9999, background: 'var(--border)', overflow: 'hidden' }}>
-                <div style={{ height: '100%', width: `${pct}%`, borderRadius: 9999, background: barColor, transition: 'width 0.4s' }} />
-              </div>
-              <p style={{ fontSize: 11, marginTop: 5, color: over ? '#ef4444' : '#8FA888', fontWeight: 500 }}>
-                {over
-                  ? `⚠️ Over budget by ${formatCurrency(totalExpense - totalBudget, currency)}`
-                  : `${formatCurrency(totalBudget - totalExpense, currency)} remaining`}
-              </p>
+        {/* Monthly budget input + progress bar */}
+        <div style={{ marginTop: 4 }}>
+          {editingMonthly ? (
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <input
+                type="number"
+                value={monthlyInput}
+                onChange={e => setMonthlyInput(e.target.value)}
+                placeholder="Enter monthly budget..."
+                autoFocus
+                style={{ flex: 1, height: 40, borderRadius: 12, border: '1.5px solid var(--accent)', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: 15, padding: '0 12px', outline: 'none' }}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') {
+                    const v = parseFloat(monthlyInput);
+                    if (!isNaN(v) && v > 0) saveMonthlyBudgetLocal(v);
+                    setEditingMonthly(false);
+                  }
+                  if (e.key === 'Escape') setEditingMonthly(false);
+                }}
+              />
+              <button
+                onClick={() => {
+                  const v = parseFloat(monthlyInput);
+                  if (!isNaN(v) && v > 0) saveMonthlyBudgetLocal(v);
+                  setEditingMonthly(false);
+                }}
+                style={{ height: 40, padding: '0 14px', borderRadius: 12, border: 'none', background: 'var(--accent)', color: '#fff', fontWeight: 600, fontSize: 13, cursor: 'pointer' }}
+              >Save</button>
+              <button onClick={() => setEditingMonthly(false)}
+                style={{ height: 40, padding: '0 10px', borderRadius: 12, border: '1px solid var(--border)', background: 'var(--bg-primary)', color: 'var(--text-secondary)', fontSize: 13, cursor: 'pointer' }}
+              >✕</button>
             </div>
-          );
-        })()}
+          ) : (
+            <button
+              onClick={() => { setMonthlyInput(monthlyBudget > 0 ? String(monthlyBudget) : ''); setEditingMonthly(true); }}
+              style={{ width: '100%', height: 40, borderRadius: 12, border: '1.5px dashed var(--border)', background: 'transparent', color: monthlyBudget > 0 ? 'var(--text-secondary)' : 'var(--accent)', fontSize: 13, fontWeight: 500, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+            >
+              {monthlyBudget > 0
+                ? `✏️ Monthly budget: ${formatCurrency(monthlyBudget, currency)}`
+                : '+ Set monthly budget'}
+            </button>
+          )}
+          {monthlyBudget > 0 && !editingMonthly && (() => {
+            const pct = Math.min((totalExpense / monthlyBudget) * 100, 100);
+            const over = totalExpense > monthlyBudget;
+            const barColor = pct >= 90 ? '#ef4444' : pct >= 70 ? '#f97316' : '#8FA888';
+            return (
+              <div style={{ marginTop: 10 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>Total budget</span>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: over ? '#ef4444' : 'var(--text-primary)' }}>
+                    {formatCurrency(totalExpense, currency)} / {formatCurrency(monthlyBudget, currency)}
+                  </span>
+                </div>
+                <div style={{ height: 8, borderRadius: 9999, background: 'var(--border)', overflow: 'hidden' }}>
+                  <div style={{ height: '100%', width: `${pct}%`, borderRadius: 9999, background: barColor, transition: 'width 0.4s' }} />
+                </div>
+                <p style={{ fontSize: 11, marginTop: 5, color: over ? '#ef4444' : '#8FA888', fontWeight: 500 }}>
+                  {over
+                    ? `⚠️ Over budget by ${formatCurrency(totalExpense - monthlyBudget, currency)}`
+                    : `${formatCurrency(monthlyBudget - totalExpense, currency)} remaining`}
+                </p>
+              </div>
+            );
+          })()}</div>
       </div>
 
       {/* Quick stats */}
@@ -1174,6 +1218,7 @@ function BudgetContent() {
   const [txs, setTxs] = useState<BudgetTransaction[]>([]);
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [budgets, setBudgets] = useState<BudgetLimits>({});
+  const [monthlyBudget, setMonthlyBudget] = useState(0);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [showAddSheet, setShowAddSheet] = useState(false);
   const [confirmMsg, setConfirmMsg] = useState<string | null>(null);
@@ -1184,6 +1229,7 @@ function BudgetContent() {
     setTxs(loadTx(user.id));
     setAccounts(loadAccounts(user.id));
     setBudgets(loadBudgets(user.id));
+    setMonthlyBudget(loadMonthlyBudget(user.id));
   }, [user]);
 
   function addTransaction(data: Omit<BudgetTransaction, 'id' | 'user_id' | 'created_at'>) {
@@ -1266,6 +1312,12 @@ function BudgetContent() {
     saveBudgets(user.id, b);
   }
 
+  function updateMonthlyBudget(v: number) {
+    if (!user) return;
+    setMonthlyBudget(v);
+    saveMonthlyBudget(user.id, v);
+  }
+
   const tabs: { key: BudgetTab; label: string }[] = [
     { key: 'overview', label: 'Overview' },
     { key: 'transactions', label: 'Transactions' },
@@ -1288,7 +1340,7 @@ function BudgetContent() {
       <AnimatePresence mode="wait">
         <motion.div key={tab} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.18 }}>
           {tab === 'overview' && (
-            <OverviewTab txs={txs} budgets={budgets} saveBudgetsLocal={updateBudgets} currency={currency} currentMonth={currentMonth} setCurrentMonth={setCurrentMonth} />
+            <OverviewTab txs={txs} budgets={budgets} saveBudgetsLocal={updateBudgets} monthlyBudget={monthlyBudget} saveMonthlyBudgetLocal={updateMonthlyBudget} currency={currency} currentMonth={currentMonth} setCurrentMonth={setCurrentMonth} />
           )}
           {tab === 'transactions' && (
             <TransactionsTab txs={txs} accounts={accounts} onDelete={deleteTransaction} onAdd={() => setShowAddSheet(true)} currency={currency} currentMonth={currentMonth} />

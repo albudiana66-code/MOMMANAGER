@@ -1688,14 +1688,16 @@ Return ONLY valid JSON (no markdown, no explanation):
 
 Include exactly 5 meals: breakfast, morning snack, lunch, afternoon snack, dinner. Each meal must include grams (portion size in grams), prepTime, cookTime, ingredients (with quantities), and steps (3-5 numbered steps). Target total close to ${kcal} kcal. Simple, quick, healthy, family-friendly.`;
     try {
-      const raw = await askAI(prompt);
+      const raw = await askAI(prompt, 4096);
       // extract JSON from response (strip any markdown fences)
-      const jsonStr = raw.replace(/```json|```/g, '').trim();
+      const jsonStr = raw.replace(/```json\n?|```/g, '').trim();
       const start = jsonStr.indexOf('{');
       const end = jsonStr.lastIndexOf('}');
+      if (start === -1 || end === -1) throw new Error('No JSON found');
       const parsed = JSON.parse(jsonStr.slice(start, end + 1));
+      if (!parsed.meals || !Array.isArray(parsed.meals)) throw new Error('Invalid format');
       setAiMeals(parsed.meals as AIMeal[]);
-      setAiTotal(parsed.total as number);
+      setAiTotal((parsed.total as number) ?? parsed.meals.reduce((s: number, m: AIMeal) => s + (m.calories ?? 0), 0));
     } catch {
       setAiError('Could not parse meal plan. Please try again.');
     }
