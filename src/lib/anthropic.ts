@@ -5,7 +5,7 @@ const SUPABASE_AI_PROXY = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 const DIRECT_API_KEY = import.meta.env.VITE_ANTHROPIC_API_KEY || '';
 const MODEL = 'claude-haiku-4-5-20251001';
-const TIMEOUT_MS = 45_000;
+const TIMEOUT_MS = 90_000;
 
 function chatSystemPrompt(_lang: string) {
   return `You are MomManager AI. Respond only in English. Help with parenting, meals, scheduling, budgeting. Be warm and concise.`;

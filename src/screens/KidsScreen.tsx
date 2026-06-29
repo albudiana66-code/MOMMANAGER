@@ -163,9 +163,8 @@ function SchoolMealsTab({ kid }: { kid: Kid }) {
 
   async function generateSchoolMenu() {
     setGenerating(true);
-    try {
-      const age = differenceInYears(new Date(), parseISO(kid.birthdate));
-      const prompt = `Generate a 5-day healthy school packed lunch menu for a ${age}-year-old child named ${kid.name}.
+    const age = differenceInYears(new Date(), parseISO(kid.birthdate));
+    const prompt = `Generate a 5-day healthy school packed lunch menu for a ${age}-year-old child named ${kid.name}.
 Use simple, nutritious ingredients. UK school lunchbox style.
 Return ONLY a JSON object:
 {
@@ -177,17 +176,26 @@ Return ONLY a JSON object:
 }
 Examples: main="Cheese sandwich", snack="Rice cakes", drink="Water bottle", fruit="Apple"
 Respond only in English.`;
-      let raw = '';
-      await askAIStream(prompt, 1024, i18n.language, (chunk) => { raw += chunk; });
-      const match = raw.match(/\{[\s\S]*\}/);
-      if (match) {
-        const parsed: SchoolMealPlan = JSON.parse(match[0]);
-        setPlan(parsed);
-        localStorage.setItem(`mm_school_meals_${kid.id}`, JSON.stringify(parsed));
+    const MAX_RETRIES = 3;
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        let raw = '';
+        await askAIStream(prompt, 1024, i18n.language, (chunk) => { raw += chunk; });
+        const match = raw.match(/\{[\s\S]*\}/);
+        if (match) {
+          const parsed: SchoolMealPlan = JSON.parse(match[0]);
+          if (Object.keys(parsed).length > 0) {
+            setPlan(parsed);
+            localStorage.setItem(`mm_school_meals_${kid.id}`, JSON.stringify(parsed));
+            setGenerating(false);
+            return;
+          }
+        }
+      } catch {
+        if (attempt < MAX_RETRIES) await new Promise(r => setTimeout(r, 1000 * attempt));
       }
-    } catch { /* silent */ } finally {
-      setGenerating(false);
     }
+    setGenerating(false);
   }
 
   const mealEmoji = { main: '🥪', snack: '🍪', drink: '💧', fruit: '🍎' };
@@ -455,21 +463,32 @@ Format as JSON with this exact structure (include ALL fields for each meal):
 }
 Include all 7 days (Monday to Sunday). Use UK measurements (grams, ml). Respond ONLY with valid JSON, no extra text.`;
 
-    try {
-      let raw = '';
-      await askAIStream(prompt, 4096, i18n.language, (chunk) => { raw += chunk; });
-      raw = raw.replace(/```json|```/g, '').trim();
-      const start = raw.indexOf('{');
-      const end = raw.lastIndexOf('}');
-      if (start !== -1 && end !== -1) {
-        const parsed: AgeMealPlan = JSON.parse(raw.slice(start, end + 1));
-        setPlan(parsed);
-        localStorage.setItem(MP_KEY(kid.id, ageGroup, weekNum), JSON.stringify(parsed));
-      } else {
-        setAiError('Could not parse meal plan. Please try again.');
+    const MAX_RETRIES = 3;
+    let lastError = '';
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        let raw = '';
+        await askAIStream(prompt, 4096, i18n.language, (chunk) => { raw += chunk; });
+        raw = raw.replace(/```json|```/g, '').trim();
+        const start = raw.indexOf('{');
+        const end = raw.lastIndexOf('}');
+        if (start !== -1 && end !== -1) {
+          const parsed: AgeMealPlan = JSON.parse(raw.slice(start, end + 1));
+          if (parsed.days && parsed.days.length > 0) {
+            setPlan(parsed);
+            localStorage.setItem(MP_KEY(kid.id, ageGroup, weekNum), JSON.stringify(parsed));
+            setGenerating(false);
+            return;
+          }
+        }
+        lastError = 'Could not parse meal plan.';
+      } catch (e) {
+        lastError = e instanceof Error ? e.message : 'Could not generate meal plan.';
+        if (attempt < MAX_RETRIES) await new Promise(r => setTimeout(r, 1000 * attempt));
       }
-    } catch (e) { setAiError(e instanceof Error ? e.message : 'Could not generate meal plan. Try again.'); }
-    finally { setGenerating(false); }
+    }
+    setAiError(`${lastError} Please try again.`);
+    setGenerating(false);
   }
 
   function toggleDay(day: string) {

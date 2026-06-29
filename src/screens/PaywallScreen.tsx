@@ -357,18 +357,23 @@ export function PaywallScreen() {
           </button>
         </motion.div>
 
+        {/* Restore Purchases — prominent button required by Apple */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.32 }}>
+          <button
+            onClick={handleRestorePurchase}
+            disabled={loadingPlan !== null}
+            className="w-full py-3 rounded-2xl text-sm font-semibold disabled:opacity-50 transition-opacity"
+            style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
+          >
+            {loadingPlan === 'trial' ? 'Restoring…' : '🔄 Restore Purchases'}
+          </button>
+        </motion.div>
+
         {/* Footer links */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }}
           className="flex flex-col items-center gap-2"
         >
-          <button
-            onClick={handleRestorePurchase}
-            disabled={loadingPlan !== null}
-            className="text-xs disabled:opacity-50"
-            style={{ color: 'var(--text-muted)' }}
-          >
-            Restore purchase
-          </button>
+          <div />
           <div className="flex items-center gap-3 text-xs" style={{ color: 'var(--text-muted)' }}>
             <button onClick={() => navigate('/privacy')}>Privacy Policy</button>
             <span>·</span>
