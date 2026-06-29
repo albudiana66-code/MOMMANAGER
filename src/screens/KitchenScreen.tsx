@@ -127,7 +127,7 @@ function BottomSheet({ open, onClose, title, children }: { open: boolean; onClos
             onClick={onClose} />
           <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 51, background: 'var(--bg-card)', borderRadius: '24px 24px 0 0', padding: '20px 20px 40px', maxHeight: '85vh', overflowY: 'auto' }}>
+            style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 51, background: 'var(--bg-card)', borderRadius: '24px 24px 0 0', padding: '20px 20px calc(env(safe-area-inset-bottom, 0px) + 32px)', maxHeight: '85vh', overflowY: 'auto' }}>
             <div style={{ width: 36, height: 4, borderRadius: 2, background: 'var(--border)', margin: '0 auto 16px' }} />
             <p style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 20 }}>{title}</p>
             {children}
@@ -263,7 +263,7 @@ function CookMode({ recipe, onClose }: { recipe: GeneratedRecipe | SavedRecipe; 
 
   if (complete) {
     return (
-      <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, padding: 32, gap: 16 }}>
+      <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, padding: '32px 32px max(calc(env(safe-area-inset-bottom, 0px) + 20px), 60px)', gap: 16 }}>
         <Confetti />
         <span style={{ fontSize: 72 }}>🎉</span>
         <p style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-primary)', textAlign: 'center' }}>Recipe Complete!</p>
@@ -342,7 +342,7 @@ function CookMode({ recipe, onClose }: { recipe: GeneratedRecipe | SavedRecipe; 
       </motion.div>
 
       {/* Navigation */}
-      <div style={{ padding: '12px 20px 32px', display: 'flex', gap: 12 }}>
+      <div style={{ padding: '12px 20px max(calc(env(safe-area-inset-bottom, 0px) + 20px), 60px)', display: 'flex', gap: 12, flexShrink: 0 }}>
         <button onClick={prev} disabled={isFirst}
           style={{
             flex: 1, height: 56, borderRadius: 18, border: '2px solid var(--border)',
@@ -425,7 +425,7 @@ function RecipeDetailModal({ recipe, initialTab = 'ingredients', onClose, onSave
         style={{ position: 'fixed', inset: 0, zIndex: 100, background: 'var(--bg-primary)', display: 'flex', flexDirection: 'column' }}
       >
         {/* Header */}
-        <div style={{ padding: '16px 16px 0', flexShrink: 0 }}>
+        <div style={{ padding: 'calc(env(safe-area-inset-top, 0px) + 16px) 16px 0', flexShrink: 0 }}>
           <div className="flex items-start justify-between gap-3 mb-3">
             <div className="flex items-center gap-3">
               <span style={{ fontSize: 48, lineHeight: 1 }}>{recipe.emoji}</span>
@@ -529,7 +529,7 @@ function RecipeDetailModal({ recipe, initialTab = 'ingredients', onClose, onSave
 
         {/* Bottom actions for ingredients/steps tabs */}
         {tab !== 'cook' && (
-          <div style={{ padding: '12px 16px 32px', background: 'var(--bg-primary)', borderTop: '1px solid var(--border)', flexShrink: 0 }}>
+          <div style={{ padding: '12px 16px max(calc(env(safe-area-inset-bottom, 0px) + 20px), 60px)', background: 'var(--bg-primary)', borderTop: '1px solid var(--border)', flexShrink: 0 }}>
             {tab === 'ingredients' && (
               <div className="flex gap-3">
                 <button onClick={addAllToShop} style={{ flex: 1, height: 48, borderRadius: 14, border: 'none', background: '#EDF5ED', color: '#4A7A58', fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>
@@ -574,6 +574,9 @@ function MealsTab() {
   const [diet, setDiet] = useState('Any');
   const [cuisine, setCuisine] = useState('Any');
   const [addingToShop, setAddingToShop] = useState(false);
+  const [mealRecipe, setMealRecipe] = useState<GeneratedRecipe | null>(null);
+  const [mealLoading, setMealLoading] = useState(false);
+  const [mealLoadingName, setMealLoadingName] = useState('');
 
   const weekStart = startOfWeek(addWeeks(new Date(), weekOffset), { weekStartsOn: 1 });
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
@@ -633,6 +636,40 @@ Use dates for the week starting ${format(weekStart, 'yyyy-MM-dd')}.`;
 
   function planForDate(ds: string) { return plan.find((d) => d.date === ds); }
 
+  async function openMealRecipe(meal: MealSlot) {
+    setMealLoadingName(meal.name);
+    setMealLoading(true);
+    setMealRecipe(null);
+    try {
+      const prompt = `Create a recipe for: ${meal.name}. For ${people} people.
+For each step that involves cooking, mention the exact time (e.g. "Cook for 5 minutes"). Include relevant emoji for each step.
+Return ONLY valid JSON, no markdown:
+{
+  "title": "${meal.name}",
+  "emoji": "${meal.emoji}",
+  "prepTime": "10 min",
+  "cookTime": "20 min",
+  "servings": ${people},
+  "difficulty": "easy",
+  "ingredients": [{ "amount": "200g", "name": "ingredient", "emoji": "🥦" }],
+  "steps": [
+    { "text": "Step description.", "emoji": "🍳", "duration": null }
+  ],
+  "tip": "Chef tip here"
+}`;
+      const raw = await askAI(prompt, 1200, i18n.language);
+      const match = raw.match(/\{[\s\S]*\}/);
+      if (!match) throw new Error('Invalid response');
+      const parsed = JSON.parse(match[0]);
+      parsed.steps = normaliseSteps(parsed.steps);
+      setMealRecipe(parsed);
+    } catch {
+      // silently fail — just close loading
+    } finally {
+      setMealLoading(false);
+    }
+  }
+
   const DIETS = ['Any', 'Vegetarian', 'Vegan', 'Gluten-free', 'Dairy-free'];
   const CUISINES = ['Any', 'British', 'Italian', 'Mediterranean', 'Asian', 'Mexican'];
 
@@ -677,6 +714,7 @@ Use dates for the week starting ${format(weekStart, 'yyyy-MM-dd')}.`;
                 const meal = dayPlan?.[slot];
                 return (
                   <button key={slot}
+                    onClick={() => meal && openMealRecipe(meal)}
                     style={{ width: '100%', textAlign: 'left', padding: '6px 8px', borderRadius: 10, marginBottom: 4, background: meal ? 'var(--bg-primary)' : 'transparent', border: meal ? '1px solid var(--border)' : '1px dashed var(--border)', cursor: meal ? 'pointer' : 'default' }}>
                     {meal ? (
                       <div className="flex items-center gap-1.5">
@@ -729,6 +767,31 @@ Use dates for the week starting ${format(weekStart, 'yyyy-MM-dd')}.`;
           </button>
         </div>
       </BottomSheet>
+
+      {/* Loading overlay while fetching recipe */}
+      <AnimatePresence>
+        {mealLoading && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            style={{ position: 'fixed', inset: 0, zIndex: 90, background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 16 }}>
+            <div style={{ background: 'var(--bg-card)', borderRadius: 24, padding: '32px 40px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14, boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}>
+              <span style={{ fontSize: 48 }}>🍳</span>
+              <p style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>Finding recipe…</p>
+              <p style={{ fontSize: 13, color: 'var(--text-secondary)', textAlign: 'center', maxWidth: 200 }}>{mealLoadingName}</p>
+              <Spinner />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Recipe detail modal */}
+      {mealRecipe && (
+        <RecipeDetailModal
+          recipe={mealRecipe}
+          initialTab="ingredients"
+          onClose={() => setMealRecipe(null)}
+          userId={user?.id}
+        />
+      )}
     </div>
   );
 }

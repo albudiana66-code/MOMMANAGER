@@ -73,7 +73,7 @@ export function QuickAddSheet({ open, date, userId, onClose, onSave }: QuickAddS
             style={{
               background: 'var(--bg-card)',
               borderRadius: '28px 28px 0 0',
-              padding: '0 24px 40px',
+              padding: '0 24px max(calc(env(safe-area-inset-bottom, 0px) + 16px), 56px)',
               boxShadow: '0 -8px 40px rgba(0,0,0,0.18)',
             }}
           >

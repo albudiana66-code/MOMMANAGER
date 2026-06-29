@@ -457,7 +457,7 @@ Include all 7 days (Monday to Sunday). Use UK measurements (grams, ml). Respond 
 
     try {
       let raw = '';
-      await askAIStream(prompt, 2048, i18n.language, (chunk) => { raw += chunk; });
+      await askAIStream(prompt, 4096, i18n.language, (chunk) => { raw += chunk; });
       raw = raw.replace(/```json|```/g, '').trim();
       const start = raw.indexOf('{');
       const end = raw.lastIndexOf('}');
@@ -468,7 +468,7 @@ Include all 7 days (Monday to Sunday). Use UK measurements (grams, ml). Respond 
       } else {
         setAiError('Could not parse meal plan. Please try again.');
       }
-    } catch { setAiError('Could not generate meal plan. Try again.'); }
+    } catch (e) { setAiError(e instanceof Error ? e.message : 'Could not generate meal plan. Try again.'); }
     finally { setGenerating(false); }
   }
 

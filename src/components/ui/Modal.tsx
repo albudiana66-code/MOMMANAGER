@@ -37,7 +37,7 @@ export function Modal({ open, onClose, title, children, fullScreen }: ModalProps
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
             className={`relative w-full bg-[var(--bg-card)] rounded-t-3xl z-10 ${fullScreen ? 'h-[90vh]' : 'max-h-[85vh]'} overflow-y-auto`}
-            style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 16px)' }}
+            style={{ paddingBottom: 'max(calc(env(safe-area-inset-bottom, 0px) + 16px), 32px)' }}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="w-10 h-1 rounded-full mx-auto mt-3 mb-4" style={{ background: 'var(--border-strong)' }} />
@@ -46,14 +46,15 @@ export function Modal({ open, onClose, title, children, fullScreen }: ModalProps
                 <h2 className="text-lg text-[var(--text-primary)]" style={{ fontWeight: 600, letterSpacing: '-0.02em' }}>{title}</h2>
                 <button
                   onClick={onClose}
-                  className="text-[var(--text-secondary)] p-1"
+                  className="text-[var(--text-secondary)] p-2 -mr-1"
                   aria-label={t('common.close')}
+                  style={{ fontSize: 18, lineHeight: 1, minWidth: 44, minHeight: 44, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
                   ✕
                 </button>
               </div>
             )}
-            <div className="px-5" style={{ paddingBottom: 24 }}>{children}</div>
+            <div className="px-5" style={{ paddingBottom: 8 }}>{children}</div>
           </motion.div>
         </motion.div>
       )}

@@ -81,7 +81,7 @@ export function ChatModal({ open, onClose }: ChatModalProps) {
           style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}
         >
           {/* Header */}
-          <div className="flex items-center gap-3 px-5 py-4" style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-card)' }}>
+          <div className="flex items-center gap-3 px-5" style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 16px)', paddingBottom: 16, borderBottom: '1px solid var(--border)', background: 'var(--bg-card)' }}>
             <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, var(--accent) 0%, var(--lavender) 100%)' }}>
               🤖
             </div>
