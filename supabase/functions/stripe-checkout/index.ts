@@ -43,8 +43,10 @@ Deno.serve(async (req) => {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'subscription',
+      currency: 'gbp',
+      locale: 'en-GB',
       line_items: [{ price: priceId, quantity: 1 }],
-      customer_email: email,
+      customer_email: email || undefined,
       metadata: { userId, plan: plan || 'unknown' },
       success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/paywall`,
@@ -52,7 +54,7 @@ Deno.serve(async (req) => {
         trial_period_days: 7,
         metadata: { userId },
       },
-      allow_promotion_codes: true,
+      allow_promotion_codes: false,
     });
 
     return new Response(JSON.stringify({ url: session.url, sessionId: session.id }), {
