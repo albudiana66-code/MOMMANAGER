@@ -198,7 +198,7 @@ export function PaywallScreen() {
             <h1 className="text-2xl text-[var(--text-primary)]" style={{ fontWeight: 700, letterSpacing: '-0.03em' }}>
               Choose your plan
             </h1>
-            <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>Cancel anytime</p>
+            <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>7-day free trial • Cancel anytime</p>
           </div>
         </motion.div>
 
@@ -280,8 +280,11 @@ export function PaywallScreen() {
                   <svg className="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" strokeOpacity=".3" /><path d="M12 2a10 10 0 0 1 10 10" /></svg>
                   Redirecting…
                 </span>
-              ) : 'Start Standard'}
+              ) : 'Start Standard – 7 Days Free'}
             </button>
+            <p style={{ fontSize: 11, color: 'var(--text-muted)', textAlign: 'center', lineHeight: 1.5 }}>
+              Try free for 7 days, then {billing === 'yearly' ? '£79.99/year' : '£9.99/month'}. Cancel before trial ends to avoid being charged.
+            </p>
           </motion.div>
 
           {/* Pro — featured */}
@@ -333,8 +336,11 @@ export function PaywallScreen() {
                   <svg className="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" strokeOpacity=".3" /><path d="M12 2a10 10 0 0 1 10 10" /></svg>
                   Redirecting…
                 </span>
-              ) : 'Start Pro'}
+              ) : 'Start Pro – 7 Days Free'}
             </button>
+            <p style={{ fontSize: 11, color: '#8A7050', textAlign: 'center', lineHeight: 1.5 }}>
+              Try free for 7 days, then {billing === 'yearly' ? '£129.99/year' : '£14.99/month'}. Cancel before trial ends to avoid being charged.
+            </p>
           </motion.div>
         </div>
 
@@ -380,7 +386,7 @@ export function PaywallScreen() {
             <button onClick={() => navigate('/terms')}>Terms of Use</button>
           </div>
           <p style={{ fontSize: 10, color: 'var(--text-muted)', textAlign: 'center', lineHeight: 1.6, maxWidth: 320, padding: '0 16px' }}>
-            Payment will be charged to your Apple ID account at confirmation of purchase. Subscription automatically renews unless cancelled at least 24 hours before the end of the current period. You can manage or cancel your subscription in iPhone Settings → Apple ID → Subscriptions.
+            Subscription renews automatically at the plan price shown above. To avoid charges, cancel at least 24 hours before your 7-day trial ends. On Android: Google Play → Subscriptions. On iOS: iPhone Settings → Apple ID → Subscriptions. Payment will be charged to your store account at confirmation of purchase.
           </p>
         </motion.div>
       </div>
