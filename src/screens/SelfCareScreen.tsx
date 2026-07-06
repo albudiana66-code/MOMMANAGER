@@ -6,6 +6,7 @@ import { Layout } from '../components/layout/Layout';
 import { LuxuryScreenHeader } from '../components/ui/LuxuryScreenHeader';
 import { Card } from '../components/ui/Card';
 import { useAuth } from '../context/AuthContext';
+import { useAIConsent } from '../context/AIConsentContext';
 import { askAI } from '../lib/anthropic';
 import { ProGate } from '../components/paywall/ProGate';
 import i18n from '../i18n';
@@ -798,6 +799,7 @@ function RoutinesTab() {
 
 function SkincareTab() {
   const { user } = useAuth();
+  const { requestAiConsent } = useAIConsent();
   const [data, setData] = useState<SkincareData | null>(null);
   const [skinType, setSkinType] = useState('');
   const [concerns, setConcerns] = useState<string[]>([]);
@@ -870,6 +872,8 @@ function SkincareTab() {
 
   async function getAdvice() {
     if (!skinType) return;
+    const consented = await requestAiConsent();
+    if (!consented) return;
     setAdviceLoading(true);
     try {
       const result = await askAI(
@@ -1596,6 +1600,7 @@ function calcDailyCalories(currentKg: number, goalKg: number, months: number): n
 }
 
 function CalorieTracker({ uid }: { uid: string }) {
+  const { requestAiConsent } = useAIConsent();
   const [data, setData] = useState<CalorieData>(() => uid ? loadCalorieData(uid) : { entries: [], dailyGoal: 1500, currentWeight: null, goalWeight: null, timeframeMonths: 3 });
   const [showForm, setShowForm] = useState(false);
   const [mealType, setMealType] = useState<MealType>('breakfast');
@@ -1633,6 +1638,8 @@ function CalorieTracker({ uid }: { uid: string }) {
 
   async function lookupFood() {
     if (!foodQuery.trim()) return;
+    const consented = await requestAiConsent();
+    if (!consented) return;
     setFoodLookupLoading(true); setFoodResult(null); setFoodError('');
     try {
       const prompt = `You are a nutritionist. For the food "${foodQuery.trim()}", return ONLY valid JSON with no markdown:
@@ -1673,6 +1680,8 @@ One standard portion. Grams = typical serving size. Calories for that portion.`;
   }
 
   async function getAIMealPlan() {
+    const consented = await requestAiConsent();
+    if (!consented) return;
     setAiLoading(true); setAiMeals(null); setAiError('');
     const cw = data.currentWeight;
     const gw = data.goalWeight;

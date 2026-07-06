@@ -6,6 +6,7 @@ import { Layout } from '../components/layout/Layout';
 import { LuxuryScreenHeader } from '../components/ui/LuxuryScreenHeader';
 import { Modal } from '../components/ui/Modal';
 import { useAuth } from '../context/AuthContext';
+import { useAIConsent } from '../context/AIConsentContext';
 import { askAI } from '../lib/anthropic';
 import type { ShoppingItem } from '../types';
 
@@ -564,6 +565,7 @@ function RecipeDetailModal({ recipe, initialTab = 'ingredients', onClose, onSave
 function MealsTab() {
   const { i18n } = useTranslation();
   const { user } = useAuth();
+  const { requestAiConsent } = useAIConsent();
 
   const [weekOffset, setWeekOffset] = useState(0);
   const [plan, setPlan] = useState<DayPlan[]>([]);
@@ -593,6 +595,8 @@ function MealsTab() {
   }
 
   async function generateMenu() {
+    const consented = await requestAiConsent();
+    if (!consented) return;
     setShowPrefs(false);
     setGenerating(true);
     setError('');
@@ -616,6 +620,8 @@ Use dates for the week starting ${format(weekStart, 'yyyy-MM-dd')}.`;
 
   async function addToShoppingList() {
     if (!user || plan.length === 0) return;
+    const consented = await requestAiConsent();
+    if (!consented) return;
     setAddingToShop(true);
     try {
       const mealNames = plan.flatMap((d) => [d.breakfast?.name, d.lunch?.name, d.dinner?.name].filter(Boolean)).join(', ');
@@ -637,6 +643,8 @@ Use dates for the week starting ${format(weekStart, 'yyyy-MM-dd')}.`;
   function planForDate(ds: string) { return plan.find((d) => d.date === ds); }
 
   async function openMealRecipe(meal: MealSlot) {
+    const consented = await requestAiConsent();
+    if (!consented) return;
     setMealLoadingName(meal.name);
     setMealLoading(true);
     setMealRecipe(null);
@@ -803,6 +811,7 @@ Return ONLY valid JSON, no markdown:
 function ShoppingTab() {
   const { i18n } = useTranslation();
   const { user } = useAuth();
+  const { requestAiConsent } = useAIConsent();
   const [items, setItems] = useState<ShoppingItem[]>([]);
   const [lists, setLists] = useState<string[]>(['Shopping']);
   const [activeList, setActiveList] = useState('Shopping');
@@ -838,6 +847,8 @@ function ShoppingTab() {
 
   async function generateFromMeals() {
     if (!user) return;
+    const consented = await requestAiConsent();
+    if (!consented) return;
     setGenerating(true);
     try {
       const meals: DayPlan[] = load(MEALS_KEY(user.id), []);
@@ -968,6 +979,7 @@ function ShopItemRow({ item, onToggle, onDelete }: { item: ShoppingItem; onToggl
 function RecipesTab() {
   const { i18n } = useTranslation();
   const { user } = useAuth();
+  const { requestAiConsent } = useAIConsent();
   const [ingredients, setIngredients] = useState('');
   const [people, setPeople] = useState(4);
   const [loading, setLoading] = useState(false);
@@ -987,6 +999,8 @@ function RecipesTab() {
 
   async function generateRecipe() {
     if (!ingredients.trim()) return;
+    const consented = await requestAiConsent();
+    if (!consented) return;
     setLoading(true);
     setError('');
     setGenerated(null);

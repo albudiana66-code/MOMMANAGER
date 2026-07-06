@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { sendMessageStream } from '../../lib/anthropic';
+import { useAIConsent } from '../../context/AIConsentContext';
 import type { ChatMessage } from '../../types';
 import { ChatBubble } from './ChatBubble';
 
@@ -13,6 +14,7 @@ interface ChatModalProps {
 
 export function ChatModal({ open, onClose }: ChatModalProps) {
   const { t, i18n } = useTranslation();
+  const { requestAiConsent } = useAIConsent();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [typing, setTyping] = useState(false);
@@ -30,6 +32,8 @@ export function ChatModal({ open, onClose }: ChatModalProps) {
   async function handleSend() {
     const text = input.trim();
     if (!text || typing) return;
+    const consented = await requestAiConsent();
+    if (!consented) return;
     setInput('');
 
     const userMsg: ChatMessage = {

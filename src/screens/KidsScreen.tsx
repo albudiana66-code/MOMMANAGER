@@ -11,6 +11,7 @@ import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { Card } from '../components/ui/Card';
 import { useAuth } from '../context/AuthContext';
+import { useAIConsent } from '../context/AIConsentContext';
 import { askAIStream } from '../lib/anthropic';
 import { ActivitiesGenerator } from '../components/kids/ActivitiesGenerator';
 import type { Kid, KidMilestone } from '../types';
@@ -158,10 +159,13 @@ function MilestonesTab({ kid: _kid, milestones, onAddMilestone, onDeleteMileston
 // ---------- SCHOOL MEALS TAB ----------
 function SchoolMealsTab({ kid }: { kid: Kid }) {
   const { t, i18n } = useTranslation();
+  const { requestAiConsent } = useAIConsent();
   const [plan, setPlan] = useState<SchoolMealPlan>(() => loadSchoolMeals(kid.id));
   const [generating, setGenerating] = useState(false);
 
   async function generateSchoolMenu() {
+    const consented = await requestAiConsent();
+    if (!consented) return;
     setGenerating(true);
     const age = differenceInYears(new Date(), parseISO(kid.birthdate));
     const prompt = `Generate a 5-day healthy school packed lunch menu for a ${age}-year-old child named ${kid.name}.
@@ -423,6 +427,7 @@ function LunchBoxTab({ kid }: { kid: Kid }) {
 // ---------- AGE MEAL PLAN TAB ----------
 function AgeMealPlanTab({ kid }: { kid: Kid }) {
   const { i18n } = useTranslation();
+  const { requestAiConsent } = useAIConsent();
   const [ageGroup, setAgeGroup] = useState<AgeGroup>('toddler');
   const weekNum = getCurrentWeekNum();
   const [plan, setPlan] = useState<AgeMealPlan | null>(null);
@@ -437,6 +442,8 @@ function AgeMealPlanTab({ kid }: { kid: Kid }) {
   }, [kid.id, ageGroup, weekNum]);
 
   async function generatePlan() {
+    const consented = await requestAiConsent();
+    if (!consented) return;
     setGenerating(true);
     setAiError('');
     const groupInfo = AGE_GROUPS.find(g => g.key === ageGroup)!;

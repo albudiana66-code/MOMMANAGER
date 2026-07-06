@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
+import { useAIConsent } from '../../context/AIConsentContext';
 import { askAI } from '../../lib/anthropic';
 
 interface GeneratedActivity {
@@ -184,6 +185,7 @@ function ActivityCard({ activity, onSave, saved }: {
 
 export function ActivitiesGenerator() {
   const { user } = useAuth();
+  const { requestAiConsent } = useAIConsent();
 
   const [ageGroup, setAgeGroup] = useState<AgeGroup>('3-5 yrs');
   const [categories, setCategories] = useState<string[]>([]);
@@ -204,6 +206,8 @@ export function ActivitiesGenerator() {
   }
 
   async function generate() {
+    const consented = await requestAiConsent();
+    if (!consented) return;
     setLoading(true);
     setError('');
     setActivities([]);

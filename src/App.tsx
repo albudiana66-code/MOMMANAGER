@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { AppProvider } from './context/AppContext';
+import { AIConsentProvider } from './context/AIConsentContext';
 import { useSubscription } from './hooks/useSubscription';
 import { AuthScreen } from './screens/AuthScreen';
 import { DashboardScreen } from './screens/DashboardScreen';
@@ -60,9 +61,11 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <AppProvider>
-          <AppRoutes />
-        </AppProvider>
+        <AIConsentProvider>
+          <AppProvider>
+            <AppRoutes />
+          </AppProvider>
+        </AIConsentProvider>
       </AuthProvider>
     </BrowserRouter>
   );

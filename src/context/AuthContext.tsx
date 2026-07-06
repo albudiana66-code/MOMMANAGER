@@ -49,6 +49,7 @@ const DEV_PROFILE: Profile = {
   theme: 'light',
   subscription_status: 'pro_monthly',
   created_at: new Date().toISOString(),
+  ai_consent: true,
 };
 
 // ─────────────────────────────────────────────

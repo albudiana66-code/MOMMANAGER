@@ -24,6 +24,7 @@ export interface Profile {
   stripe_subscription_id?: string;
   subscription_end_date?: string;
   created_at: string;
+  ai_consent: boolean;
 }
 
 export interface Task {

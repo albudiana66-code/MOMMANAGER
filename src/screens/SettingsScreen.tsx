@@ -39,7 +39,7 @@ const CURRENCIES: { value: Currency; label: string }[] = [
 export function SettingsScreen() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { profile, signOut, deleteAccount } = useAuth();
+  const { profile, signOut, deleteAccount, updateProfile } = useAuth();
   const { theme, toggleTheme, currency, setCurrency, language, setLanguage } = useApp();
   const { plan, isFreeTrial, isStandard, isPro, trialDaysLeft } = useSubscription();
   const [showSignOut, setShowSignOut] = useState(false);
@@ -169,6 +169,23 @@ export function SettingsScreen() {
             options={CURRENCIES}
             onChange={(e) => setCurrency(e.target.value as Currency)}
           />
+        </Card>
+
+        {/* AI Assistant consent */}
+        <Card>
+          <h3 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-3">AI Assistant</h3>
+          <div className="flex items-center justify-between">
+            <div className="pr-3">
+              <span className="text-sm text-[var(--text-primary)]">Allow AI features</span>
+              <p className="text-xs text-[var(--text-muted)] mt-0.5" style={{ lineHeight: 1.4 }}>
+                Sends your messages and relevant context to Anthropic to generate AI responses.
+              </p>
+            </div>
+            <Toggle
+              checked={profile?.ai_consent === true}
+              onChange={(next) => updateProfile({ ai_consent: next })}
+            />
+          </div>
         </Card>
 
         {/* Subscription */}
