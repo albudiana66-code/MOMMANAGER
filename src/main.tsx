@@ -32,7 +32,7 @@ if (Capacitor.isNativePlatform()) {
   if (Capacitor.getPlatform() === 'ios') {
     import('@capgo/capacitor-purchases').then(({ CapacitorPurchases }) => {
       CapacitorPurchases.setup({
-        apiKey: 'appl_REPLACE_WITH_YOUR_REVENUECAT_IOS_API_KEY',
+        apiKey: 'appl_gySwhoFqHjxXBrKzWFbvqVHqOBf',
       }).catch(console.error);
     });
   }
