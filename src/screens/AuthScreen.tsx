@@ -53,19 +53,24 @@ export function AuthScreen() {
       return;
     }
     setLoading(true);
+    console.log(`[AuthScreen] handleEmailSubmit: mode=${mode}, email=${email}`);
     try {
       if (mode === 'signin') {
         const err = await signInWithEmail(email, password);
         if (err) {
+          console.log('[AuthScreen] signInWithEmail returned error:', err);
           setError(err);
         } else {
+          console.log('[AuthScreen] signInWithEmail succeeded — navigating to /');
           navigate('/');
         }
       } else {
         const err = await signUpWithEmail(email, password);
         if (err) {
+          console.log('[AuthScreen] signUpWithEmail returned error:', err);
           setError(err);
         } else {
+          console.log('[AuthScreen] signUpWithEmail succeeded — navigating to /');
           navigate('/');
         }
       }

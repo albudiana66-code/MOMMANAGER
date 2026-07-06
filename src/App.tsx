@@ -20,6 +20,8 @@ function AppRoutes() {
   const { user, loading } = useAuth();
   const { hasAccess } = useSubscription();
 
+  console.log('[AppRoutes] render — loading:', loading, 'user:', user?.id ?? null, 'hasAccess:', hasAccess);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--bg-primary)]">
