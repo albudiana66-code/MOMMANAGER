@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { format, parseISO, startOfWeek, endOfWeek, eachDayOfInterval, isToday, isSameDay } from 'date-fns';
+import { format, parseISO, startOfWeek, endOfWeek, eachDayOfInterval, isToday } from 'date-fns';
 import { Layout } from '../components/layout/Layout';
-import { LuxuryScreenHeader } from '../components/ui/LuxuryScreenHeader';
 import { TaskItem } from '../components/tasks/TaskItem';
 import { TaskForm } from '../components/tasks/TaskForm';
 import { CalendarView } from '../components/tasks/CalendarView';
@@ -12,6 +12,10 @@ import { DayView } from '../components/tasks/DayView';
 import { QuickAddSheet } from '../components/tasks/QuickAddSheet';
 import { Modal } from '../components/ui/Modal';
 import { useAuth } from '../context/AuthContext';
+import { useDateFnsLocale } from '../hooks/useDateFnsLocale';
+import { useNotificationSettings } from '../hooks/useNotificationSettings';
+import type { NotificationDeepLinkState } from '../hooks/useNotificationDeepLink';
+import i18n from '../i18n';
 import type { Task, CalendarEvent } from '../types';
 
 type MainTab = 'list' | 'calendar';
@@ -70,6 +74,7 @@ function downloadICS(title: string, id: string, date: string, time?: string, des
 
 // ── Weekly Recap ──────────────────────────────────────────────
 function WeeklyRecap({ tasks }: { tasks: Task[] }) {
+  const dateLocale = useDateFnsLocale();
   const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
   const weekEnd = endOfWeek(new Date(), { weekStartsOn: 1 });
   const days = eachDayOfInterval({ start: weekStart, end: weekEnd });
@@ -92,8 +97,8 @@ function WeeklyRecap({ tasks }: { tasks: Task[] }) {
   return (
     <div style={{ background: 'var(--bg-card)', borderRadius: 20, border: '1px solid var(--border)', padding: 16, marginBottom: 12 }}>
       <div className="flex items-center justify-between mb-3">
-        <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>This week</p>
-        <p style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{done}/{total} done</p>
+        <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{i18n.t('tasks.thisWeek')}</p>
+        <p style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{i18n.t('tasks.doneOfTotal', { done, total })}</p>
       </div>
       {/* Progress bar */}
       <div style={{ height: 6, borderRadius: 3, background: 'var(--border)', marginBottom: 12, overflow: 'hidden' }}>
@@ -112,7 +117,7 @@ function WeeklyRecap({ tasks }: { tasks: Task[] }) {
           return (
             <div key={day.toISOString()} className="flex flex-col items-center gap-1">
               <span style={{ fontSize: 9, fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase', color: todayDay ? 'var(--accent)' : 'var(--text-muted)' }}>
-                {format(day, 'EEE')[0]}
+                {format(day, 'EEE', { locale: dateLocale })[0]}
               </span>
               <div
                 style={{
@@ -150,6 +155,7 @@ function DayPanel({ date, tasks, events, onClose, onAddEvent }: {
   onClose: () => void;
   onAddEvent: (date: string) => void;
 }) {
+  const dateLocale = useDateFnsLocale();
   const dayTasks = tasks.filter((t) => t.due_date === date);
   const dayEvents = events.filter((e) => e.date === date);
 
@@ -169,21 +175,21 @@ function DayPanel({ date, tasks, events, onClose, onAddEvent }: {
     >
       <div className="flex items-center justify-between mb-3">
         <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>
-          {format(parseISO(date + 'T00:00:00'), 'EEEE, MMMM d')}
+          {format(parseISO(date + 'T00:00:00'), 'EEEE, MMMM d', { locale: dateLocale })}
         </p>
         <div className="flex items-center gap-2">
           <button
             onClick={() => onAddEvent(date)}
             style={{ fontSize: 12, fontWeight: 600, color: '#fff', background: 'var(--accent)', border: 'none', borderRadius: 10, padding: '5px 10px', cursor: 'pointer' }}
           >
-            + Add Event
+            + {i18n.t('tasks.addEvent')}
           </button>
           <button onClick={onClose} style={{ fontSize: 18, color: 'var(--text-muted)', lineHeight: 1 }}>×</button>
         </div>
       </div>
 
       {dayTasks.length === 0 && dayEvents.length === 0 ? (
-        <p style={{ fontSize: 13, color: 'var(--text-secondary)', textAlign: 'center', padding: '12px 0' }}>Nothing scheduled — tap + Add Event</p>
+        <p style={{ fontSize: 13, color: 'var(--text-secondary)', textAlign: 'center', padding: '12px 0' }}>{i18n.t('tasks.nothingScheduled')}</p>
       ) : (
         <div className="flex flex-col gap-2">
           {dayTasks.map((t) => (
@@ -195,7 +201,7 @@ function DayPanel({ date, tasks, events, onClose, onAddEvent }: {
                 <div>
                   <p style={{ fontSize: 13, fontWeight: 500, color: t.completed ? 'var(--text-muted)' : 'var(--text-primary)', textDecoration: t.completed ? 'line-through' : 'none' }}>{t.title}</p>
                   {t.time && <p style={{ fontSize: 11, color: 'var(--text-secondary)' }}>⏰ {t.time}</p>}
-                  {t.has_reminder && <p style={{ fontSize: 10, color: 'var(--accent)' }}>🔔 Reminder set</p>}
+                  {t.has_reminder && <p style={{ fontSize: 10, color: 'var(--accent)' }}>🔔 {i18n.t('tasks.reminderSet')}</p>}
                 </div>
                 <button
                   onClick={() => downloadICS(t.title, t.id, date, t.time, t.description)}
@@ -246,45 +252,30 @@ export function TasksScreen() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [showTaskForm, setShowTaskForm] = useState(false);
-  const notifTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
-
-  // Schedule browser notifications for tasks with reminders
-  function scheduleNotifications(allTasks: Task[]) {
-    if (!('Notification' in window) || Notification.permission !== 'granted') return;
-    // Clear previously scheduled timers
-    notifTimers.current.forEach((timer) => clearTimeout(timer));
-    notifTimers.current.clear();
-
-    const now = Date.now();
-    allTasks.forEach((task) => {
-      if (!task.has_reminder || !task.due_date || !task.time || task.completed) return;
-      const [h, m] = task.time.split(':').map(Number);
-      const due = new Date(`${task.due_date}T${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:00`).getTime();
-      const delta = due - now;
-      if (delta <= 0 || delta > 7 * 24 * 60 * 60 * 1000) return; // only schedule if within 7 days
-      const timer = setTimeout(() => {
-        new Notification(`⏰ ${task.title}`, {
-          body: `MomManager reminder${task.due_date ? ` · ${task.due_date}` : ''}`,
-          icon: '/icon.png',
-          tag: task.id,
-        });
-      }, delta);
-      notifTimers.current.set(task.id, timer);
-    });
-  }
+  const { resync } = useNotificationSettings();
+  const location = useLocation();
 
   useEffect(() => {
     if (!user) return;
     const loadedTasks = loadTasks(user.id);
+    const loadedEvents = loadEvents(user.id);
     setTasks(loadedTasks);
-    setEvents(loadEvents(user.id));
-    scheduleNotifications(loadedTasks);
-    // Re-check every minute in case new tasks were added elsewhere
-    const interval = setInterval(() => scheduleNotifications(loadTasks(user.id)), 60_000);
-    return () => {
-      clearInterval(interval);
-      notifTimers.current.forEach((t) => clearTimeout(t));
-    };
+    setEvents(loadedEvents);
+
+    // Opened from a tapped notification — jump to the exact item.
+    const deepLink = location.state as NotificationDeepLinkState | null;
+    if (deepLink?.notifType === 'event') {
+      const event = loadedEvents.find((e) => e.id === deepLink.notifItemId);
+      if (event) {
+        setMainTab('calendar');
+        setCalView('month');
+        setSelectedDate(event.date);
+      }
+    } else if (deepLink?.notifType === 'task') {
+      setMainTab('list');
+      setStatusFilter('all');
+      setPlanFilter('all');
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
@@ -301,12 +292,14 @@ export function TasksScreen() {
       category: partial.category ?? 'personal',
       priority: partial.priority ?? 'medium',
       plan: partial.plan ?? 'mom',
+      has_reminder: partial.has_reminder,
+      reminder_minutes_before: partial.reminder_minutes_before,
       created_at: new Date().toISOString(),
     };
     const updated = [newTask, ...tasks];
     setTasks(updated);
     saveTasks(user.id, updated);
-    scheduleNotifications(updated);
+    resync();
     setShowTaskForm(false);
   }
 
@@ -315,6 +308,7 @@ export function TasksScreen() {
     const updated = [event, ...events];
     setEvents(updated);
     saveEvents(user.id, updated);
+    resync();
     setSheetDate(null);
   }
 
@@ -323,6 +317,7 @@ export function TasksScreen() {
     const updated = tasks.map((t) => t.id === id ? { ...t, completed: !t.completed } : t);
     setTasks(updated);
     saveTasks(user.id, updated);
+    resync();
   }
 
   function handleDelete(id: string) {
@@ -330,6 +325,7 @@ export function TasksScreen() {
     const updated = tasks.filter((t) => t.id !== id);
     setTasks(updated);
     saveTasks(user.id, updated);
+    resync();
   }
 
   function openAddEvent(date: string) {
@@ -346,16 +342,16 @@ export function TasksScreen() {
   }, [tasks, statusFilter, planFilter]);
 
   const PLAN_PILLS: { id: PlanFilter; label: string; color: string }[] = [
-    { id: 'all', label: 'All', color: 'var(--accent)' },
-    { id: 'mom', label: '🌸 Mom', color: 'var(--accent)' },
-    { id: 'kids', label: '🧸 Kids', color: 'var(--lavender)' },
-    { id: 'family', label: '🏠 Family', color: 'var(--sage)' },
+    { id: 'all', label: t('tasks.all'), color: 'var(--accent)' },
+    { id: 'mom', label: `🌸 ${t('tasks.planMom')}`, color: 'var(--accent)' },
+    { id: 'kids', label: `🧸 ${t('tasks.planKids')}`, color: 'var(--lavender)' },
+    { id: 'family', label: `🏠 ${t('tasks.planFamily')}`, color: 'var(--sage)' },
   ];
 
   const CAL_TABS: { id: CalView; label: string }[] = [
-    { id: 'month', label: 'Month' },
-    { id: 'week', label: 'Week' },
-    { id: 'day', label: 'Day' },
+    { id: 'month', label: t('tasks.monthView') },
+    { id: 'week', label: t('tasks.weekView') },
+    { id: 'day', label: t('tasks.dayView') },
   ];
 
   return (

@@ -1,9 +1,9 @@
 import { Capacitor, CapacitorHttp } from '@capacitor/core';
 import type { ChatMessage } from '../types';
+import { supabase } from './supabase';
 
 const SUPABASE_AI_PROXY = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-proxy`;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
-const DIRECT_API_KEY = import.meta.env.VITE_ANTHROPIC_API_KEY || '';
 const MODEL = 'claude-haiku-4-5-20251001';
 const TIMEOUT_MS = 90_000;
 
@@ -15,28 +15,16 @@ function featureSystemPrompt(_lang: string) {
   return `You are MomManager AI for busy mothers. Be practical and concise. Respond only in English.`;
 }
 
-const AUTH_HEADERS = {
-  'Content-Type': 'application/json',
-  'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-  'apikey': SUPABASE_ANON_KEY,
-};
-
-// ── Direct Anthropic call (fallback when proxy unavailable) ──────────────────
-
-async function callDirect(
-  payload: object,
-  signal: AbortSignal
-): Promise<Response> {
-  return fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': DIRECT_API_KEY,
-      'anthropic-version': '2023-06-01',
-    },
-    body: JSON.stringify(payload),
-    signal,
-  });
+// The proxy verifies the caller is a signed-in user, so requests must carry
+// the current user's own access token — the anon key alone is rejected.
+async function authHeaders(): Promise<Record<string, string>> {
+  const { data } = await supabase.auth.getSession();
+  const token = data.session?.access_token || SUPABASE_ANON_KEY;
+  return {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`,
+    'apikey': SUPABASE_ANON_KEY,
+  };
 }
 
 // ── Non-streaming (Android + fallback) ───────────────────────────────────────
@@ -48,38 +36,23 @@ async function callAPI(
 ): Promise<string> {
   const payload = { model: MODEL, max_tokens: maxTokens, system: systemPrompt, messages };
 
+  const headers = await authHeaders();
+
   if (Capacitor.isNativePlatform()) {
-    // Try proxy first; fall back to direct on error
-    const res = await CapacitorHttp.post({ url: SUPABASE_AI_PROXY, headers: AUTH_HEADERS, data: payload })
+    const res = await CapacitorHttp.post({ url: SUPABASE_AI_PROXY, headers, data: payload })
       .catch(() => null);
     if (res && res.status === 200) return res.data.content[0]?.text || '';
-    // Direct fallback on native
-    if (DIRECT_API_KEY) {
-      const r = await CapacitorHttp.post({
-        url: 'https://api.anthropic.com/v1/messages',
-        headers: { 'Content-Type': 'application/json', 'x-api-key': DIRECT_API_KEY, 'anthropic-version': '2023-06-01' },
-        data: payload,
-      });
-      if (r.status === 200) return r.data.content[0]?.text || '';
-      throw new Error(r.data?.error?.message || `HTTP ${r.status}`);
-    }
     throw new Error(res?.data?.error?.message || 'AI service unavailable');
   }
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
   try {
-    // Try proxy first
-    let res = await fetch(SUPABASE_AI_PROXY, {
-      method: 'POST', headers: AUTH_HEADERS, body: JSON.stringify(payload), signal: controller.signal,
-    }).catch(() => null);
+    const res = await fetch(SUPABASE_AI_PROXY, {
+      method: 'POST', headers, body: JSON.stringify(payload), signal: controller.signal,
+    });
 
-    // Fall back to direct Anthropic if proxy fails or returns error
-    if ((!res || !res.ok) && DIRECT_API_KEY) {
-      res = await callDirect(payload, controller.signal);
-    }
-
-    if (!res || !res.ok) {
+    if (!res.ok) {
       const err = await res?.json().catch(() => ({})) ?? {};
       throw new Error(err.error?.message || `HTTP ${res?.status ?? 0}`);
     }
@@ -114,18 +87,14 @@ async function callAPIStream(
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
   try {
-    // Try proxy; fall back to direct Anthropic if proxy fails
-    let res = await fetch(SUPABASE_AI_PROXY, {
-      method: 'POST', headers: AUTH_HEADERS, body: JSON.stringify(payload), signal: controller.signal,
-    }).catch(() => null);
+    const headers = await authHeaders();
+    const res = await fetch(SUPABASE_AI_PROXY, {
+      method: 'POST', headers, body: JSON.stringify(payload), signal: controller.signal,
+    });
 
-    if ((!res || !res.ok) && DIRECT_API_KEY) {
-      res = await callDirect(payload, controller.signal);
-    }
-
-    if (!res || !res.ok || !res.body) {
-      const err = await res?.json().catch(() => ({})) ?? {};
-      throw new Error(err.error?.message || `HTTP ${res?.status ?? 0}`);
+    if (!res.ok || !res.body) {
+      const err = await res.json().catch(() => ({})) ?? {};
+      throw new Error(err.error?.message || `HTTP ${res.status}`);
     }
 
     const reader = res.body.getReader();

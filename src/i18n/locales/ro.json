@@ -15,7 +15,8 @@
     "newAccount": "Cont nou?",
     "alreadyHaveAccount": "Ai deja cont?",
     "fillEmailAndPassword": "Completează email și parola.",
-    "signInWithApple": "Conectează-te cu Apple"
+    "signInWithApple": "Conectează-te cu Apple",
+    "emailPlaceholder": "Email"
   },
   "nav": {
     "home": "Acasă",
@@ -24,7 +25,8 @@
     "kitchen": "Bucătărie",
     "budget": "Buget",
     "selfcare": "Îngrijire",
-    "settings": "Setări"
+    "settings": "Setări",
+    "workout": "Antrenament"
   },
   "dashboard": {
     "goodMorning": "Bună dimineața",
@@ -74,7 +76,28 @@
     "addEvent": "Adaugă eveniment",
     "eventTitle": "Titlul evenimentului",
     "time": "Oră",
-    "color": "Culoare"
+    "color": "Culoare",
+    "thisWeek": "Săptămâna aceasta",
+    "doneOfTotal": "{{done}}/{{total}} finalizate",
+    "nothingScheduled": "Nimic programat — apasă + Adaugă eveniment",
+    "planMom": "Mama",
+    "planKids": "Copii",
+    "planFamily": "Familie",
+    "timeOptional": "Oră (opțional)",
+    "setReminder": "Setează memento",
+    "notifyAt": "Notificare la ora {{time}} din {{date}}",
+    "reminderNeedsDateTime": "Necesită dată și oră setate",
+    "toggleReminder": "Comută memento",
+    "addToPhoneCalendar": "Adaugă în calendarul telefonului",
+    "reminderSet": "Memento setat",
+    "date": "Dată",
+    "allDay": "Toată ziua",
+    "eventTitlePlaceholder": "Ce se întâmplă?",
+    "addEventFor": "+ Adaugă eveniment pentru {{date}}",
+    "moreCount": "+{{count}} mai multe",
+    "monthView": "Lună",
+    "weekView": "Săptămână",
+    "dayView": "Zi"
   },
   "kids": {
     "title": "Copii",
@@ -126,7 +149,44 @@
     "saveStory": "Salvează povestea",
     "ageToddler": "Mic (2-4 ani)",
     "ageYoung": "Copil (5-8 ani)",
-    "ageOlder": "Mare (9-12 ani)"
+    "ageOlder": "Mare (9-12 ani)",
+    "weekOfFour": "📅 Săptămâna {{week}} din 4",
+    "resetsMondays": "Se resetează luni",
+    "activityIdeasTab": "Idei de Activități",
+    "addCustomItemPlaceholder": "Adaugă un articol personalizat...",
+    "addItemsFromPresets": "Adaugă articole din presetările de mai sus",
+    "ageGroupBaby": "Bebeluș (0-2 ani)",
+    "ageGroupPreschool": "Preșcolar (4-7 ani)",
+    "ageGroupSchool": "Vârstă școlară (7-10 ani)",
+    "ageGroupToddlerFull": "Copil mic (2-4 ani)",
+    "couldNotGenerateMealPlan": "Nu s-a putut genera planul de mese.",
+    "couldNotParseMealPlan": "Nu s-a putut procesa planul de mese.",
+    "generateMealPlanBtn": "🔄 Generează Plan de Mese",
+    "generatingEllipsis": "⏳ Se generează...",
+    "howToPrepare": "Mod de preparare",
+    "ingredients": "Ingrediente",
+    "itemsPacked": "{{packed}}/{{total}} pregătite",
+    "lunchBoxTitle": "🍱 Pachet de Prânz",
+    "lunchPresets": [
+      "🥪 Sandviș",
+      "🍎 Fruct",
+      "💧 Apă",
+      "🍪 Gustare",
+      "🥕 Legume",
+      "🧃 Suc",
+      "🧀 Brânză",
+      "🥜 Nuci"
+    ],
+    "lunchboxTab": "Pachet de Prânz",
+    "mealPlansTab": "🍽️ Planuri de Mese",
+    "newMenu": "🔄 Meniu Nou",
+    "pleaseTryAgain": "Te rugăm să încerci din nou.",
+    "selectKid": "Selectează un copil",
+    "snacks": "Gustări",
+    "sportsCentrePlaceholder": "Centru Sportiv",
+    "swimmingPlaceholder": "Înot",
+    "tapGenerateMealPlan": "Apasă Generează pentru a crea un plan de mese personalizat pe 7 zile",
+    "textureLabel": "Textură"
   },
   "kitchen": {
     "title": "Bucătărie",
@@ -168,7 +228,75 @@
     "enterIngredients": "Introdu ingredientele pe care le ai...",
     "suggestRecipes": "Sugerează rețete",
     "recipeSuggestions": "Rețete sugerate",
-    "difficulty": "Dificultate"
+    "difficulty": "Dificultate",
+    "timerDone": "Gata! ✓",
+    "reset": "Resetează",
+    "categories": {
+      "produce": "Legume și fructe",
+      "meatFish": "Carne și pește",
+      "dairy": "Lactate",
+      "pantry": "Cămară",
+      "bakery": "Panificație",
+      "other": "Altele"
+    },
+    "pause": "⏸ Pauză",
+    "start": "▶ Start",
+    "recipeComplete": "Rețetă finalizată!",
+    "howDidItGo": "Cum a fost?",
+    "stepXofY": "Pasul {{current}} din {{total}}",
+    "markDone": "Marchează ca finalizat",
+    "doneCheck": "✓ Finalizat",
+    "finish": "🎉 Finalizează",
+    "ingredientsTab": "🛒 Ingrediente",
+    "stepsTab": "📋 Pași",
+    "stepsTabWithProgress": "📋 Pași ({{done}}/{{total}})",
+    "cookTab": "👨‍🍳 Gătește",
+    "chefsTip": "Sfatul bucătarului:",
+    "addAllToShoppingList": "🛒 Adaugă tot la lista de cumpărături",
+    "startCooking": "👨‍🍳 Începe gătitul",
+    "enterCookMode": "👨‍🍳 Intră în modul de gătit",
+    "saveRecipeBtn": "Salvează rețeta ♡",
+    "generateWeeklyMenuTitle": "Generează meniul săptămânal ✨",
+    "aiPoweredMealPlanDesc": "Plan de mese AI pentru familia ta",
+    "setPreferencesGenerate": "Setează preferințele și generează",
+    "couldNotGenerateMealPlan": "Nu s-a putut genera planul de mese. Încearcă din nou.",
+    "addingEllipsis": "Se adaugă…",
+    "addIngredientsToShoppingList": "🛒 Adaugă ingredientele la lista de cumpărături",
+    "mealPlanPreferencesTitle": "Preferințe plan de mese",
+    "numberOfPeople": "Număr de persoane",
+    "dietPreference": "Preferință dietă",
+    "cuisineLabel": "Bucătărie",
+    "generateMenuBtn": "Generează meniul ✨",
+    "findingRecipeEllipsis": "Se caută rețeta…",
+    "dietAny": "Oricare",
+    "dietVegetarian": "Vegetarian",
+    "dietVegan": "Vegan",
+    "dietGlutenFree": "Fără gluten",
+    "dietDairyFree": "Fără lactate",
+    "cuisineAny": "Oricare",
+    "cuisineBritish": "Britanică",
+    "cuisineItalian": "Italiană",
+    "cuisineMediterranean": "Mediteraneană",
+    "cuisineAsian": "Asiatică",
+    "cuisineMexican": "Mexicană",
+    "itemsOfTotal": "{{bought}} din {{total}} produse",
+    "generateFromMealsBtn": "Generează din mesele săptămânii ✨",
+    "addItemPlaceholder": "Adaugă un produs...",
+    "noItemsYet": "Niciun produs încă — adaugă unul mai sus sau generează din mese",
+    "boughtCount": "Cumpărate ({{count}})",
+    "clearBoughtBtn": "Șterge cumpărate",
+    "findRecipeTitle": "Găsește o rețetă ✨",
+    "whatsInFridge": "Ce ai în frigider?",
+    "ingredientsPlaceholder": "ex. pui, orez, roșii...",
+    "servesLabel": "Porții:",
+    "generateRecipeBtn": "Generează rețeta",
+    "couldNotGenerateRecipe": "Nu s-a putut genera rețeta. Încearcă din nou.",
+    "viewFullRecipe": "Vezi rețeta completă",
+    "cookNowBtn": "👨‍🍳 Gătește acum",
+    "savedCheckmark": "Salvată ✓",
+    "savedRecipesCount": "Rețete salvate ({{count}})",
+    "viewBtn": "Vezi",
+    "cookBtn": "Gătește"
   },
   "budget": {
     "title": "Buget",
@@ -196,7 +324,87 @@
     "cancel": "Anulează",
     "delete": "Șterge",
     "monthlyLimit": "Limită lunară",
-    "limitPlaceholder": "Buget lunar (ex: 2500)..."
+    "limitPlaceholder": "Buget lunar (ex: 2500)...",
+    "totalSpent": "Total cheltuit",
+    "proGateFeature": "Monitor de buget — urmărește cheltuielile, setează limite și gestionează conturi",
+    "categories": {
+      "groceries": "Alimente",
+      "housing": "Locuință",
+      "transport": "Transport",
+      "eatingOut": "Ieșit la mâncare",
+      "shopping": "Cumpărături",
+      "kids": "Copii",
+      "health": "Sănătate",
+      "entertainment": "Divertisment",
+      "savings": "Economii",
+      "other": "Altele"
+    },
+    "resetsMonthlyNote": "ℹ️ Bugetul se resetează pe data de 1 a fiecărei luni",
+    "incomeLabel": "VENITURI",
+    "expensesLabel": "CHELTUIELI",
+    "enterMonthlyBudgetPlaceholder": "Introdu bugetul lunar...",
+    "setMonthlyBudget": "+ Setează buget lunar",
+    "monthlyBudgetPrefix": "✏️ Buget lunar: {{amount}}",
+    "totalBudgetLabel": "Buget total",
+    "overBudgetBy": "⚠️ Buget depășit cu {{amount}}",
+    "remainingSuffix": "{{amount}} rămași",
+    "biggestExpense": "Cea mai mare cheltuială",
+    "dailyAverage": "Medie zilnică",
+    "perDay": "pe zi",
+    "projected": "Estimat",
+    "daysLeftSuffix": "{{days}} zile rămase",
+    "spendingByCategory": "Cheltuieli pe categorii",
+    "budgetByCategoryHeading": "Buget pe categorii",
+    "setCategoryLimitPlaceholder": "Setează limita pentru {{category}}...",
+    "descriptionOptionalPlaceholder": "Descriere (opțional)",
+    "accountLabel": "Cont",
+    "anyOption": "Oricare",
+    "saveTransactionBtn": "Salvează tranzacția",
+    "today": "Astăzi",
+    "yesterday": "Ieri",
+    "searchTransactionsPlaceholder": "Caută tranzacții...",
+    "allFilter": "Toate",
+    "sortNewest": "Cele mai recente",
+    "sortOldest": "Cele mai vechi",
+    "sortByAmount": "După sumă",
+    "noTransactionsFound": "Nu s-au găsit tranzacții",
+    "pdfNoTransactions": "Nu s-au găsit tranzacții în PDF. Asigură-te că este un extras de cont text (nu o imagine scanată).",
+    "pdfReadFailed": "Citirea PDF-ului a eșuat: {{msg}}",
+    "csvNoDataRows": "CSV-ul nu are rânduri de date. Verifică fișierul.",
+    "csvNoValidTransactions": "Nu s-au găsit tranzacții valide. Asigură-te că fișierul are coloane Dată, Descriere și Sumă.",
+    "csvParseFailed": "Procesarea CSV-ului a eșuat. Verifică formatul fișierului.",
+    "importSuccess_one": "✅ {{count}} tranzacție importată din {{bank}}",
+    "importSuccess_other": "✅ {{count}} tranzacții importate din {{bank}}",
+    "importBankStatement": "Importă extras de cont",
+    "uploadCsvOrPdfDesc": "Încarcă CSV sau PDF — vom detecta tranzacțiile automat",
+    "readingPdf": "Se citește PDF-ul...",
+    "chooseCsvOrPdf": "Alege fișier CSV sau PDF",
+    "bankStatementAnyBank": "Extras de cont de la orice bancă",
+    "worksWithBanksPrefix": "Funcționează cu",
+    "worksWithBanksSuffix": "și majoritatea băncilor",
+    "transactionsFromBank": "{{count}} tranzacții de la {{bank}}",
+    "moreRowsSuffix": "+{{count}} rânduri suplimentare (toate vor fi importate)",
+    "importBtn_one": "📥 Importă {{count}} tranzacție",
+    "importBtn_other": "📥 Importă {{count}} tranzacții",
+    "myAccounts": "Conturile mele",
+    "addAccountBtn": "+ Adaugă",
+    "accountNamePlaceholder": "Numele contului",
+    "accountTypeCash": "Numerar",
+    "accountTypeCurrent": "Curent",
+    "accountTypeSavings": "Economii",
+    "accountTypeCredit": "Credit",
+    "startingBalancePlaceholder": "Sold inițial (£)",
+    "saveAccountBtn": "Salvează contul",
+    "noAccountsYet": "Niciun cont adăugat încă",
+    "lastTxPrefix": "Ultima: {{description}} · {{date}}",
+    "yourBank": "banca ta",
+    "addedToCategory": "{{sign}}{{amount}} adăugat la {{category}}",
+    "exceededBudgetAlert": "⚠️ Ai depășit bugetul pentru {{category}}!",
+    "tabOverview": "Prezentare",
+    "tabTransactions": "Tranzacții",
+    "tabAccounts": "Conturi",
+    "importSuccess_few": "✅ {{count}} tranzacții importate din {{bank}}",
+    "importBtn_few": "📥 Importă {{count}} tranzacții"
   },
   "selfcare": {
     "title": "Îngrijire",
@@ -358,7 +566,449 @@
       "Hrănește-ți corpul, mintea și sufletul 🍃",
       "Ești inima căminului tău 💗",
       "Celebrează cât de departe ai ajuns 🥂"
-    ]
+    ],
+    "wellnessThisWeek": "Săptămâna aceasta",
+    "tapToAdd": "Apasă orice card pentru a-l adăuga în lista ta personală",
+    "treatmentSteps": {
+      "bath": [
+        "Umple cada cu apă caldă (37–39°C — nu prea fierbinte)",
+        "Adaugă 2 cești de sare Epsom + câteva picături de ulei esențial de lavandă",
+        "Opțional: adaugă o lingură de ulei de cocos pentru piele și mai catifelată",
+        "Stai în baie 15–20 min — lasă mușchii să se relaxeze complet",
+        "Șterge-te ușor, apoi aplică loțiune de corp cât timp pielea e încă puțin umedă"
+      ],
+      "claywrap": [
+        "Amestecă argilă caolin sau bentonită cu apă caldă până obții o pastă fină",
+        "Aplică un strat generos și uniform pe corp — evită fața și gâtul",
+        "Înfășoară lejer în folie alimentară sau un prosop cald pentru a păstra căldura",
+        "Lasă 20–25 min cât timp te relaxezi",
+        "Clătește la duș, apoi șterge-te și hidratează-te bine"
+      ],
+      "scrub": [
+        "Udă-ți pielea la duș cu apă caldă",
+        "Ia o cantitate generoasă de scrub cu cafea sau zahăr în mâini",
+        "Masează în mișcări circulare, începând de la picioare, în sus",
+        "Acordă atenție genunchilor, coatelor și călcâielor",
+        "Clătește bine, apoi aplică imediat ulei de corp sau loțiune"
+      ],
+      "roseoil": [
+        "Încălzește câteva picături de ulei de măceșe între palme",
+        "Începe de la umeri — folosește mișcări lungi, line, pe brațe în jos",
+        "Lucrează pe abdomen în cercuri lente, în sensul acelor de ceasornic",
+        "Masează picioarele de la gleznă la coapsă cu presiune fermă în sus",
+        "Termină apăsând ușor palmele pe decolteu timp de 30s"
+      ],
+      "facesteam": [
+        "Fierbe apă și toarn-o într-un bol — adaugă mușețel sau rozmarin dacă ai",
+        "Curăță-ți fața bine înainte de aburi",
+        "Pune un prosop peste cap și apleacă-te deasupra bolului",
+        "Ține fața la 20–30 cm de apă — abur timp de 8–10 min",
+        "Șterge-te, aplică un toner, apoi ser și hidratant"
+      ],
+      "coldplunge": [
+        "Începe cu un duș cald pentru a deschide porii și relaxa mușchii",
+        "Scade treptat temperatura spre rece, în 30–60 secunde",
+        "Concentrează-te pe respirație constantă — inspiră adânc, expiră lent",
+        "Stai sub apă rece 2–3 min (crește treptat până la 5 min)",
+        "Termină, șterge-te repede și mișcă-te ușor ca să te încălzești"
+      ],
+      "greenteamask": [
+        "Amestecă 1 lingură de matcha sau pudră de ceai verde cu iaurt simplu sau miere",
+        "Curăță pielea, apoi aplică masca uniform pe față și gât",
+        "Opțional, aplică un strat subțire pe brațe sau piept pentru un boost antioxidant",
+        "Lasă 15–20 min — relaxează-te și evită să vorbești",
+        "Clătește cu apă călduță, apoi toner și hidratant"
+      ],
+      "meditation": [
+        "Găsește un loc liniștit — stai jos sau întins confortabil",
+        "Închide ochii și ia 5 respirații adânci: 4 sec inspirație, 4 sec expirație",
+        "Scanare corporală: relaxează mental fiecare parte a corpului, de la tălpi la creștet",
+        "Concentrează-te pe respirație — când apar gânduri, revino ușor la respirație",
+        "Încheie cu 3 gânduri de recunoștință, apoi deschide ochii încet"
+      ]
+    },
+    "workoutGuides": {
+      "strength": {
+        "beginner": {
+          "title": "💪 Corp Întreg — Începător",
+          "location": "🏠 Acasă",
+          "duration": "25 min",
+          "items": [
+            "Încălzire: 5 min mers ușor pe loc",
+            "3×12 genuflexiuni cu greutatea corpului",
+            "3×10 flotări (pe genunchi e ok)",
+            "3×12 fandări inverse pe fiecare picior",
+            "3×15 poduri fesiere (glute bridge)",
+            "3×10 extensii de spate tip \"superman\"",
+            "Revenire: întinderi cvadricepși, piept & spate 5 min"
+          ]
+        },
+        "intermediate": {
+          "title": "💪 Split Superior + Inferior",
+          "location": "🏠 Acasă / 🏋️ Sală",
+          "duration": "40 min",
+          "items": [
+            "Încălzire: 5 min jumping jacks + rotații de brațe",
+            "4×12 genuflexiuni goblet cu gantere",
+            "4×10 îndreptări românești cu gantere",
+            "3×12 împins pentru piept cu gantere (pe podea sau bancă)",
+            "3×12 vâsliri aplecat cu gantere pe fiecare parte",
+            "3×15 ridicări laterale",
+            "3×20 abdomene tip bicicletă",
+            "Revenire: întindere flexori șold + umeri 5 min"
+          ]
+        },
+        "advanced": {
+          "title": "💪 Circuit Forță & Putere",
+          "location": "🏋️ Sală",
+          "duration": "55 min",
+          "items": [
+            "Încălzire: 8 min bandă de alergare + întinderi dinamice",
+            "4×8 genuflexiuni cu bară (greutate moderată)",
+            "4×8 îndreptări românești cu bară",
+            "4×10 împins înclinat cu gantere",
+            "4×10 vâsliri așezat la cablu",
+            "3×12 genuflexiuni bulgărești pe fiecare picior",
+            "3×15 ridicări laterale la cablu",
+            "3×12 extensii triceps la cablu",
+            "3×10 flexii biceps cu bară EZ",
+            "Revenire: foam roller cvadricepși, ischio-gambieri, dorsali"
+          ]
+        }
+      },
+      "cardio": {
+        "beginner": {
+          "title": "🏃 Mers Cardio Ușor",
+          "location": "🏠 Acasă / Afară",
+          "duration": "30 min",
+          "items": [
+            "5 min mers ușor de încălzire",
+            "20 min mers alert (respiri dar poți vorbi)",
+            "5 min mers lent de revenire",
+            "Întindere gambe, cvadricepși & flexori șold 5 min",
+            "Vizează 4×/săptămână pentru bază de fitness"
+          ]
+        },
+        "intermediate": {
+          "title": "🏃 Intervale Alergare-Mers",
+          "location": "🏠 Afară / Bandă",
+          "duration": "35 min",
+          "items": [
+            "5 min mers alert de încălzire",
+            "Repetă 6×: 3 min jogging + 1 min mers",
+            "5 min mers de revenire",
+            "Întinde flexorii de șold, gambele & ischio-gambierii",
+            "Progresează adăugând 1 interval de jogging în plus în fiecare săptămână"
+          ]
+        },
+        "advanced": {
+          "title": "🏃 Sesiune Tempo + Sprint",
+          "location": "🏋️ Bandă / Pistă",
+          "duration": "45 min",
+          "items": [
+            "10 min jogging ușor de încălzire",
+            "15 min alergare tempo (ritm confortabil-greu)",
+            "5× sprinturi de 30s cu recuperare de 90s jogging ușor",
+            "10 min jogging ușor de revenire",
+            "Întindere: piriform, gambe & flexori șold 5 min"
+          ]
+        }
+      },
+      "yoga": {
+        "beginner": {
+          "title": "🧘 Flux de Dimineață — Blând",
+          "location": "🏠 Acasă",
+          "duration": "20 min",
+          "items": [
+            "Poziția muntelui — 30s, respiră adânc",
+            "Cat-Cow — 10 repetări lente, relaxează coloana",
+            "Câinele cu fața în jos — menține 30s, du călcâiele spre podea",
+            "Fandare joasă pe fiecare parte — 30s, deschide flexorii de șold",
+            "Poziția copilului — 1 min, odihnește-te și respiră",
+            "Îndoire înainte din șezut — 45s, ischio-gambieri",
+            "Torsiune culcat pe fiecare parte — 30s, relaxează spatele",
+            "Savasana — 3 min, relaxare completă"
+          ]
+        },
+        "intermediate": {
+          "title": "🧘 Flux Vinyasa",
+          "location": "🏠 Acasă / Studio",
+          "duration": "35 min",
+          "items": [
+            "5 min respirație & încălzire din șezut",
+            "5× Salutul Soarelui A (mișcare sincronizată cu respirația)",
+            "Războinic I + II + Războinic Invers — 45s pe fiecare parte",
+            "Poziția triunghiului pe fiecare parte — 45s",
+            "Poziția scaunului — menține 1 min",
+            "Scândură → Chaturanga → Câinele cu fața în sus — 5 repetări",
+            "Poziția porumbelului pe fiecare parte — 1 min întindere profundă",
+            "Torsiune vertebrală din șezut + îndoire înainte",
+            "Savasana — 5 min"
+          ]
+        },
+        "advanced": {
+          "title": "🧘 Power Yoga + Echilibru",
+          "location": "🏠 Acasă / Studio",
+          "duration": "50 min",
+          "items": [
+            "10 min serie Surya Namaskar B (8 runde)",
+            "Poziția corbului (Bakasana) — încearcă să menții 3×",
+            "Pregătire stând pe mâini la perete — 3× 30s",
+            "Poziția semilunei pe fiecare parte — 1 min",
+            "Războinic III pe fiecare parte — 1 min echilibru",
+            "Poziția roții (Urdhva Dhanurasana) — 3× 20s",
+            "Pregătire echilibru pe antebrațe (Pincha) — 3× 30s",
+            "Final yin: porumbel + dragon 2 min fiecare",
+            "Yoga nidra / Savasana — 8 min"
+          ]
+        }
+      },
+      "hiit": {
+        "beginner": {
+          "title": "🔥 HIIT cu Impact Redus",
+          "location": "🏠 Acasă",
+          "duration": "20 min",
+          "items": [
+            "Încălzire: 3 min balansări de brațe + rotații de șold",
+            "3 runde (40s lucru / 20s pauză):",
+            "  • Step jacks (jumping jacks cu impact redus)",
+            "  • Pulsații de genuflexiune",
+            "  • Mers pe loc cu genunchii sus",
+            "  • Flotări modificate",
+            "  • Abdomene oblice din picioare",
+            "Revenire: 5 min întindere corp întreg"
+          ]
+        },
+        "intermediate": {
+          "title": "🔥 Circuit HIIT",
+          "location": "🏠 Acasă",
+          "duration": "30 min",
+          "items": [
+            "Încălzire: 5 min întinderi dinamice",
+            "4 runde (40s lucru / 15s pauză):",
+            "  • Burpees",
+            "  • Genuflexiuni cu săritură",
+            "  • Flotare cu atingere umăr",
+            "  • Speed skaters",
+            "  • Scândură cu balansări de șold",
+            "  • Fandări cu săritură",
+            "Pauză 90s între runde",
+            "Revenire: 5 min întindere"
+          ]
+        },
+        "advanced": {
+          "title": "🔥 HIIT Avansat + Core",
+          "location": "🏠 Acasă / 🏋️ Sală",
+          "duration": "40 min",
+          "items": [
+            "Încălzire: 5 min jogging + mobilizare",
+            "5 runde (45s lucru / 10s pauză):",
+            "  • Sărituri cu genunchii la piept",
+            "  • Flotări pliometrice",
+            "  • Burpees pe un picior (alternativ)",
+            "  • Sărituri pe cutie sau variantă de genuflexiune cu săritură",
+            "  • Mențineri core tip \"dragon flag\"",
+            "  • Sărituri laterale + oprire",
+            "Pauză 60s între runde",
+            "Final: provocare scândură 3 min",
+            "Revenire: întindere profundă 8 min"
+          ]
+        }
+      },
+      "walking": {
+        "beginner": {
+          "title": "🚶 Țintă Pași Zilnici",
+          "location": "🏠 Afară / Mall",
+          "duration": "30 min",
+          "items": [
+            "Vizează 7.000–8.000 pași/zi",
+            "30 min mers ușor, ritm confortabil",
+            "Poartă încălțăminte cu suport bun",
+            "🎧 Ideal pentru podcasturi sau muzică",
+            "Bonus: urcă scările în loc de lift",
+            "Urmărește progresul cu aplicația de sănătate sau ceasul"
+          ]
+        },
+        "intermediate": {
+          "title": "🚶 Mers Alert + Dealuri",
+          "location": "🏠 Afară",
+          "duration": "45 min",
+          "items": [
+            "Vizează 10.000 pași/zi",
+            "10 min mers ușor de încălzire",
+            "25 min mers alert (ritm susținut)",
+            "Include dealuri sau înclinare dacă e posibil",
+            "10 min mers ușor de revenire",
+            "Balansează brațele activ pentru ardere calorică suplimentară",
+            "Întinde șoldurile & gambele după"
+          ]
+        },
+        "advanced": {
+          "title": "🚶 Mers cu Greutate (Rucking)",
+          "location": "🏠 Afară / Trasee",
+          "duration": "60 min",
+          "items": [
+            "Încarcă un rucsac cu 5–10 kg",
+            "10 min mers ușor de încălzire",
+            "40 min mers alert cu greutate în spate",
+            "Include dealuri — beneficiu maxim caloric & de forță",
+            "10 min mers de revenire",
+            "Întinde flexorii de șold, fesierii & partea superioară a spatelui",
+            "Vizează 12.000–15.000 pași în zilele cu rucking"
+          ]
+        }
+      },
+      "swimming": {
+        "beginner": {
+          "title": "🏊 Sesiune Ușoară la Bazin",
+          "location": "🏋️ Bazin",
+          "duration": "30 min",
+          "items": [
+            "4 lungimi de încălzire ușoară (orice stil)",
+            "8 lungimi set principal — pauză 30s la fiecare 2 lungimi",
+            "Concentrează-te pe tehnica de respirație",
+            "2 lungimi de revenire (spate)",
+            "Total ~30 min · excelent pentru articulații"
+          ]
+        },
+        "intermediate": {
+          "title": "🏊 Înot de Anduranță",
+          "location": "🏋️ Bazin",
+          "duration": "45 min",
+          "items": [
+            "200m încălzire: liber ușor",
+            "400m set principal: liber cu întoarceri",
+            "4× 50m serii de picior cu placă, pauză 20s fiecare",
+            "4× 50m serii de tracțiune cu pull buoy, pauză 20s fiecare",
+            "200m revenire: spate",
+            "Total ~1600m · întinde umerii & șoldurile după"
+          ]
+        },
+        "advanced": {
+          "title": "🏊 Intervale de Înot",
+          "location": "🏋️ Bazin",
+          "duration": "60 min",
+          "items": [
+            "400m încălzire: stiluri mixte",
+            "8× 100m la 2:00 (vizează timpi negativi)",
+            "4× 50m fluture sau bras, pauză 30s",
+            "8× 25m sprint la 1:00",
+            "200m revenire: spate ușor",
+            "Total ~2400m · foam roller umeri & dorsali"
+          ]
+        }
+      }
+    },
+    "howTo": "Mod de utilizare",
+    "addToMyTreatments": "+ Adaugă la tratamentele mele",
+    "alreadyInList": "✓ Deja în lista ta",
+    "myTreatments": "Tratamentele mele",
+    "everyDaySuffix": "În fiecare {{day}}",
+    "timesDoneSuffix": "{{count}}× finalizat",
+    "days": {
+      "monday": "Luni",
+      "tuesday": "Marți",
+      "wednesday": "Miercuri",
+      "thursday": "Joi",
+      "friday": "Vineri",
+      "saturday": "Sâmbătă",
+      "sunday": "Duminică"
+    },
+    "routineNamePlaceholder": "Numele rutinei (ex. reset la prânz)",
+    "addStepPlaceholder": "Adaugă un pas...",
+    "morningAM": "Dimineață (AM)",
+    "eveningPM": "Seară (PM)",
+    "doneCountSuffix": "{{done}}/{{total}} finalizate",
+    "productPlaceholderCeraVe": "ex. CeraVe",
+    "productPlaceholderLRP": "ex. La Roche-Posay",
+    "legendFullRoutine": "🟢 Rutină completă",
+    "legendPartial": "🟡 Parțial",
+    "legendMissed": "⚪ Ratat",
+    "getPersonalisedAdvice": "Obține sfaturi personalizate pentru piele ✨",
+    "skinTypeLabel": "Tip de piele",
+    "concernsLabel": "Probleme",
+    "gettingAdvice": "Se obțin sfaturi...",
+    "getAdviceBtn": "Obține sfaturi",
+    "myProducts": "Produsele mele",
+    "productNamePlaceholder": "Numele produsului",
+    "productStepPlaceholder": "Pas (ex. Cremă hidratantă)",
+    "addProductBtn": "Adaugă produs",
+    "tapToAddProducts": "Apasă + pentru a adăuga produsele tale",
+    "concernHydration": "Hidratare",
+    "concernBrightening": "Iluminare",
+    "workoutTrackerTitle": "Monitor de antrenamente",
+    "workoutsThisWeek_one": "{{count}} antrenament săptămâna aceasta · {{mins}} min total",
+    "workoutsThisWeek_other": "{{count}} antrenamente săptămâna aceasta · {{mins}} min total",
+    "logThisWorkout": "Înregistrează acest antrenament",
+    "durationMinPlaceholder": "Durată (min)",
+    "logCheckBtn": "Înregistrează ✓",
+    "notesOptionalPlaceholder": "Notițe (opțional)",
+    "todayLabel": "Astăzi",
+    "workoutStrength": "Forță",
+    "workoutCardio": "Cardio",
+    "workoutYoga": "Yoga",
+    "workoutHiit": "HIIT",
+    "workoutWalking": "Mers",
+    "workoutSwimming": "Înot",
+    "levelBeginner": "Începător",
+    "levelIntermediate": "Intermediar",
+    "levelAdvanced": "Avansat",
+    "calorieTrackerTitle": "Monitor de calorii",
+    "dailyGoalLabel": "Obiectiv zilnic: {{goal}} kcal",
+    "weightGoalBtn": "⚖️ Obiectiv greutate",
+    "setWeightGoalTitle": "Setează obiectivul de greutate",
+    "currentWeightLabel": "Greutate actuală (kg)",
+    "goalWeightLabel": "Greutate țintă (kg)",
+    "timeframeLabel": "Interval de timp",
+    "calculateGoalBtn": "Calculează obiectivul meu",
+    "dailyCalorieGoalResult_one": "Obiectivul tău caloric zilnic: {{calories}} kcal (pentru a {{action}} {{diff}} kg în {{months}} lună)",
+    "dailyCalorieGoalResult_other": "Obiectivul tău caloric zilnic: {{calories}} kcal (pentru a {{action}} {{diff}} kg în {{months}} luni)",
+    "actionLose": "slăbi",
+    "actionGain": "crește în greutate cu",
+    "currentWeightDisplay": "Actual: {{weight}} kg",
+    "goalWeightDisplay": "Obiectiv: {{weight}} kg",
+    "needToLose": "Trebuie să slăbești {{kg}} kg pentru a-ți atinge obiectivul",
+    "kcalConsumed": "{{count}} kcal consumate",
+    "kcalOver": "{{count}} kcal peste",
+    "kcalRemaining": "{{count}} kcal rămase",
+    "couldNotFindFoodInfo": "Nu am putut găsi informații. Încearcă din nou.",
+    "foodQueryPlaceholder": "Ce ai mâncat? (ex. orez cu pui, salată, ou fiert)",
+    "addBtn": "+ Adaugă",
+    "addMealBtn": "+ Adaugă masă",
+    "generatingEllipsis": "⏳ Se generează...",
+    "aiMealPlanBtn": "✨ Plan de mese AI",
+    "couldNotParseMealPlan": "Nu s-a putut procesa planul de mese. Încearcă din nou.",
+    "yourAiMealPlan": "✨ Planul tău de mese AI",
+    "addToShoppingListLink": "🛒 Adaugă la lista de cumpărături",
+    "totalLabel": "Total",
+    "kcalOfGoal": "{{total}} kcal / obiectiv {{goal}} kcal",
+    "addAllToTodayLog": "➕ Adaugă tot în jurnalul de azi",
+    "recipeToggleHide": "ascunde",
+    "recipeToggleShow": "rețetă",
+    "prepSuffix": "{{time}} preparare",
+    "cookSuffix": "{{time}} gătit",
+    "mealSnack": "Gustare",
+    "tf1": "1 lună",
+    "tf2": "2 luni",
+    "tf3": "3 luni",
+    "tf6": "6 luni",
+    "motivationalFar": "💪 Fiecare pas mic contează — poți reuși!",
+    "motivationalGetting": "🌟 Faci progrese uimitoare, continuă!",
+    "motivationalClose": "🎯 Ești atât de aproape de obiectiv — rămâi constantă!",
+    "motivationalAlmost": "🏆 Aproape ai ajuns! Ultima etapă e cea mai grea.",
+    "motivationalReached": "✨ Ai atins greutatea țintă — menține-o!",
+    "motivationalSetGoal": "🌸 Setează-ți obiectivul de greutate pentru un plan personalizat!",
+    "legendMoodLabel": "Dispoziție",
+    "legendSleepLabel": "Somn",
+    "legendWaterLabel": "Apă",
+    "todaysAffirmation": "Afirmația zilei",
+    "waterShort": "Apă",
+    "weeklyOverview": "Prezentare săptămânală",
+    "journalPlaceholder": "Scrie liber — acesta este spațiul tău privat...",
+    "lessToggle": "mai puțin",
+    "moreToggle": "mai mult",
+    "workoutsThisWeek_few": "{{count}} antrenamente săptămâna aceasta · {{mins}} min total",
+    "dailyCalorieGoalResult_few": "Obiectivul tău caloric zilnic: {{calories}} kcal (pentru a {{action}} {{diff}} kg în {{months}} luni)"
   },
   "settings": {
     "title": "Setări",
@@ -382,39 +1032,139 @@
     "yes": "Da",
     "no": "Nu",
     "save": "Salvează",
-    "cancel": "Anulează"
+    "cancel": "Anulează",
+    "aiAssistantTitle": "Asistent AI",
+    "allowAiFeatures": "Permite funcțiile AI",
+    "aiFeaturesDescription": "Trimite mesajele tale și contextul relevant către Anthropic pentru a genera răspunsuri AI.",
+    "freeTrialLabel": "Perioadă gratuită",
+    "daysLeftSuffix": "z rămase",
+    "unlockAllFeatures": "Deblochează toate funcțiile — fă upgrade înainte să se termine perioada de test.",
+    "upgradeNow": "Fă upgrade acum",
+    "whatsIncluded": "Ce include",
+    "everythingInStandardPlus": "Tot ce e în Standard, plus:",
+    "renewsOn": "Se reînnoiește pe {{date}}",
+    "managePortalNote": "Abonamentele achiziționate pe web pot fi gestionate mai jos. Dacă te-ai abonat prin App Store, gestionează din <strong>Setări iPhone → Apple ID → Abonamente</strong>.",
+    "openingPortal": "Se deschide portalul...",
+    "manageSubscriptionBtn": "Gestionează abonamentul",
+    "cancelAnytimeManaged": "Anulează oricând · Gestionat de Stripe",
+    "noActiveSubscription": "Nu ai un abonament activ.",
+    "choosePlanBtn": "Alege un plan",
+    "purchasesSection": "Achiziții",
+    "restorePurchases": "Restaurează achizițiile",
+    "restoring": "Se restaurează…",
+    "restoreSuccess": "Achizițiile au fost restaurate cu succes.",
+    "restoreNone": "Nu s-au găsit achiziții de restaurat.",
+    "restoreIOSOnly": "Restaurarea e disponibilă doar în aplicația mobilă.",
+    "restoreError": "Nu s-au putut restaura achizițiile. Încearcă din nou.",
+    "portalError": "Nu s-a putut deschide portalul de abonament.",
+    "legalSection": "Legal",
+    "termsAndConditions": "Termeni și condiții",
+    "privacyPolicy": "Politica de confidențialitate",
+    "deleteAccountTitle": "Șterge contul",
+    "deleteAccountWarning": "Aceasta va șterge permanent contul tău și toate datele tale. Această acțiune nu poate fi anulată.",
+    "deleteAccountLink": "Șterge contul",
+    "deleting": "Se șterge…",
+    "delete": "Șterge"
   },
   "paywall": {
-    "title": "Continuă cu MomManager Premium",
-    "subtitle": "Anulează oricând",
     "monthly": "Lunar",
-    "annual": "Anual",
-    "bestValue": "CEA MAI BUNĂ OFERTĂ",
-    "monthlyPrice": "£9.99/lună",
-    "annualPrice": "£79.99/an",
-    "startMonthly": "Începe lunar",
-    "startAnnual": "Începe anual",
-    "feature1": "Toate funcțiile",
-    "feature2": "Asistent AI",
-    "feature3": "Multilingv",
-    "feature4": "Convertor valutar",
-    "feature5": "Copii nelimitați",
-    "trialExpiredMessage": "Perioada ta de probă de 7 zile s-a încheiat. Actualizează pentru a continua să folosești MomManager.",
-    "processing": "Se procesează...",
-    "startFreeTrial": "Începe 7 Zile Gratuit",
-    "activateTest": "Activează (Mod test)",
-    "trialIncludes": "Include 7 zile gratuit, apoi",
-    "orActivateTest": "— sau pentru testare —",
-    "trialTermsTitle": "Termenii Perioadei de Probă",
-    "trialTerm1": "Perioadă de probă de 7 zile inclusă la toate planurile",
-    "trialTerm2": "După perioada de probă: £9.99/lună sau £79.99/an",
-    "trialTerm3": "Anulați oricând înainte de sfârșitul perioadei de probă pentru a evita taxele",
-    "trialTerm4": "Plata va fi percepută din contul dvs. după perioada de probă"
+    "chooseYourPlan": "Alege-ți planul",
+    "sevenDayTrialCancelAnytime": "7 zile gratuite • Anulează oricând",
+    "subscriptionRequired": "Este necesar un abonament pentru a folosi MomManager.",
+    "yearly": "Anual",
+    "standardName": "Standard",
+    "proName": "Pro",
+    "billedMonthly": "facturat lunar",
+    "billedYearly": "{{amount}}/lună, facturat anual",
+    "mostPopular": "CEL MAI POPULAR",
+    "everythingInStandardPlus": "Tot ce e în Standard, plus:",
+    "soon": "În curând",
+    "redirecting": "Se redirecționează…",
+    "openingNativeSheet": "Se deschide fereastra de cumpărare…",
+    "startStandardTrial": "Începe Standard – 7 zile gratuit",
+    "startProTrial": "Începe Pro – 7 zile gratuit",
+    "tryFreeThen": "Încearcă gratuit 7 zile, apoi {{price}}. Anulează înainte de sfârșitul perioadei de test ca să eviți taxarea.",
+    "or": "sau",
+    "startFreeTrialCta": "Încearcă gratuit 7 zile — fără card",
+    "noPaymentOptionLabel": "FĂRĂ PLATĂ",
+    "noPaymentSectionSubtitle": "Preferi să nu introduci datele de plată acum?",
+    "startingTrial": "Se pornește perioada de test…",
+    "restorePurchases": "🔄 Restaurează achizițiile",
+    "restoring": "Se restaurează…",
+    "footerRenewalNotice": "Abonamentul se reînnoiește automat la prețul planului afișat mai sus. Ca să eviți taxarea, anulează cu cel puțin 24 de ore înainte de sfârșitul perioadei de test.",
+    "manageIOS": "Gestionează sau anulează oricând din Setări iPhone → Apple ID → Abonamente.",
+    "manageOther": "Gestionează sau anulează oricând din setările contului.",
+    "footerPaymentCharge": "Plata va fi taxată în contul tău la confirmarea achiziției.",
+    "privacyPolicy": "Politica de confidențialitate",
+    "termsOfUse": "Termeni de utilizare",
+    "purchaseCouldNotComplete": "Achiziția nu a putut fi finalizată. Încearcă din nou.",
+    "mustBeSignedIn": "Trebuie să fii autentificat ca să te abonezi.",
+    "openingCheckout": "Se deschide plata securizată…",
+    "redirectingCheckout": "Se redirecționează spre plata securizată…",
+    "purchaseFailed": "Achiziția a eșuat: {{msg}}",
+    "unknownError": "eroare necunoscută",
+    "noPreviousPurchases": "Nu s-au găsit achiziții anterioare.",
+    "couldNotRestore": "Nu s-au putut restaura achizițiile.",
+    "purchaseNoPaymentMethod": "Adaugă o metodă de plată în contul tău {{store}} ca să începi perioada gratuită.",
+    "purchaseNotAllowed": "Achizițiile nu sunt permise pe acest dispozitiv. Verifică setările Screen Time / control parental.",
+    "purchaseNetworkError": "Eroare de rețea — verifică-ți conexiunea și încearcă din nou.",
+    "purchaseTimedOut": "Durează mai mult decât de obicei. Te rugăm încearcă din nou.",
+    "purchasePending": "Achiziția ta așteaptă aprobare. Îți deblocăm planul imediat ce este confirmată.",
+    "restoreTimedOut": "Restaurarea durează mai mult decât de obicei. Te rugăm încearcă din nou.",
+    "tapRetry": "Apasă pentru a reîncerca",
+    "standardFeatures": [
+      "Calendar și task-uri cu memento-uri și notificări",
+      "Planuri separate pentru Mama și Copii",
+      "Generator AI de activități pentru copii",
+      "Bucătărie și planificare mese",
+      "Rutine de bază de îngrijire personală",
+      "Monitor de buget de bază",
+      "9 limbi suportate"
+    ],
+    "proExtras": [
+      "Îngrijire avansată a pielii cu recomandări AI de produse",
+      "Monitor de antrenamente cu progres și serii",
+      "Planuri nutriționale AI pentru toată familia",
+      "Import extrase bancare (CSV și PDF)",
+      "Recapitulare săptămânală AI și predicții",
+      "Suport prioritar"
+    ],
+    "offeringsUnavailable": "Nu am putut încărca planurile de abonament. Verifică conexiunea și încearcă din nou.",
+    "retry": "Reîncearcă",
+    "remainingInTrial_one": "🌸 {{count}} zi rămasă din perioada gratuită",
+    "remainingInTrial_other": "🌸 {{count}} zile rămase din perioada gratuită"
+  },
+  "trialDisclosure": {
+    "endsOn": "Perioada ta de probă gratuită de 7 zile se încheie pe {{date}}.",
+    "endsOnIfStartedToday": "Perioada de probă gratuită de 7 zile se încheie pe {{date}} dacă începi astăzi.",
+    "chargedAfter": "După perioada de probă vei fi taxat(ă) cu {{price}} pe {{period}}, dacă nu anulezi.",
+    "cancelGoogle": "Poți anula oricând, cu cel puțin 24 de ore înainte de finalul perioadei de probă, din Google Play > Abonamente.",
+    "cancelApple": "Poți anula oricând, cu cel puțin 24 de ore înainte de finalul perioadei de probă, din Setări iPhone → Apple ID → Abonamente.",
+    "cancelWeb": "Poți anula oricând, cu cel puțin 24 de ore înainte de finalul perioadei de probă, din setările contului tău.",
+    "autoRenews": "Abonamentul se reînnoiește automat până la anulare.",
+    "periodMonth": "lună",
+    "periodYear": "an",
+    "periodWeek": "săptămână",
+    "periodDay": "zi",
+    "freeEndsOn": "Perioada ta de probă gratuită se încheie pe {{date}}.",
+    "freeDuration": "Perioada de probă gratuită durează 7 zile de la activare.",
+    "freeNoCharge": "Nu este necesară nicio metodă de plată — nu vei fi taxat(ă) automat.",
+    "freeNoAutoRenew": "Această perioadă de probă nu se reînnoiește automat. Alege un plan oricând pentru a păstra accesul complet după ce se încheie."
   },
   "success": {
     "title": "Bun venit la Premium!",
     "message": "Abonamentul tău este acum activ. Bucură-te de toate funcțiile MomManager!",
-    "continue": "Continuă în aplicație"
+    "continue": "Continuă în aplicație",
+    "confirmingPayment": "Se confirmă plata…",
+    "paymentNotCompleted": "Plata nu a fost finalizată",
+    "cardNotCharged": "Cardul tău nu a fost taxat.",
+    "tryAgain": "Încearcă din nou",
+    "planLabel": "Plan",
+    "planName": "Plan {{plan}} {{period}}",
+    "nextBillingDate": "Următoarea dată de facturare",
+    "statusLabel": "Status",
+    "statusActive": "✓ Activ",
+    "receiptSentNote": "O chitanță a fost trimisă pe email de către Stripe."
   },
   "ai": {
     "title": "Asistent AI",
@@ -423,7 +1173,13 @@
     "errorMessage": "Îmi pare rău, a apărut o eroare. Te rog încearcă din nou.",
     "send": "Trimite",
     "close": "Închide",
-    "newChat": "Conversație nouă"
+    "newChat": "Conversație nouă",
+    "consentTitle": "Asistentul AI și datele tale",
+    "consentIntro": "Funcțiile AI din MomManager (chat-ul Asistent AI, planuri de mese, rețete, sugestii de activități și sfaturi de îngrijire personală) sunt oferite de <strong>Anthropic</strong>, un serviciu AI terț.",
+    "consentDetails": "Pentru a genera un răspuns, trimitem către Anthropic mesajul sau cererea pe care o scrii, împreună cu detaliile relevante pe care le-ai introdus pentru acea funcție — de exemplu numele și vârsta unui copil pentru un plan de mese, preferințe alimentare, tip de piele, sau cifre de greutate/obiectiv pentru sfaturi de îngrijire. Nu trimitem <strong>niciodată</strong> datele de autentificare, detaliile de plată sau date din funcții pe care nu le-ai folosit.",
+    "consentFooter": "Îți poți schimba oricând opțiunea din Setări → Asistent AI. Refuzul dezactivează doar funcțiile AI — restul MomManager funcționează normal oricum.",
+    "consentNotNow": "Nu acum",
+    "consentAgree": "Sunt de acord, continuă"
   },
   "common": {
     "loading": "Se încarcă...",
@@ -442,6 +1198,271 @@
     "no": "Nu",
     "search": "Caută",
     "noData": "Nu există date disponibile",
-    "required": "Acest câmp este obligatoriu"
+    "required": "Acest câmp este obligatoriu",
+    "toggleTheme": "Comută tema"
+  },
+  "trialBanner": {
+    "trialEnded": "Perioada de test s-a încheiat — Alege un plan",
+    "daysLeft": "🌸 {{days}} zile rămase din perioada gratuită",
+    "choosePlan": "Alege plan",
+    "upgrade": "Upgrade"
+  },
+  "proGate": {
+    "proFeature": "Funcție Pro",
+    "upgradeToPro": "Fă upgrade la Pro"
+  },
+  "kidsActivities": {
+    "activityIdeas": "🧸 Idei de activități",
+    "ageGroupLabel": "Grupă de vârstă",
+    "categoryLabel": "Categorie",
+    "pickAny": "(alege oricâte)",
+    "durationLabel": "Durată",
+    "materialsLabel": "Materiale",
+    "generateBtn": "Generează activități ✨",
+    "generating": "Se caută activități...",
+    "stepsLabel": "Pași",
+    "savedLabel": "Salvat ✓",
+    "saveLabel": "Salvează ♡",
+    "savedActivitiesLabel": "Activități salvate",
+    "invalidResponse": "Format de răspuns invalid",
+    "couldNotGenerate": "Nu s-au putut genera activități. Încearcă din nou.",
+    "ageGroups": {
+      "toddler": "0-2 ani",
+      "young": "3-5 ani",
+      "middle": "6-9 ani",
+      "older": "10+ ani"
+    },
+    "categories": {
+      "creative": "Creativ",
+      "educational": "Educațional",
+      "physical": "Fizic",
+      "relaxing": "Relaxant",
+      "outdoor": "În aer liber",
+      "rainyDay": "Zi ploioasă"
+    },
+    "durations": {
+      "min15": "15 min",
+      "min30": "30 min",
+      "hour1": "1 oră",
+      "afternoon": "După-amiază"
+    },
+    "materials": {
+      "none": "Nu e nevoie",
+      "basic": "De bază",
+      "craft": "Materiale creative",
+      "kitchen": "Bucătărie"
+    }
+  },
+  "fitness": {
+    "pushup": {
+      "muscle": "Piept și triceps",
+      "mistakes": [
+        "Șoldurile lăsate sau ridicate prea sus",
+        "Coatele desfăcute prea larg",
+        "Nu se atinge întreaga amplitudine de mișcare"
+      ]
+    },
+    "squat": {
+      "muscle": "Cvadricepși și fesieri",
+      "mistakes": [
+        "Genunchii se apropie spre interior",
+        "Călcâiele se ridică de pe podea",
+        "Rotunjirea spatelui inferior"
+      ]
+    },
+    "lunge": {
+      "muscle": "Cvadricepși și fesieri",
+      "mistakes": [
+        "Genunchiul din față trece de vârful piciorului",
+        "Torsul se apleacă prea mult în față",
+        "Pierderea echilibrului — fixează privirea înainte"
+      ]
+    },
+    "plank": {
+      "muscle": "Abdomen și core",
+      "mistakes": [
+        "Șoldurile prea sus sau lăsate",
+        "Se ține respirația în loc să se respire normal",
+        "Capul cade în jos"
+      ]
+    },
+    "deadlift": {
+      "muscle": "Ischiogambieri și spate",
+      "mistakes": [
+        "Rotunjirea spatelui inferior",
+        "Bara se îndepărtează de corp",
+        "Ridicarea bruscă a barei de pe sol"
+      ]
+    },
+    "bicepCurl": {
+      "muscle": "Biceps",
+      "mistakes": [
+        "Balansarea corpului pentru inerție",
+        "Lipsa controlului la coborâre",
+        "Coatele se depărtează de torso"
+      ]
+    },
+    "shoulderPress": {
+      "muscle": "Umeri și triceps",
+      "mistakes": [
+        "Arcuirea spatelui inferior",
+        "Coatele nu se extind complet sus",
+        "Împingerea înainte în loc de drept în sus"
+      ]
+    },
+    "latPulldown": {
+      "muscle": "Dorsali și spate superior",
+      "mistakes": [
+        "Aplecarea prea mult pe spate",
+        "Tragerea cu brațele în loc de dorsali",
+        "Ridicarea umerilor spre urechi"
+      ]
+    },
+    "gluteBridge": {
+      "muscle": "Fesieri și ischiogambieri",
+      "mistakes": [
+        "Hiperextensia spatelui inferior sus",
+        "Picioarele prea departe sau prea aproape de șolduri",
+        "Genunchii se prăbușesc spre interior"
+      ]
+    },
+    "mountainClimber": {
+      "muscle": "Core și cardio",
+      "mistakes": [
+        "Șoldurile sar în sus și în jos",
+        "Pierderea poziției drepte a spatelui",
+        "Mișcare prea rapidă cu control slab"
+      ]
+    },
+    "burpee": {
+      "muscle": "Corp întreg",
+      "mistakes": [
+        "Pieptul nu coboară complet la podea",
+        "Săritura cu picioarele prea depărtate",
+        "Aterizare cu genunchii blocați drept"
+      ]
+    },
+    "tricepDip": {
+      "muscle": "Triceps",
+      "mistakes": [
+        "Ridicarea umerilor spre urechi",
+        "Aplecarea prea mult în față",
+        "Coatele desfăcute în lateral"
+      ]
+    },
+    "calfRaise": {
+      "muscle": "Gambe",
+      "mistakes": [
+        "Nicio pauză în vârf",
+        "Rularea picioarelor spre interior/exterior",
+        "Folosirea inerției în loc de control"
+      ]
+    },
+    "russianTwist": {
+      "muscle": "Oblici și core",
+      "mistakes": [
+        "Rotunjirea spatelui",
+        "Rotirea doar a brațelor, nu a torsului",
+        "Mișcare prea rapidă fără control"
+      ]
+    },
+    "legRaise": {
+      "muscle": "Abdomen și flexori de șold",
+      "mistakes": [
+        "Spatele inferior se arcuiește de pe podea",
+        "Picioarele cad prea repede",
+        "Folosirea inerției în loc de control muscular"
+      ]
+    },
+    "generic": {
+      "muscle": "Corp întreg",
+      "mistakes": [
+        "Folosirea prea multă a inerției",
+        "Lipsa unei posturi corecte",
+        "Sărirea amplitudinii complete de mișcare"
+      ]
+    },
+    "exerciseFallback": "Exercițiu"
+  },
+  "legal": {
+    "lastUpdated": "Ultima actualizare: aprilie 2025",
+    "terms": {
+      "pageTitle": "Termeni și condiții",
+      "section1Title": "1. Despre noi",
+      "section1Body": "MomManager este operat de <strong>SoldOut Digital LTD</strong>, o companie înregistrată în Anglia și Țara Galilor. Adresă înregistrată: Regatul Unit. Număr de companie: 16208774.",
+      "section2Title": "2. Acceptarea termenilor",
+      "section2Body": "Prin descărcarea, instalarea sau utilizarea aplicației MomManager (\"Aplicația\"), ești de acord să respecți acești Termeni și Condiții. Dacă nu ești de acord cu acești termeni, te rugăm să nu folosești Aplicația.",
+      "section3Title": "3. Abonament și plăți",
+      "section3Body": "MomManager oferă acces bazat pe abonament la funcții premium. Abonamentele sunt facturate recurent (lunar sau anual) prin {{storeName}}. Plata va fi taxată în contul tău la confirmarea achiziției. Abonamentele se reînnoiesc automat, cu excepția cazului în care sunt anulate cu cel puțin 24 de ore înainte de sfârșitul perioadei curente. Poți gestiona sau anula abonamentul din setările contului dispozitivului tău. Nu se oferă rambursări pentru perioadele parțiale de abonament, cu excepția cazurilor prevăzute de legea aplicabilă.",
+      "section4Title": "4. Perioadă gratuită de test",
+      "section4Body": "Putem oferi o perioadă gratuită de test pentru utilizatorii noi. La sfârșitul perioadei de test, abonamentul tău va începe automat și vei fi taxat cu tariful aplicabil, cu excepția cazului în care anulezi înainte de sfârșitul perioadei de test.",
+      "section5Title": "5. Utilizarea aplicației",
+      "section5Body": "Ești de acord să folosești MomManager doar în scopuri personale, legale și necomerciale. Nu trebuie să folosești greșit Aplicația, să încerci să obții acces neautorizat la vreo parte a acesteia, sau să o folosești într-un mod care ar putea deteriora, dezactiva sau afecta funcționalitatea ei. Ești responsabil pentru menținerea securității datelor tale de autentificare.",
+      "section6Title": "6. Funcții AI",
+      "section6Body": "MomManager include funcții bazate pe AI (cum ar fi sugestii de mese, generare de povești și asistență prin chat) oferite de furnizori AI terți. Aceste funcții sunt oferite doar în scopuri informative și de divertisment. Conținutul generat de AI poate să nu fie întotdeauna corect, complet sau potrivit pentru situația ta specifică. Ar trebui să folosești întotdeauna propria judecată și să consulți profesioniști calificați pentru sfaturi medicale, nutriționale, financiare sau juridice.",
+      "section7Title": "7. Proprietate intelectuală",
+      "section7Body": "Tot conținutul, design-ul, grafica și software-ul din Aplicație sunt proprietatea intelectuală a SoldOut Digital LTD sau a licențiatorilor săi și sunt protejate de legile aplicabile privind drepturile de autor și proprietatea intelectuală. Nu ai voie să copiezi, modifici, distribui sau decompilezi vreo parte a Aplicației fără acordul nostru scris prealabil.",
+      "section8Title": "8. Limitarea răspunderii",
+      "section8Body": "În limita maximă permisă de lege, SoldOut Digital LTD nu va fi răspunzătoare pentru daune indirecte, incidentale, speciale, subsecvente sau punitive rezultate din utilizarea Aplicației. Răspunderea noastră totală față de tine nu va depăși suma pe care ai plătit-o pentru abonamentul tău în cele 12 luni premergătoare reclamației.",
+      "section9Title": "9. Modificări ale termenilor",
+      "section9Body": "Ne rezervăm dreptul de a modifica acești Termeni în orice moment. Te vom notifica despre modificările semnificative prin Aplicație sau prin email. Continuarea utilizării Aplicației după modificări constituie acceptarea Termenilor revizuiți.",
+      "section10Title": "10. Legea aplicabilă",
+      "section10Body": "Acești Termeni sunt guvernați de legile Angliei și Țării Galilor. Orice dispută va fi supusă jurisdicției exclusive a instanțelor din Anglia și Țara Galilor.",
+      "section11Title": "11. Contact",
+      "section11Body": "Dacă ai întrebări despre acești Termeni, te rugăm să ne contactezi la <strong>support@mommanager.co.uk</strong>.",
+      "appleAppStore": "Apple App Store",
+      "yourAppStoreAccount": "contul tău din magazinul de aplicații"
+    },
+    "privacy": {
+      "pageTitle": "Politica de confidențialitate",
+      "section1Title": "1. Cine suntem",
+      "section1Body": "<strong>SoldOut Digital LTD</strong> (\"noi\", \"al nostru\") este operatorul de date pentru datele personale colectate prin MomManager. Adresă înregistrată: Regatul Unit. Număr de companie: 16208774. Contact: <strong>support@mommanager.co.uk</strong>.",
+      "section2Title": "2. Datele pe care le colectăm",
+      "section2Intro": "Colectăm următoarele tipuri de date personale când folosești MomManager:",
+      "section2Items": [
+        "<strong>Date de cont:</strong> adresă de email, nume, fotografie de profil (dacă e furnizată)",
+        "<strong>Date ale aplicației:</strong> task-uri, informații despre copii, planuri de mese, intrări de buget și alt conținut pe care îl creezi în Aplicație — stocate local pe dispozitivul tău sau în spațiul tău personal de stocare cloud",
+        "<strong>Date de utilizare:</strong> interacțiuni cu aplicația, utilizarea funcțiilor și rapoarte de blocare pentru îmbunătățirea Aplicației",
+        "<strong>Date de plată:</strong> statusul abonamentului (procesat de Apple/Google — nu stocăm detaliile cardului de plată)"
+      ],
+      "section3Title": "3. Cum îți folosim datele",
+      "section3Intro": "Folosim datele tale personale pentru a:",
+      "section3Items": [
+        "Furniza și menține serviciul MomManager",
+        "Gestiona contul și abonamentul tău",
+        "Îmbunătăți Aplicația prin analize anonimizate",
+        "Îți trimite comunicări importante despre serviciu",
+        "Respecta obligațiile legale"
+      ],
+      "section4Title": "4. Funcții AI și procesarea datelor",
+      "section4Body": "Când folosești funcții bazate pe AI (chat, sugestii de mese, povești etc.), textul introdus este trimis furnizorului nostru AI (Anthropic, Inc.) pentru a genera răspunsuri. Nu stocăm conversațiile AI pe serverele noastre. Te rugăm să nu partajezi informații personale sensibile precum parole, numere de conturi financiare sau dosare medicale în chat-ul AI.",
+      "section5Title": "5. Partajarea datelor",
+      "section5Intro": "Nu vindem datele tale personale. Putem partaja date cu:",
+      "section5Items": [
+        "<strong>Furnizori de servicii</strong> care ajută la operarea Aplicației (ex. autentificare, analize), sub acorduri stricte de confidențialitate",
+        "<strong>Autorități legale</strong> atunci când legea o cere"
+      ],
+      "section6Title": "6. Păstrarea datelor",
+      "section6Body": "Păstrăm datele contului tău atât timp cât contul tău este activ. Dacă îți ștergi contul, vom șterge datele tale personale în termen de 30 de zile, cu excepția cazurilor în care suntem obligați de lege să le păstrăm.",
+      "section7Title": "7. Drepturile tale",
+      "section7Intro": "Conform GDPR-ului din Marea Britanie și legii aplicabile privind protecția datelor, ai dreptul de a:",
+      "section7Items": [
+        "Accesa datele personale pe care le deținem despre tine",
+        "Corecta date inexacte",
+        "Solicita ștergerea datelor tale (\"dreptul de a fi uitat\")",
+        "Te opune sau restricționa procesarea datelor tale",
+        "Portabilitatea datelor",
+        "Depune o plângere la Information Commissioner's Office (ICO) la ico.org.uk"
+      ],
+      "section7Contact": "Pentru a exercita oricare dintre aceste drepturi, contactează-ne la <strong>support@mommanager.co.uk</strong>.",
+      "section8Title": "8. Securitate",
+      "section8Body": "Implementăm măsuri tehnice și organizatorice adecvate pentru a proteja datele tale personale împotriva accesului neautorizat, alterării, divulgării sau distrugerii. Totuși, nicio transmisie prin internet nu este complet sigură și nu putem garanta securitate absolută.",
+      "section9Title": "9. Confidențialitatea copiilor",
+      "section9Body": "MomManager este destinat utilizării de către adulți (18+). Nu colectăm cu bună știință date personale de la copii sub 13 ani. Dacă crezi că un copil ne-a furnizat date personale, te rugăm să ne contactezi ca să le ștergem.",
+      "section10Title": "10. Modificări ale acestei politici",
+      "section10Body": "Putem actualiza această Politică de confidențialitate din când în când. Te vom notifica despre modificările semnificative prin Aplicație sau prin email. Cea mai recentă versiune va fi întotdeauna disponibilă în Aplicație.",
+      "section11Title": "11. Contactează-ne",
+      "section11Body": "Pentru orice întrebări sau solicitări legate de confidențialitate, contactează-ne la <strong>support@mommanager.co.uk</strong> sau scrie la SoldOut Digital LTD, Regatul Unit."
+    }
   }
 }

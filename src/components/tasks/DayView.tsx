@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { format, addDays, subDays, parseISO } from 'date-fns';
 import type { Task, CalendarEvent } from '../../types';
+import { useDateFnsLocale } from '../../hooks/useDateFnsLocale';
 
 interface DayViewProps {
   tasks: Task[];
@@ -21,6 +23,8 @@ const PLAN_COLORS: Record<string, string> = {
 function pad(n: number) { return String(n).padStart(2, '0'); }
 
 export function DayView({ tasks, events, initialDate, onAddEvent }: DayViewProps) {
+  const { t } = useTranslation();
+  const dateLocale = useDateFnsLocale();
   const [date, setDate] = useState(initialDate ? parseISO(initialDate) : new Date());
   const dateStr = format(date, 'yyyy-MM-dd');
 
@@ -54,9 +58,9 @@ export function DayView({ tasks, events, initialDate, onAddEvent }: DayViewProps
         </button>
         <div className="text-center">
           <p style={{ fontSize: 15, fontWeight: 600, letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
-            {format(date, 'EEEE')}
+            {format(date, 'EEEE', { locale: dateLocale })}
           </p>
-          <p style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{format(date, 'MMMM d, yyyy')}</p>
+          <p style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{format(date, 'MMMM d, yyyy', { locale: dateLocale })}</p>
         </div>
         <button
           onClick={() => setDate((d) => addDays(d, 1))}
@@ -74,7 +78,7 @@ export function DayView({ tasks, events, initialDate, onAddEvent }: DayViewProps
         {allDay.length > 0 && (
           <div style={{ borderBottom: '1px solid var(--border)' }}>
             <div className="flex items-start px-3 py-2 gap-3">
-              <span style={{ fontSize: 11, color: 'var(--text-muted)', width: 36, paddingTop: 2, flexShrink: 0 }}>All day</span>
+              <span style={{ fontSize: 11, color: 'var(--text-muted)', width: 36, paddingTop: 2, flexShrink: 0 }}>{t('tasks.allDay')}</span>
               <div className="flex flex-col gap-1 flex-1">
                 {allDay.map((item) => {
                   const plan = (item as Task).plan || (item as CalendarEvent).plan;
@@ -155,7 +159,7 @@ export function DayView({ tasks, events, initialDate, onAddEvent }: DayViewProps
           className="w-full py-2.5 rounded-xl text-sm font-medium"
           style={{ background: 'var(--accent-soft)', color: 'var(--accent)', border: '1px solid var(--border)' }}
         >
-          + Add event for {format(date, 'MMM d')}
+          {t('tasks.addEventFor', { date: format(date, 'MMM d', { locale: dateLocale }) })}
         </button>
       </div>
     </div>

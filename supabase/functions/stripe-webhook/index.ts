@@ -57,7 +57,7 @@ Deno.serve(async (req) => {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.CheckoutSession;
         const userId = session.metadata?.userId;
-        const plan = session.metadata?.plan || 'monthly';
+        const plan = session.metadata?.plan || 'standard_monthly';
         if (userId) {
           await supabase.from('subscriptions').upsert({
             user_id: userId,
@@ -67,6 +67,16 @@ Deno.serve(async (req) => {
             plan,
             updated_at: new Date().toISOString(),
           }, { onConflict: 'user_id' });
+
+          // Source of truth for what actually gates app access
+          await supabase
+            .from('profiles')
+            .update({
+              subscription_status: plan,
+              stripe_customer_id: session.customer as string,
+              stripe_subscription_id: session.subscription as string,
+            })
+            .eq('id', userId);
 
           // Fetch profile for email
           const { data: profile } = await supabase
@@ -101,6 +111,12 @@ Deno.serve(async (req) => {
           .eq('stripe_subscription_id', sub.id)
           .single();
         if (subRow) {
+          // Revoke access once the subscription is actually gone
+          await supabase
+            .from('profiles')
+            .update({ subscription_status: null })
+            .eq('id', subRow.user_id);
+
           const { data: profile } = await supabase
             .from('profiles')
             .select('name, email')
@@ -129,6 +145,33 @@ Deno.serve(async (req) => {
             updated_at: new Date().toISOString(),
           })
           .eq('stripe_subscription_id', sub.id);
+
+        // Keep the field that actually gates app access in sync with Stripe
+        if (status === 'expired') {
+          const { data: expiredRow } = await supabase
+            .from('subscriptions')
+            .select('user_id')
+            .eq('stripe_subscription_id', sub.id)
+            .single();
+          if (expiredRow) {
+            await supabase
+              .from('profiles')
+              .update({ subscription_status: null })
+              .eq('id', expiredRow.user_id);
+          }
+        } else if (status === 'active') {
+          const { data: activeRow } = await supabase
+            .from('subscriptions')
+            .select('user_id, plan')
+            .eq('stripe_subscription_id', sub.id)
+            .single();
+          if (activeRow) {
+            await supabase
+              .from('profiles')
+              .update({ subscription_status: activeRow.plan, subscription_end_date: expiresAt })
+              .eq('id', activeRow.user_id);
+          }
+        }
 
         // Send renewal email when billing period advances (current_period_end changed)
         const periodAdvanced = prevSub?.current_period_end !== undefined

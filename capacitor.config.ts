@@ -6,6 +6,7 @@ const config: CapacitorConfig = {
   webDir: 'dist',
   server: {
     androidScheme: 'https',
+    iosScheme: 'https',
   },
   plugins: {
     CapacitorHttp: {
@@ -25,6 +26,14 @@ const config: CapacitorConfig = {
     },
     Browser: {
       androidStrategy: 'custom-tabs',
+    },
+    LocalNotifications: {
+      // Drawable name (no extension) in android/app/src/main/res/drawable —
+      // must be a white-on-transparent monochrome shape per Android status
+      // bar icon guidelines.
+      smallIcon: 'ic_stat_mommanager',
+      iconColor: '#C4788A',
+      presentationOptions: ['badge', 'sound', 'banner', 'list'],
     },
   },
 };

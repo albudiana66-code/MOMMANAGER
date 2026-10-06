@@ -1,60 +1,186 @@
 import { Capacitor } from '@capacitor/core';
-import type { Package } from '@capgo/capacitor-purchases';
+import { Purchases, PURCHASES_ERROR_CODE } from '@revenuecat/purchases-capacitor';
+import type { PurchasesPackage } from '@revenuecat/purchases-capacitor';
+import { nativeProductIds, RC_PACKAGE_IDS, type IAPPlan } from './iapProducts';
 
-// Apple product IDs — must match exactly what you create in App Store Connect
-export const APPLE_PRODUCT_IDS = {
-  standard_monthly: 'com.soldoutdigital.mommanager.standard.monthly',
-  standard_yearly:  'com.soldoutdigital.mommanager.standard.yearly',
-  pro_monthly:      'com.soldoutdigital.mommanager.pro.monthly',
-  pro_yearly:       'com.soldoutdigital.mommanager.pro.yearly',
-} as const;
+export type { IAPPlan };
 
-export type IAPPlan = keyof typeof APPLE_PRODUCT_IDS;
+export function isNativeMobile(): boolean {
+  return Capacitor.isNativePlatform();
+}
 
 export function isNativeIOS(): boolean {
   return Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios';
 }
 
+// Configures the RevenueCat SDK exactly once and resolves when it's ready.
+// main.tsx kicks this off on startup but previously never awaited it before
+// rendering — if the paywall mounted on a cold launch (e.g. an already
+// signed-in user with no active subscription landing straight on /paywall)
+// before configure() finished, calling getOfferings()/purchasePackage()
+// first could fail with RevenueCat's own CONFIGURATION_ERROR. Every call
+// into `Purchases` below awaits this first so that race can't happen.
+let configuredPromise: Promise<void> | null = null;
+
+export function ensureRevenueCatConfigured(): Promise<void> {
+  if (!isNativeMobile()) return Promise.resolve();
+  if (!configuredPromise) {
+    const platform = Capacitor.getPlatform();
+    const apiKey = platform === 'ios'
+      ? import.meta.env.VITE_REVENUECAT_IOS_API_KEY
+      : platform === 'android'
+        ? import.meta.env.VITE_REVENUECAT_ANDROID_API_KEY
+        : undefined;
+
+    if (!apiKey) {
+      console.error(`[RevenueCat] Missing API key for platform "${platform}" — check .env`);
+      configuredPromise = Promise.resolve();
+    } else {
+      configuredPromise = Purchases.configure({ apiKey })
+        .then(() => {
+          console.log('[RevenueCat] configured for platform:', platform);
+        })
+        .catch((err) => {
+          console.error('[RevenueCat] configure failed:', err);
+        });
+    }
+  }
+  return configuredPromise;
+}
+
+// How long we wait for the native store sheet (StoreKit / Play Billing) to
+// resolve before giving up and letting the UI recover on its own. Real
+// purchases normally settle in a couple of seconds, but native promises can
+// get stuck — e.g. StoreKit's "Payment Information Required" dialog closing
+// without the plugin's completion callback ever firing — so the button must
+// never depend solely on the native promise settling.
+const NATIVE_PURCHASE_TIMEOUT_MS = 18_000;
+
+export class PurchaseTimeoutError extends Error {
+  constructor() {
+    super('Native purchase timed out waiting for the store to respond');
+    this.name = 'PurchaseTimeoutError';
+  }
+}
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => reject(new PurchaseTimeoutError()), ms);
+    promise.then(
+      (value) => { clearTimeout(timer); resolve(value); },
+      (err) => { clearTimeout(timer); reject(err); }
+    );
+  });
+}
+
+/** RevenueCat's PurchasesError.code (a numeric-string enum) if present on this error, else null. */
+export function getRevenueCatErrorCode(err: unknown): string | null {
+  if (err && typeof err === 'object' && 'code' in err) {
+    const code = (err as { code: unknown }).code;
+    if (typeof code === 'string') return code;
+  }
+  return null;
+}
+
 /**
- * Purchase a subscription via Apple StoreKit (iOS only).
- * Uses RevenueCat offerings API via @capgo/capacitor-purchases.
- * Returns true on success, throws on failure/cancellation.
+ * Purchase a subscription via the platform's native store (Apple StoreKit on
+ * iOS, Google Play Billing on Android), through the same RevenueCat call on
+ * both — RevenueCat itself talks to whichever store the app is running on.
+ * Returns true on success, throws on failure/cancellation/timeout.
  */
-export async function purchaseAppleSubscription(plan: IAPPlan): Promise<boolean> {
-  if (!isNativeIOS()) throw new Error('Apple IAP only available on iOS');
+export async function purchaseNativeSubscription(plan: IAPPlan): Promise<boolean> {
+  if (!isNativeMobile()) throw new Error('Native purchases only available in the app');
+  await ensureRevenueCatConfigured();
 
-  const { CapacitorPurchases } = await import('@capgo/capacitor-purchases');
-  const targetProductId = APPLE_PRODUCT_IDS[plan];
+  // Packages are matched by their RevenueCat package identifier, not the
+  // store product identifier — the package identifiers are the stable,
+  // cross-platform key configured in the "Subscription" offering (each
+  // package already resolves to the right underlying iOS/Android product),
+  // whereas the store product id itself differs by platform.
+  const targetPackageId = RC_PACKAGE_IDS[plan];
 
-  // Fetch all offerings from RevenueCat
-  const { offerings } = await CapacitorPurchases.getOfferings();
-  const current = offerings?.current;
+  const offerings = await withTimeout(Purchases.getOfferings(), NATIVE_PURCHASE_TIMEOUT_MS);
+  const current = offerings.current;
+  console.log(
+    '[RevenueCat] current offering:', current?.identifier ?? null,
+    '— packages:', current?.availablePackages.map((p) => p.identifier) ?? []
+  );
   if (!current) throw new Error('No offerings available');
 
-  // Find the package whose underlying product matches our target product ID
-  const pkg: Package | undefined = current.availablePackages.find(
-    (p: Package) => p.product.identifier === targetProductId
+  const pkg: PurchasesPackage | undefined = current.availablePackages.find(
+    (p) => p.identifier === targetPackageId
   );
 
-  if (!pkg) throw new Error(`Product not found: ${targetProductId}`);
+  if (!pkg) throw new Error(`Package not found: ${targetPackageId}`);
 
-  const { customerInfo } = await CapacitorPurchases.purchasePackage({
-    identifier: pkg.identifier,
-    offeringIdentifier: pkg.offeringIdentifier,
-  });
+  const { customerInfo } = await withTimeout(
+    Purchases.purchasePackage({ aPackage: pkg }),
+    NATIVE_PURCHASE_TIMEOUT_MS
+  );
 
   const entitlements = customerInfo?.entitlements?.active ?? {};
   return Object.keys(entitlements).length > 0;
 }
 
 /**
- * Restore previous Apple purchases.
+ * Restore previous native purchases (Apple or Google Play, whichever store
+ * the app is running on). Returns the restored plan so the caller can
+ * confirm it server-side, or null if nothing active was found.
  */
-export async function restoreApplePurchases(): Promise<boolean> {
-  if (!isNativeIOS()) return false;
+export async function restoreNativePurchases(): Promise<IAPPlan | null> {
+  if (!isNativeMobile()) return null;
+  await ensureRevenueCatConfigured();
 
-  const { CapacitorPurchases } = await import('@capgo/capacitor-purchases');
-  const { customerInfo } = await CapacitorPurchases.restorePurchases();
-  const entitlements = customerInfo?.entitlements?.active ?? {};
-  return Object.keys(entitlements).length > 0;
+  const { customerInfo } = await withTimeout(Purchases.restorePurchases(), NATIVE_PURCHASE_TIMEOUT_MS);
+  const entitlements = Object.values(customerInfo?.entitlements?.active ?? {});
+  if (entitlements.length === 0) return null;
+
+  const productId = entitlements[0].productIdentifier;
+  const productIds = nativeProductIds();
+  const plan = (Object.keys(productIds) as IAPPlan[]).find((p) => productIds[p] === productId);
+  return plan ?? null;
+}
+
+/**
+ * Buckets a thrown purchase/restore error into the categories the paywall UI
+ * needs to react to differently — silent for a deliberate cancel, an
+ * actionable message for everything else. Based on RevenueCat's
+ * PURCHASES_ERROR_CODE where available, falling back to message sniffing for
+ * errors that don't carry one (e.g. our own timeout, or a plain network throw).
+ */
+export type PurchaseErrorKind =
+  | 'cancelled'
+  | 'noPaymentMethod'
+  | 'notAllowed'
+  | 'network'
+  | 'timeout'
+  | 'pending'
+  | 'unknown';
+
+export function classifyPurchaseError(err: unknown): PurchaseErrorKind {
+  if (err instanceof PurchaseTimeoutError) return 'timeout';
+
+  switch (getRevenueCatErrorCode(err)) {
+    case PURCHASES_ERROR_CODE.PURCHASE_CANCELLED_ERROR:
+      return 'cancelled';
+    case PURCHASES_ERROR_CODE.PURCHASE_NOT_ALLOWED_ERROR:
+      return 'notAllowed';
+    // RevenueCat reports this when the store itself rejects the purchase
+    // attempt (commonly: no valid payment method on the Apple/Google account).
+    case PURCHASES_ERROR_CODE.STORE_PROBLEM_ERROR:
+      return 'noPaymentMethod';
+    case PURCHASES_ERROR_CODE.PAYMENT_PENDING_ERROR:
+      return 'pending';
+    case PURCHASES_ERROR_CODE.NETWORK_ERROR:
+    case PURCHASES_ERROR_CODE.OFFLINE_CONNECTION_ERROR:
+    case PURCHASES_ERROR_CODE.PRODUCT_REQUEST_TIMED_OUT_ERROR:
+      return 'network';
+    default:
+      break;
+  }
+
+  const msg = (err instanceof Error ? err.message : String(err)).toLowerCase();
+  if (msg.includes('cancel')) return 'cancelled';
+  if (msg.includes('network') || msg.includes('offline') || msg.includes('internet')) return 'network';
+  return 'unknown';
 }

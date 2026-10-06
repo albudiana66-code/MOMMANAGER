@@ -5,6 +5,8 @@ import App from './App.tsx'
 import { Capacitor } from '@capacitor/core';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { SplashScreen } from '@capacitor/splash-screen';
+import { ensureRevenueCatConfigured } from './lib/iap';
+import { initNotificationTapHandling } from './lib/notifications';
 
 // Polyfill crypto.randomUUID for older Android WebViews (API < 92 / Chrome < 92)
 if (typeof crypto !== 'undefined' && !crypto.randomUUID) {
@@ -28,14 +30,18 @@ if (Capacitor.isNativePlatform()) {
   StatusBar.setStyle({ style: Style.Light });
   StatusBar.setBackgroundColor({ color: '#FAF8F5' });
 
-  // Initialize RevenueCat (required before any IAP calls on iOS)
-  if (Capacitor.getPlatform() === 'ios') {
-    import('@capgo/capacitor-purchases').then(({ CapacitorPurchases }) => {
-      CapacitorPurchases.setup({
-        apiKey: 'appl_gySwhoFqHjxXBrKzWFbvqVHqOBf',
-      }).catch(console.error);
-    });
-  }
+  // Kicked off here so configuration starts as early as possible, but never
+  // awaited before rendering — every call site that actually talks to
+  // RevenueCat (lib/iap.ts, hooks/useOfferingPricing.ts) awaits this same
+  // promise first, so a cold launch landing straight on /paywall can't race
+  // ahead of configure() finishing.
+  ensureRevenueCatConfigured();
+
+  // Attached before React even renders, so a tap that cold-launches the app
+  // from a notification is captured immediately — it's buffered until the
+  // router mounts and calls registerDeepLinkHandler() (see
+  // useNotificationDeepLink.ts), rather than lost.
+  initNotificationTapHandling();
 }
 
 createRoot(document.getElementById('root')!).render(

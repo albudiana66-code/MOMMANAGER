@@ -40,7 +40,7 @@ const SETS_OF = /(\d+)\s+sets?\s+of\s+([\d\-–]+)/i;
 // Matches rest: "60s rest", "90 seconds", "2 min rest"
 const REST = /(?:rest[:\s]+|rest\s+of\s+)?(\d+[-–]?\d*)\s*(?:s(?:ec(?:ond)?s?)?|min(?:ute)?s?)\s*(?:rest|between)?/i;
 
-function parseWorkout(text: string): ParsedDay[] {
+function parseWorkout(text: string, fallbackTitle: string, fallbackExercise: string): ParsedDay[] {
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
   const days: ParsedDay[] = [];
   let current: ParsedDay | null = null;
@@ -58,7 +58,7 @@ function parseWorkout(text: string): ParsedDay[] {
     }
 
     if (!current) {
-      current = { title: 'Workout', exercises: [], preamble: [] };
+      current = { title: fallbackTitle, exercises: [], preamble: [] };
     }
 
     // Try to detect an exercise line with sets×reps
@@ -70,13 +70,14 @@ function parseWorkout(text: string): ParsedDay[] {
       // Remove trailing punctuation / dash
       name = name.replace(/[-–:,]+$/, '').trim();
       if (name.length < 2) name = line.replace(setsMatch[0], '').trim();
+      if (!name) name = fallbackExercise;
 
       // Rest time
       const restMatch = REST.exec(line);
       const rest = restMatch ? restMatch[0].replace(/^rest[:\s]*/i, '').trim() : '60s';
 
       current.exercises.push({
-        name: name || 'Exercise',
+        name: name || fallbackExercise,
         sets: setsMatch[1],
         reps: setsMatch[2].replace(/reps?/i, '').trim(),
         rest,
@@ -198,7 +199,8 @@ function DaySection({ day }: { day: ParsedDay }) {
 
 // ── Main export ────────────────────────────────────────────────
 export function WorkoutDisplay({ plan }: { plan: string }) {
-  const days = parseWorkout(plan);
+  const { t } = useTranslation();
+  const days = parseWorkout(plan, t('nav.workout'), t('fitness.exerciseFallback'));
 
   // If parsing found no structured days, fall back to markdown-rendered text
   if (days.length === 0 || days.every(d => d.exercises.length === 0)) {

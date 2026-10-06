@@ -6,7 +6,10 @@ import { LuxuryScreenHeader } from '../components/ui/LuxuryScreenHeader';
 import { useAuth } from '../context/AuthContext';
 import { useApp } from '../context/AppContext';
 import { formatCurrency } from '../lib/frankfurter';
+import { getErrorMessage } from '../lib/errors';
 import { ProGate } from '../components/paywall/ProGate';
+import { useDateFnsLocale } from '../hooks/useDateFnsLocale';
+import i18n from '../i18n';
 import type { BudgetTransaction } from '../types';
 
 // ─────────────────────────────────────────────
@@ -38,20 +41,21 @@ const MONTHLY_BUDGET_KEY = (uid: string) => `mm_monthly_budget_${uid}`;
 // legacy key migration
 const LEGACY_KEY = (uid: string) => `mm_budget_${uid}`;
 
-type CatMeta = { label: string; emoji: string; color: string };
+type CatMeta = { labelKey: string; emoji: string; color: string };
 const CATEGORIES: Record<TxCategory, CatMeta> = {
-  groceries:    { label: 'Groceries',    emoji: '🛒', color: '#8FA888' },
-  food:         { label: 'Groceries',    emoji: '🛒', color: '#8FA888' }, // legacy alias
-  housing:      { label: 'Housing',      emoji: '🏠', color: '#C4B8D8' },
-  transport:    { label: 'Transport',    emoji: '🚗', color: '#E8B89A' },
-  eating_out:   { label: 'Eating out',   emoji: '🍽️', color: '#D4AF37' },
-  shopping:     { label: 'Shopping',     emoji: '👗', color: '#C4788A' },
-  kids:         { label: 'Kids',         emoji: '🧒', color: '#9B6B8A' },
-  health:       { label: 'Health',       emoji: '💊', color: '#60A5FA' },
-  entertainment:{ label: 'Entertainment',emoji: '🎮', color: '#FB923C' },
-  savings:      { label: 'Savings',      emoji: '💰', color: '#34D399' },
-  other:        { label: 'Other',        emoji: '📦', color: '#94A3B8' },
+  groceries:    { labelKey: 'budget.categories.groceries',    emoji: '🛒', color: '#8FA888' },
+  food:         { labelKey: 'budget.categories.groceries',    emoji: '🛒', color: '#8FA888' }, // legacy alias
+  housing:      { labelKey: 'budget.categories.housing',      emoji: '🏠', color: '#C4B8D8' },
+  transport:    { labelKey: 'budget.categories.transport',    emoji: '🚗', color: '#E8B89A' },
+  eating_out:   { labelKey: 'budget.categories.eatingOut',    emoji: '🍽️', color: '#D4AF37' },
+  shopping:     { labelKey: 'budget.categories.shopping',     emoji: '👗', color: '#C4788A' },
+  kids:         { labelKey: 'budget.categories.kids',         emoji: '🧒', color: '#9B6B8A' },
+  health:       { labelKey: 'budget.categories.health',       emoji: '💊', color: '#60A5FA' },
+  entertainment:{ labelKey: 'budget.categories.entertainment',emoji: '🎮', color: '#FB923C' },
+  savings:      { labelKey: 'budget.categories.savings',      emoji: '💰', color: '#34D399' },
+  other:        { labelKey: 'budget.categories.other',        emoji: '📦', color: '#94A3B8' },
 };
+function catLabel(cat: TxCategory): string { return i18n.t(CATEGORIES[cat]?.labelKey ?? CATEGORIES.other.labelKey); }
 
 // canonical categories shown in UI (no 'food' legacy)
 const CAT_KEYS: TxCategory[] = [
@@ -149,13 +153,13 @@ function DonutChart({ slices, total }: { slices: Slice[]; total: number }) {
             <>
               <span style={{ fontSize: 18 }}>{CATEGORIES[hoveredSlice.category]?.emoji}</span>
               <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-primary)', textAlign: 'center', lineHeight: 1.2, marginTop: 2 }}>
-                {CATEGORIES[hoveredSlice.category]?.label}
+                {catLabel(hoveredSlice.category)}
               </p>
               <p style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{hoveredSlice.pct.toFixed(0)}%</p>
             </>
           ) : (
             <>
-              <p style={{ fontSize: 10, color: 'var(--text-secondary)' }}>Total spent</p>
+              <p style={{ fontSize: 10, color: 'var(--text-secondary)' }}>{i18n.t('budget.totalSpent')}</p>
               <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{formatCurrency(total, 'GBP').replace(/[£$€]/,'')}</p>
             </>
           )}
@@ -168,7 +172,7 @@ function DonutChart({ slices, total }: { slices: Slice[]; total: number }) {
             onMouseEnter={() => setHovered(s.category)} onMouseLeave={() => setHovered(null)}>
             <div style={{ width: 10, height: 10, borderRadius: '50%', flexShrink: 0, background: CATEGORIES[s.category]?.color }} />
             <span style={{ fontSize: 11, color: 'var(--text-secondary)', flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              {CATEGORIES[s.category]?.label}
+              {catLabel(s.category)}
             </span>
             <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-primary)' }}>{s.pct.toFixed(0)}%</span>
           </div>
@@ -185,6 +189,7 @@ function DonutChart({ slices, total }: { slices: Slice[]; total: number }) {
 function OverviewTab({ txs, budgets, saveBudgetsLocal, monthlyBudget, saveMonthlyBudgetLocal, currency, currentMonth, setCurrentMonth }:
   { txs: BudgetTransaction[]; budgets: BudgetLimits; saveBudgetsLocal: (b: BudgetLimits) => void; monthlyBudget: number; saveMonthlyBudgetLocal: (v: number) => void; currency: string; currentMonth: Date; setCurrentMonth: (d: Date) => void }) {
 
+  const dateLocale = useDateFnsLocale();
   const monthStart = format(startOfMonth(currentMonth), 'yyyy-MM-dd');
   const monthEnd = format(endOfMonth(currentMonth), 'yyyy-MM-dd');
   const monthTxs = txs.filter(t => t.date >= monthStart && t.date <= monthEnd);
@@ -244,19 +249,19 @@ function OverviewTab({ txs, budgets, saveBudgetsLocal, monthlyBudget, saveMonthl
             style={{ width: 36, height: 36, borderRadius: 12, background: 'var(--bg-primary)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)' }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
           </button>
-          <p style={{ fontWeight: 700, fontSize: 16, color: 'var(--text-primary)' }}>{format(currentMonth, 'MMMM yyyy')}</p>
+          <p style={{ fontWeight: 700, fontSize: 16, color: 'var(--text-primary)' }}>{format(currentMonth, 'MMMM yyyy', { locale: dateLocale })}</p>
           <button onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
             style={{ width: 36, height: 36, borderRadius: 12, background: 'var(--bg-primary)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)' }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
           </button>
         </div>
         <p style={{ textAlign: 'center', fontSize: 10, color: 'var(--text-secondary)', marginBottom: 12, letterSpacing: '0.02em' }}>
-          ℹ️ Budget resets on the 1st of each month
+          {i18n.t('budget.resetsMonthlyNote')}
         </p>
 
         {/* Big number */}
         <div style={{ textAlign: 'center', marginBottom: 16 }}>
-          <p style={{ fontSize: 11, color: 'var(--text-secondary)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Total spent</p>
+          <p style={{ fontSize: 11, color: 'var(--text-secondary)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{i18n.t('budget.totalSpent')}</p>
           <p style={{ fontSize: 40, fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.03em', lineHeight: 1 }}>
             {formatCurrency(totalExpense, currency)}
           </p>
@@ -265,11 +270,11 @@ function OverviewTab({ txs, budgets, saveBudgetsLocal, monthlyBudget, saveMonthl
         {/* Income/Expense pills */}
         <div style={{ display: 'flex', gap: 10, marginBottom: 16 }}>
           <div style={{ flex: 1, borderRadius: 14, padding: '10px 12px', background: 'var(--sage-soft)' }}>
-            <p style={{ fontSize: 10, color: '#8FA888', fontWeight: 600, marginBottom: 2 }}>↑ INCOME</p>
+            <p style={{ fontSize: 10, color: '#8FA888', fontWeight: 600, marginBottom: 2 }}>↑ {i18n.t('budget.incomeLabel')}</p>
             <p style={{ fontSize: 15, fontWeight: 700, color: '#8FA888' }}>{formatCurrency(totalIncome, currency)}</p>
           </div>
           <div style={{ flex: 1, borderRadius: 14, padding: '10px 12px', background: 'var(--accent-soft)' }}>
-            <p style={{ fontSize: 10, color: 'var(--accent)', fontWeight: 600, marginBottom: 2 }}>↓ EXPENSES</p>
+            <p style={{ fontSize: 10, color: 'var(--accent)', fontWeight: 600, marginBottom: 2 }}>↓ {i18n.t('budget.expensesLabel')}</p>
             <p style={{ fontSize: 15, fontWeight: 700, color: 'var(--accent)' }}>{formatCurrency(totalExpense, currency)}</p>
           </div>
         </div>
@@ -282,7 +287,7 @@ function OverviewTab({ txs, budgets, saveBudgetsLocal, monthlyBudget, saveMonthl
                 type="number"
                 value={monthlyInput}
                 onChange={e => setMonthlyInput(e.target.value)}
-                placeholder="Enter monthly budget..."
+                placeholder={i18n.t('budget.enterMonthlyBudgetPlaceholder')}
                 autoFocus
                 style={{ flex: 1, height: 40, borderRadius: 12, border: '1.5px solid var(--accent)', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: 15, padding: '0 12px', outline: 'none' }}
                 onKeyDown={e => {
@@ -301,7 +306,7 @@ function OverviewTab({ txs, budgets, saveBudgetsLocal, monthlyBudget, saveMonthl
                   setEditingMonthly(false);
                 }}
                 style={{ height: 40, padding: '0 14px', borderRadius: 12, border: 'none', background: 'var(--accent)', color: '#fff', fontWeight: 600, fontSize: 13, cursor: 'pointer' }}
-              >Save</button>
+              >{i18n.t('budget.save')}</button>
               <button onClick={() => setEditingMonthly(false)}
                 style={{ height: 40, padding: '0 10px', borderRadius: 12, border: '1px solid var(--border)', background: 'var(--bg-primary)', color: 'var(--text-secondary)', fontSize: 13, cursor: 'pointer' }}
               >✕</button>
@@ -312,8 +317,8 @@ function OverviewTab({ txs, budgets, saveBudgetsLocal, monthlyBudget, saveMonthl
               style={{ width: '100%', height: 40, borderRadius: 12, border: '1.5px dashed var(--border)', background: 'transparent', color: monthlyBudget > 0 ? 'var(--text-secondary)' : 'var(--accent)', fontSize: 13, fontWeight: 500, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
             >
               {monthlyBudget > 0
-                ? `✏️ Monthly budget: ${formatCurrency(monthlyBudget, currency)}`
-                : '+ Set monthly budget'}
+                ? i18n.t('budget.monthlyBudgetPrefix', { amount: formatCurrency(monthlyBudget, currency) })
+                : i18n.t('budget.setMonthlyBudget')}
             </button>
           )}
           {monthlyBudget > 0 && !editingMonthly && (() => {
@@ -323,7 +328,7 @@ function OverviewTab({ txs, budgets, saveBudgetsLocal, monthlyBudget, saveMonthl
             return (
               <div style={{ marginTop: 10 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                  <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>Total budget</span>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>{i18n.t('budget.totalBudgetLabel')}</span>
                   <span style={{ fontSize: 12, fontWeight: 700, color: over ? '#ef4444' : 'var(--text-primary)' }}>
                     {formatCurrency(totalExpense, currency)} / {formatCurrency(monthlyBudget, currency)}
                   </span>
@@ -333,8 +338,8 @@ function OverviewTab({ txs, budgets, saveBudgetsLocal, monthlyBudget, saveMonthl
                 </div>
                 <p style={{ fontSize: 11, marginTop: 5, color: over ? '#ef4444' : '#8FA888', fontWeight: 500 }}>
                   {over
-                    ? `⚠️ Over budget by ${formatCurrency(totalExpense - monthlyBudget, currency)}`
-                    : `${formatCurrency(monthlyBudget - totalExpense, currency)} remaining`}
+                    ? i18n.t('budget.overBudgetBy', { amount: formatCurrency(totalExpense - monthlyBudget, currency) })
+                    : i18n.t('budget.remainingSuffix', { amount: formatCurrency(monthlyBudget - totalExpense, currency) })}
                 </p>
               </div>
             );
@@ -344,9 +349,9 @@ function OverviewTab({ txs, budgets, saveBudgetsLocal, monthlyBudget, saveMonthl
       {/* Quick stats */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
         {[
-          { label: 'Biggest expense', value: biggestTx ? formatCurrency(biggestTx.amount, currency) : '—', sub: biggestTx ? CATEGORIES[biggestTx.category as TxCategory]?.label : '' },
-          { label: 'Daily average', value: formatCurrency(avgDaily, currency), sub: 'per day' },
-          { label: 'Projected', value: formatCurrency(projected, currency), sub: `${daysLeft}d left` },
+          { label: i18n.t('budget.biggestExpense'), value: biggestTx ? formatCurrency(biggestTx.amount, currency) : '—', sub: biggestTx ? catLabel(biggestTx.category as TxCategory) : '' },
+          { label: i18n.t('budget.dailyAverage'), value: formatCurrency(avgDaily, currency), sub: i18n.t('budget.perDay') },
+          { label: i18n.t('budget.projected'), value: formatCurrency(projected, currency), sub: i18n.t('budget.daysLeftSuffix', { days: daysLeft }) },
         ].map(s => (
           <div key={s.label} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 18, padding: '12px 10px', textAlign: 'center' }}>
             <p style={{ fontSize: 10, color: 'var(--text-secondary)', marginBottom: 4, lineHeight: 1.2 }}>{s.label}</p>
@@ -359,14 +364,14 @@ function OverviewTab({ txs, budgets, saveBudgetsLocal, monthlyBudget, saveMonthl
       {/* Donut chart */}
       {slices.length > 0 && (
         <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 24, padding: '16px' }}>
-          <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 14 }}>Spending by Category</p>
+          <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 14 }}>{i18n.t('budget.spendingByCategory')}</p>
           <DonutChart slices={slices} total={totalExpense} />
         </div>
       )}
 
       {/* Category budget limits — full list with progress bars */}
       <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 24, padding: '16px' }}>
-        <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 14 }}>Budget by Category</p>
+        <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 14 }}>{i18n.t('budget.budgetByCategoryHeading')}</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           {CAT_KEYS.map(cat => {
             const spent = catTotals[cat] || 0;
@@ -384,7 +389,7 @@ function OverviewTab({ txs, budgets, saveBudgetsLocal, monthlyBudget, saveMonthl
                     {meta.emoji}
                   </div>
                   <span style={{ flex: 1, fontSize: 13, fontWeight: 500, color: spent > 0 ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
-                    {meta.label}
+                    {catLabel(cat)}
                   </span>
                   {limit > 0 && (
                     <span style={{ fontSize: 12, fontWeight: 600, color: over ? '#ef4444' : 'var(--text-secondary)' }}>
@@ -409,8 +414,8 @@ function OverviewTab({ txs, budgets, saveBudgetsLocal, monthlyBudget, saveMonthl
                     </div>
                     <p style={{ fontSize: 11, color: over ? '#ef4444' : '#8FA888', fontWeight: 500 }}>
                       {over
-                        ? `⚠️ Over budget by ${formatCurrency(spent - limit, currency)}`
-                        : `${formatCurrency(limit - spent, currency)} remaining`}
+                        ? i18n.t('budget.overBudgetBy', { amount: formatCurrency(spent - limit, currency) })
+                        : i18n.t('budget.remainingSuffix', { amount: formatCurrency(limit - spent, currency) })}
                     </p>
                   </>
                 )}
@@ -419,12 +424,12 @@ function OverviewTab({ txs, budgets, saveBudgetsLocal, monthlyBudget, saveMonthl
                 {isEditing && (
                   <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
                     <input value={budgetInput} onChange={e => setBudgetInput(e.target.value)}
-                      type="number" inputMode="decimal" placeholder={`Set ${meta.label} limit...`}
+                      type="number" inputMode="decimal" placeholder={i18n.t('budget.setCategoryLimitPlaceholder', { category: catLabel(cat) })}
                       autoFocus
                       style={{ flex: 1, borderRadius: 10, padding: '8px 10px', fontSize: 13, background: 'var(--bg-primary)', border: '1px solid var(--border)', color: 'var(--text-primary)', outline: 'none' }} />
                     <button onClick={() => saveBudgetLimit(cat)}
                       style={{ padding: '8px 14px', borderRadius: 10, border: 'none', background: 'linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%)', color: '#fff', fontSize: 12, fontWeight: 600 }}>
-                      Save
+                      {i18n.t('budget.save')}
                     </button>
                     <button onClick={() => setEditingBudget(null)}
                       style={{ padding: '8px 10px', borderRadius: 10, border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-secondary)', fontSize: 12 }}>
@@ -471,7 +476,7 @@ function AddTransactionSheet({ onClose, onSave, accounts, currency }:
         style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 51, background: 'var(--bg-card)', borderRadius: '24px 24px 0 0', padding: `20px 16px max(calc(env(safe-area-inset-bottom, 0px) + 16px), 56px)`, maxHeight: '92vh', overflowY: 'auto' }}>
 
         <div style={{ width: 36, height: 4, borderRadius: 2, background: 'var(--border)', margin: '0 auto 20px' }} />
-        <p style={{ fontWeight: 700, fontSize: 18, color: 'var(--text-primary)', marginBottom: 20 }}>Add Transaction</p>
+        <p style={{ fontWeight: 700, fontSize: 18, color: 'var(--text-primary)', marginBottom: 20 }}>{i18n.t('budget.addTransaction')}</p>
 
         {/* Type toggle */}
         <div style={{ display: 'flex', gap: 8, marginBottom: 20, background: 'var(--bg-primary)', borderRadius: 14, padding: 4 }}>
@@ -480,7 +485,7 @@ function AddTransactionSheet({ onClose, onSave, accounts, currency }:
               flex: 1, padding: '10px', borderRadius: 12, border: 'none', fontSize: 14, fontWeight: 600,
               background: txType === t ? (t === 'expense' ? 'linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%)' : 'linear-gradient(135deg, #8FA888 0%, #6B9462 100%)') : 'transparent',
               color: txType === t ? '#fff' : 'var(--text-secondary)',
-            }}>{t === 'expense' ? '↓ Expense' : '↑ Income'}</button>
+            }}>{t === 'expense' ? `↓ ${i18n.t('budget.expense')}` : `↑ ${i18n.t('budget.income')}`}</button>
           ))}
         </div>
 
@@ -495,7 +500,7 @@ function AddTransactionSheet({ onClose, onSave, accounts, currency }:
         </div>
 
         {/* Category grid */}
-        <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 10 }}>Category</p>
+        <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 10 }}>{i18n.t('budget.category')}</p>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8, marginBottom: 16 }}>
           {CAT_KEYS.map(cat => (
             <button key={cat} onClick={() => setCategory(cat)} style={{
@@ -506,7 +511,7 @@ function AddTransactionSheet({ onClose, onSave, accounts, currency }:
             }}>
               <span style={{ fontSize: 18 }}>{CATEGORIES[cat].emoji}</span>
               <span style={{ fontSize: 9, color: category === cat ? CATEGORIES[cat].color : 'var(--text-secondary)', fontWeight: category === cat ? 600 : 400, lineHeight: 1.2, textAlign: 'center' }}>
-                {CATEGORIES[cat].label}
+                {catLabel(cat)}
               </span>
             </button>
           ))}
@@ -514,22 +519,22 @@ function AddTransactionSheet({ onClose, onSave, accounts, currency }:
 
         {/* Description */}
         <input value={description} onChange={e => setDescription(e.target.value)}
-          placeholder="Description (optional)"
+          placeholder={i18n.t('budget.descriptionOptionalPlaceholder')}
           style={{ width: '100%', borderRadius: 14, padding: '12px 14px', fontSize: 14, background: 'var(--bg-primary)', border: '1px solid var(--border)', color: 'var(--text-primary)', outline: 'none', marginBottom: 12 }} />
 
         {/* Date + Account row */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 20 }}>
           <div>
-            <p style={{ fontSize: 11, color: 'var(--text-secondary)', marginBottom: 4 }}>Date</p>
+            <p style={{ fontSize: 11, color: 'var(--text-secondary)', marginBottom: 4 }}>{i18n.t('budget.date')}</p>
             <input type="date" value={date} onChange={e => setDate(e.target.value)}
               style={{ width: '100%', borderRadius: 12, padding: '9px 10px', fontSize: 13, background: 'var(--bg-primary)', border: '1px solid var(--border)', color: 'var(--text-primary)', outline: 'none' }} />
           </div>
           {accounts.length > 0 && (
             <div>
-              <p style={{ fontSize: 11, color: 'var(--text-secondary)', marginBottom: 4 }}>Account</p>
+              <p style={{ fontSize: 11, color: 'var(--text-secondary)', marginBottom: 4 }}>{i18n.t('budget.accountLabel')}</p>
               <select value={accountId} onChange={e => setAccountId(e.target.value)}
                 style={{ width: '100%', borderRadius: 12, padding: '9px 10px', fontSize: 13, background: 'var(--bg-primary)', border: '1px solid var(--border)', color: 'var(--text-primary)', outline: 'none' }}>
-                <option value="">Any</option>
+                <option value="">{i18n.t('budget.anyOption')}</option>
                 {accounts.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
               </select>
             </div>
@@ -542,7 +547,7 @@ function AddTransactionSheet({ onClose, onSave, accounts, currency }:
             background: 'linear-gradient(135deg, var(--accent-gold, #D4AF37) 0%, #B8935A 100%)',
             color: '#fff', fontWeight: 700, fontSize: 16, opacity: amount && parseFloat(amount) > 0 ? 1 : 0.5,
           }}>
-          Save Transaction
+          {i18n.t('budget.saveTransactionBtn')}
         </button>
       </motion.div>
     </>
@@ -556,6 +561,7 @@ function AddTransactionSheet({ onClose, onSave, accounts, currency }:
 function TransactionsTab({ txs, accounts, onDelete, onAdd, currency, currentMonth }:
   { txs: BudgetTransaction[]; accounts: Account[]; onDelete: (id: string) => void; onAdd: () => void; currency: string; currentMonth: Date }) {
 
+  const dateLocale = useDateFnsLocale();
   const [search, setSearch] = useState('');
   const [filterCat, setFilterCat] = useState<TxCategory | ''>('');
   const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'amount'>('newest');
@@ -568,7 +574,7 @@ function TransactionsTab({ txs, accounts, onDelete, onAdd, currency, currentMont
     let list = txs.filter(t => t.date >= monthStart && t.date <= monthEnd);
     if (search) {
       const q = search.toLowerCase();
-      list = list.filter(t => (t.description || '').toLowerCase().includes(q) || CATEGORIES[t.category]?.label.toLowerCase().includes(q));
+      list = list.filter(t => (t.description || '').toLowerCase().includes(q) || catLabel(t.category).toLowerCase().includes(q));
     }
     if (filterCat) list = list.filter(t => t.category === filterCat || (filterCat === 'groceries' && t.category === 'food'));
     if (sortBy === 'newest') list = [...list].sort((a, b) => b.date.localeCompare(a.date) || b.created_at.localeCompare(a.created_at));
@@ -591,9 +597,9 @@ function TransactionsTab({ txs, accounts, onDelete, onAdd, currency, currentMont
   function dateLabel(d: string) {
     const today = format(new Date(), 'yyyy-MM-dd');
     const yesterday = format(new Date(Date.now() - 86400000), 'yyyy-MM-dd');
-    if (d === today) return 'Today';
-    if (d === yesterday) return 'Yesterday';
-    return format(new Date(d + 'T00:00:00'), 'EEEE, d MMM');
+    if (d === today) return i18n.t('budget.today');
+    if (d === yesterday) return i18n.t('budget.yesterday');
+    return format(new Date(d + 'T00:00:00'), 'EEEE, d MMM', { locale: dateLocale });
   }
 
   function accountName(id?: string) {
@@ -606,23 +612,23 @@ function TransactionsTab({ txs, accounts, onDelete, onAdd, currency, currentMont
       <div style={{ padding: '12px 16px 0' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 14, padding: '8px 12px', marginBottom: 10 }}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search transactions..."
+          <input value={search} onChange={e => setSearch(e.target.value)} placeholder={i18n.t('budget.searchTransactionsPlaceholder')}
             style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', fontSize: 14, color: 'var(--text-primary)' }} />
         </div>
         <div style={{ display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 4 }} className="no-scrollbar">
-          {[{ label: 'All', val: '' }, ...CAT_KEYS.slice(0, 6).map(k => ({ label: CATEGORIES[k].emoji + ' ' + CATEGORIES[k].label, val: k }))].map(f => (
+          {[{ label: i18n.t('budget.allFilter'), val: '' }, ...CAT_KEYS.slice(0, 6).map(k => ({ label: CATEGORIES[k].emoji + ' ' + catLabel(k), val: k }))].map(f => (
             <button key={f.val} onClick={() => setFilterCat(f.val as TxCategory | '')}
               style={{ flexShrink: 0, padding: '5px 12px', borderRadius: 20, fontSize: 11, fontWeight: 500,
                 background: filterCat === f.val ? 'linear-gradient(135deg, var(--sage) 0%, #6B9462 100%)' : 'var(--bg-card)',
                 color: filterCat === f.val ? '#fff' : 'var(--text-secondary)', border: filterCat === f.val ? 'none' : '1px solid var(--border)' }}>
-              {f.label || 'All'}
+              {f.label || i18n.t('budget.allFilter')}
             </button>
           ))}
           <select value={sortBy} onChange={e => setSortBy(e.target.value as typeof sortBy)}
             style={{ flexShrink: 0, padding: '5px 10px', borderRadius: 20, fontSize: 11, background: 'var(--bg-card)', border: '1px solid var(--border)', color: 'var(--text-secondary)', outline: 'none' }}>
-            <option value="newest">Newest</option>
-            <option value="oldest">Oldest</option>
-            <option value="amount">By amount</option>
+            <option value="newest">{i18n.t('budget.sortNewest')}</option>
+            <option value="oldest">{i18n.t('budget.sortOldest')}</option>
+            <option value="amount">{i18n.t('budget.sortByAmount')}</option>
           </select>
         </div>
       </div>
@@ -630,7 +636,7 @@ function TransactionsTab({ txs, accounts, onDelete, onAdd, currency, currentMont
       {/* Transaction groups */}
       <div style={{ padding: '8px 16px 0' }}>
         {groups.length === 0 ? (
-          <p style={{ textAlign: 'center', color: 'var(--text-secondary)', fontSize: 14, padding: '40px 0' }}>No transactions found</p>
+          <p style={{ textAlign: 'center', color: 'var(--text-secondary)', fontSize: 14, padding: '40px 0' }}>{i18n.t('budget.noTransactionsFound')}</p>
         ) : (
           groups.map(([date, items]) => (
             <div key={date} style={{ marginBottom: 16 }}>
@@ -656,10 +662,10 @@ function TransactionsTab({ txs, accounts, onDelete, onAdd, currency, currentMont
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                            {tx.description || meta.label}
+                            {tx.description || catLabel(tx.category)}
                           </p>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
-                            <span style={{ fontSize: 10, background: meta.color + '20', color: meta.color, borderRadius: 8, padding: '2px 6px', fontWeight: 600 }}>{meta.label}</span>
+                            <span style={{ fontSize: 10, background: meta.color + '20', color: meta.color, borderRadius: 8, padding: '2px 6px', fontWeight: 600 }}>{catLabel(tx.category)}</span>
                             {acc && <span style={{ fontSize: 10, color: 'var(--text-secondary)' }}>{acc}</span>}
                           </div>
                         </div>
@@ -734,7 +740,7 @@ function detectBankName(headers: string[]): string {
   const h = headers.map(s => s.toLowerCase());
   if (h.some(x => x.includes('emoji') || x.includes('local amount'))) return 'Monzo';
   if (h.some(x => x.includes('started date') || x.includes('completed date'))) return 'Revolut';
-  return 'your bank';
+  return i18n.t('budget.yourBank');
 }
 
 function normaliseDate(raw: string): string {
@@ -921,15 +927,16 @@ function CSVImportCard({ onImport, currency }: { onImport: (rows: ParsedRow[], b
       extractTextFromPDF(file).then(text => {
         const data = parsePDFText(text);
         if (data.length === 0) {
-          setError('No transactions found in PDF. Make sure it is a text-based bank statement (not a scanned image).');
+          setError(i18n.t('budget.pdfNoTransactions'));
           setStage('idle');
           return;
         }
         setParsed(data);
         setBankName('PDF Statement');
         setStage('preview');
-      }).catch(() => {
-        setError('Failed to read PDF. Make sure the file is a valid PDF bank statement.');
+      }).catch((err: unknown) => {
+        console.error('[BudgetScreen] PDF parse error:', err);
+        setError(i18n.t('budget.pdfReadFailed', { msg: getErrorMessage(err) }));
         setStage('idle');
       });
     } else {
@@ -939,16 +946,16 @@ function CSVImportCard({ onImport, currency }: { onImport: (rows: ParsedRow[], b
         try {
           const text = ev.target?.result as string;
           const rows = parseCSVText(text);
-          if (rows.length < 2) { setError('CSV has no data rows. Please check the file.'); return; }
+          if (rows.length < 2) { setError(i18n.t('budget.csvNoDataRows')); return; }
           const fmt = detectBankFormat(rows[0]);
           const name = detectBankName(rows[0]);
           const data = parseCSVRows(rows, fmt);
-          if (data.length === 0) { setError('No valid transactions found. Make sure the file has Date, Description, and Amount columns.'); return; }
+          if (data.length === 0) { setError(i18n.t('budget.csvNoValidTransactions')); return; }
           setParsed(data);
           setBankName(name);
           setStage('preview');
         } catch {
-          setError('Failed to parse CSV. Please check the file format.');
+          setError(i18n.t('budget.csvParseFailed'));
         }
       };
       reader.readAsText(file);
@@ -963,7 +970,7 @@ function CSVImportCard({ onImport, currency }: { onImport: (rows: ParsedRow[], b
 
   function handleImport() {
     onImport(parsed, bankName);
-    setDoneMsg(`✅ ${parsed.length} transaction${parsed.length !== 1 ? 's' : ''} imported from ${bankName}`);
+    setDoneMsg(i18n.t('budget.importSuccess', { count: parsed.length, bank: bankName }));
     setStage('done');
     setTimeout(() => { setStage('idle'); setParsed([]); setDoneMsg(''); }, 5000);
   }
@@ -975,8 +982,8 @@ function CSVImportCard({ onImport, currency }: { onImport: (rows: ParsedRow[], b
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
         <div style={{ width: 40, height: 40, borderRadius: 14, background: 'var(--sage-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>📂</div>
         <div style={{ flex: 1 }}>
-          <p style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-primary)' }}>Import Bank Statement</p>
-          <p style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Upload CSV or PDF — we'll detect transactions automatically</p>
+          <p style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-primary)' }}>{i18n.t('budget.importBankStatement')}</p>
+          <p style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{i18n.t('budget.uploadCsvOrPdfDesc')}</p>
         </div>
       </div>
 
@@ -991,7 +998,7 @@ function CSVImportCard({ onImport, currency }: { onImport: (rows: ParsedRow[], b
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" style={{ animation: 'spin 0.8s linear infinite' }}>
             <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
           </svg>
-          <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Reading PDF...</p>
+          <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{i18n.t('budget.readingPdf')}</p>
         </div>
       )}
 
@@ -1001,8 +1008,8 @@ function CSVImportCard({ onImport, currency }: { onImport: (rows: ParsedRow[], b
           <button onClick={() => fileRef.current?.click()}
             style={{ width: '100%', borderRadius: 18, border: '2px dashed #8FA888', background: 'var(--sage-soft)', padding: '22px 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
             <span style={{ fontSize: 32 }}>📤</span>
-            <span style={{ fontSize: 14, fontWeight: 700, color: '#4A7A58' }}>Choose CSV or PDF File</span>
-            <span style={{ fontSize: 11, color: '#6B9462' }}>Bank statement from any bank</span>
+            <span style={{ fontSize: 14, fontWeight: 700, color: '#4A7A58' }}>{i18n.t('budget.chooseCsvOrPdf')}</span>
+            <span style={{ fontSize: 11, color: '#6B9462' }}>{i18n.t('budget.bankStatementAnyBank')}</span>
           </button>
           <input ref={fileRef} type="file" accept=".csv,text/csv,.pdf,application/pdf" onChange={handleFile} style={{ display: 'none' }} />
 
@@ -1013,7 +1020,7 @@ function CSVImportCard({ onImport, currency }: { onImport: (rows: ParsedRow[], b
             <span style={{ fontSize: 11, background: 'rgba(196,120,138,0.12)', color: 'var(--accent)', borderRadius: 8, padding: '3px 8px', fontWeight: 600 }}>PDF</span>
           </div>
           <p style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 8, textAlign: 'center', lineHeight: 1.5 }}>
-            Works with <strong>Monzo</strong>, <strong>Revolut</strong>, <strong>Barclays</strong>, <strong>HSBC</strong>, <strong>Lloyds</strong>, <strong>NatWest</strong>, BRD, BCR and most banks
+            {i18n.t('budget.worksWithBanksPrefix')} <strong>Monzo</strong>, <strong>Revolut</strong>, <strong>Barclays</strong>, <strong>HSBC</strong>, <strong>Lloyds</strong>, <strong>NatWest</strong>, BRD, BCR {i18n.t('budget.worksWithBanksSuffix')}
           </p>
         </>
       )}
@@ -1022,11 +1029,11 @@ function CSVImportCard({ onImport, currency }: { onImport: (rows: ParsedRow[], b
         <>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
             <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>
-              {parsed.length} transactions from {bankName}
+              {i18n.t('budget.transactionsFromBank', { count: parsed.length, bank: bankName })}
             </p>
             <button onClick={() => { setStage('idle'); setParsed([]); }}
               style={{ fontSize: 11, color: 'var(--text-secondary)', background: 'none', border: 'none', cursor: 'pointer' }}>
-              ✕ Cancel
+              ✕ {i18n.t('budget.cancel')}
             </button>
           </div>
 
@@ -1034,7 +1041,7 @@ function CSVImportCard({ onImport, currency }: { onImport: (rows: ParsedRow[], b
           <div style={{ borderRadius: 14, overflow: 'hidden', border: '1px solid var(--border)', marginBottom: 14 }}>
             {/* Table header */}
             <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr 64px 90px', background: 'var(--bg-primary)', padding: '7px 10px', gap: 6 }}>
-              {['Date', 'Description', 'Amount', 'Category'].map(h => (
+              {[i18n.t('budget.date'), i18n.t('budget.description'), i18n.t('budget.amount'), i18n.t('budget.category')].map(h => (
                 <span key={h} style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</span>
               ))}
             </div>
@@ -1051,14 +1058,14 @@ function CSVImportCard({ onImport, currency }: { onImport: (rows: ParsedRow[], b
                   <select value={row.category} onChange={e => updateCategory(row.id, e.target.value as TxCategory)}
                     style={{ fontSize: 10, borderRadius: 8, padding: '3px 4px', background: 'var(--bg-primary)', border: '1px solid var(--border)', color: 'var(--text-primary)', outline: 'none' }}>
                     {CAT_KEYS.map(k => (
-                      <option key={k} value={k}>{CATEGORIES[k].emoji} {CATEGORIES[k].label}</option>
+                      <option key={k} value={k}>{CATEGORIES[k].emoji} {catLabel(k)}</option>
                     ))}
                   </select>
                 </div>
               ))}
               {parsed.length > 50 && (
                 <div style={{ padding: '8px 10px', fontSize: 11, color: 'var(--text-secondary)', textAlign: 'center', background: 'var(--bg-primary)', borderTop: '1px solid var(--border)' }}>
-                  +{parsed.length - 50} more rows (all will be imported)
+                  {i18n.t('budget.moreRowsSuffix', { count: parsed.length - 50 })}
                 </div>
               )}
             </div>
@@ -1066,7 +1073,7 @@ function CSVImportCard({ onImport, currency }: { onImport: (rows: ParsedRow[], b
 
           <button onClick={handleImport}
             style={{ width: '100%', height: 48, borderRadius: 14, border: 'none', background: 'linear-gradient(135deg, #8FA888 0%, #4A7A58 100%)', color: '#fff', fontWeight: 700, fontSize: 15, cursor: 'pointer', boxShadow: '0 4px 12px rgba(74,122,88,0.3)' }}>
-            📥 Import {parsed.length} Transaction{parsed.length !== 1 ? 's' : ''}
+            {i18n.t('budget.importBtn', { count: parsed.length })}
           </button>
         </>
       )}
@@ -1081,6 +1088,7 @@ function CSVImportCard({ onImport, currency }: { onImport: (rows: ParsedRow[], b
 function AccountsTab({ accounts, txs, onSaveAccount, onDeleteAccount, onCSVImport, currency }:
   { accounts: Account[]; txs: BudgetTransaction[]; onSaveAccount: (a: Omit<Account, 'id' | 'createdAt'>) => void; onDeleteAccount: (id: string) => void; onCSVImport: (rows: ParsedRow[], bankName: string) => void; currency: string }) {
 
+  const dateLocale = useDateFnsLocale();
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState('');
   const [accType, setAccType] = useState<Account['type']>('current');
@@ -1113,10 +1121,10 @@ function AccountsTab({ accounts, txs, onSaveAccount, onDeleteAccount, onCSVImpor
       {/* Manual Accounts */}
       <div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-          <p style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-primary)' }}>My Accounts</p>
+          <p style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-primary)' }}>{i18n.t('budget.myAccounts')}</p>
           <button onClick={() => setShowForm(f => !f)}
             style={{ height: 34, padding: '0 14px', borderRadius: 12, border: 'none', background: 'linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%)', color: '#fff', fontWeight: 600, fontSize: 13 }}>
-            + Add
+            {i18n.t('budget.addAccountBtn')}
           </button>
         </div>
 
@@ -1126,7 +1134,7 @@ function AccountsTab({ accounts, txs, onSaveAccount, onDeleteAccount, onCSVImpor
             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
               style={{ overflow: 'hidden', marginBottom: 14 }}>
               <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 20, padding: '16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-                <input value={name} onChange={e => setName(e.target.value)} placeholder="Account name"
+                <input value={name} onChange={e => setName(e.target.value)} placeholder={i18n.t('budget.accountNamePlaceholder')}
                   style={{ borderRadius: 12, padding: '10px 12px', fontSize: 14, background: 'var(--bg-primary)', border: '1px solid var(--border)', color: 'var(--text-primary)', outline: 'none' }} />
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 6 }}>
@@ -1139,13 +1147,13 @@ function AccountsTab({ accounts, txs, onSaveAccount, onDeleteAccount, onCSVImpor
                       textAlign: 'center',
                     }}>
                       <div style={{ fontSize: 18, marginBottom: 2 }}>{ACCOUNT_TYPE_ICONS[t]}</div>
-                      {t.charAt(0).toUpperCase() + t.slice(1)}
+                      {i18n.t(`budget.accountType${t.charAt(0).toUpperCase()}${t.slice(1)}`)}
                     </button>
                   ))}
                 </div>
 
                 <input value={startingBalance} onChange={e => setStartingBalance(e.target.value)}
-                  type="number" inputMode="decimal" placeholder="Starting balance (£)"
+                  type="number" inputMode="decimal" placeholder={i18n.t('budget.startingBalancePlaceholder')}
                   style={{ borderRadius: 12, padding: '10px 12px', fontSize: 14, background: 'var(--bg-primary)', border: '1px solid var(--border)', color: 'var(--text-primary)', outline: 'none' }} />
 
                 <div style={{ display: 'flex', gap: 8 }}>
@@ -1159,7 +1167,7 @@ function AccountsTab({ accounts, txs, onSaveAccount, onDeleteAccount, onCSVImpor
 
                 <button onClick={handleSave} disabled={!name.trim()}
                   style={{ height: 46, borderRadius: 14, border: 'none', background: 'linear-gradient(135deg, var(--lavender) 0%, #9B8CBD 100%)', color: '#fff', fontWeight: 600, fontSize: 14, opacity: name.trim() ? 1 : 0.5 }}>
-                  Save Account
+                  {i18n.t('budget.saveAccountBtn')}
                 </button>
               </div>
             </motion.div>
@@ -1167,7 +1175,7 @@ function AccountsTab({ accounts, txs, onSaveAccount, onDeleteAccount, onCSVImpor
         </AnimatePresence>
 
         {accounts.length === 0 && (
-          <p style={{ textAlign: 'center', color: 'var(--text-secondary)', fontSize: 13, padding: '20px 0' }}>No accounts added yet</p>
+          <p style={{ textAlign: 'center', color: 'var(--text-secondary)', fontSize: 13, padding: '20px 0' }}>{i18n.t('budget.noAccountsYet')}</p>
         )}
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -1184,7 +1192,7 @@ function AccountsTab({ accounts, txs, onSaveAccount, onDeleteAccount, onCSVImpor
                     <p style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-primary)' }}>{acc.name}</p>
                     {last && (
                       <p style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 2 }}>
-                        Last: {last.description || CATEGORIES[last.category]?.label} · {format(new Date(last.date + 'T00:00:00'), 'd MMM')}
+                        {i18n.t('budget.lastTxPrefix', { description: last.description || catLabel(last.category), date: format(new Date(last.date + 'T00:00:00'), 'd MMM', { locale: dateLocale }) })}
                       </p>
                     )}
                   </div>
@@ -1194,7 +1202,7 @@ function AccountsTab({ accounts, txs, onSaveAccount, onDeleteAccount, onCSVImpor
                     </p>
                     <button onClick={() => onDeleteAccount(acc.id)}
                       style={{ fontSize: 11, color: 'var(--text-secondary)', background: 'none', border: 'none', cursor: 'pointer', marginTop: 2 }}>
-                      Delete
+                      {i18n.t('budget.delete')}
                     </button>
                   </div>
                 </div>
@@ -1240,9 +1248,8 @@ function BudgetContent() {
     saveTx(user.id, updated);
 
     // Confirmation toast
-    const meta = CATEGORIES[data.category] || CATEGORIES.other;
     const sign = data.type === 'income' ? '+' : '-';
-    setConfirmMsg(`${sign}${formatCurrency(data.amount, data.currency)} added to ${meta.label}`);
+    setConfirmMsg(i18n.t('budget.addedToCategory', { sign, amount: formatCurrency(data.amount, data.currency), category: catLabel(data.category) }));
     setTimeout(() => setConfirmMsg(null), 3000);
 
     // Over-budget check (expenses only)
@@ -1257,7 +1264,7 @@ function BudgetContent() {
           .filter(t => (t.category === normCat) || (normCat === 'groceries' && t.category === 'food'))
           .reduce((s, t) => s + t.amount, 0);
         if (catSpent > limit) {
-          setOverBudgetAlert(`⚠️ You've exceeded your ${CATEGORIES[normCat].label} budget!`);
+          setOverBudgetAlert(i18n.t('budget.exceededBudgetAlert', { category: catLabel(normCat) }));
           setTimeout(() => setOverBudgetAlert(null), 5000);
         }
       }
@@ -1302,7 +1309,7 @@ function BudgetContent() {
     const updated = [...newTxs, ...txs];
     setTxs(updated);
     saveTx(user.id, updated);
-    setConfirmMsg(`✅ ${rows.length} transactions imported from ${bankName}`);
+    setConfirmMsg(i18n.t('budget.importSuccess', { count: rows.length, bank: bankName }));
     setTimeout(() => setConfirmMsg(null), 5000);
   }
 
@@ -1319,9 +1326,9 @@ function BudgetContent() {
   }
 
   const tabs: { key: BudgetTab; label: string }[] = [
-    { key: 'overview', label: 'Overview' },
-    { key: 'transactions', label: 'Transactions' },
-    { key: 'accounts', label: 'Accounts' },
+    { key: 'overview', label: i18n.t('budget.tabOverview') },
+    { key: 'transactions', label: i18n.t('budget.tabTransactions') },
+    { key: 'accounts', label: i18n.t('budget.tabAccounts') },
   ];
 
   return (
@@ -1403,9 +1410,9 @@ export function BudgetScreen() {
   return (
     <Layout background="url('/bg-budget.jpg') center/cover no-repeat">
       <div className="px-5 pt-5 pb-2">
-        <h1 style={{ fontSize: 32, fontWeight: 300, color: '#3D2B1F', letterSpacing: '-0.01em', margin: 0 }}>Budget</h1>
+        <h1 style={{ fontSize: 32, fontWeight: 300, color: '#3D2B1F', letterSpacing: '-0.01em', margin: 0 }}>{i18n.t('budget.title')}</h1>
       </div>
-      <ProGate feature="Budget tracker — track spending, set limits & manage accounts">
+      <ProGate feature={i18n.t('budget.proGateFeature')}>
         <BudgetContent />
       </ProGate>
     </Layout>

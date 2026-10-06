@@ -26,8 +26,8 @@ export function Modal({ open, onClose, title, children, fullScreen }: ModalProps
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-end justify-center"
-          style={{ maxWidth: 430, margin: '0 auto' }}
+          className="fixed inset-0 flex items-end justify-center"
+          style={{ maxWidth: 430, margin: '0 auto', zIndex: 10000 }}
           onClick={onClose}
         >
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />

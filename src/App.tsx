@@ -2,7 +2,10 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { AppProvider } from './context/AppContext';
 import { AIConsentProvider } from './context/AIConsentContext';
+import { NotificationPermissionProvider } from './context/NotificationPermissionContext';
 import { useSubscription } from './hooks/useSubscription';
+import { useNotificationLifecycle } from './hooks/useNotificationLifecycle';
+import { useNotificationDeepLinkRouter } from './hooks/useNotificationDeepLink';
 import { AuthScreen } from './screens/AuthScreen';
 import { DashboardScreen } from './screens/DashboardScreen';
 import { PaywallScreen } from './screens/PaywallScreen';
@@ -20,6 +23,8 @@ import './i18n';
 function AppRoutes() {
   const { user, loading } = useAuth();
   const { hasAccess } = useSubscription();
+  useNotificationLifecycle();
+  useNotificationDeepLinkRouter();
 
   console.log('[AppRoutes] render — loading:', loading, 'user:', user?.id ?? null, 'hasAccess:', hasAccess);
 
@@ -63,7 +68,9 @@ export default function App() {
       <AuthProvider>
         <AIConsentProvider>
           <AppProvider>
-            <AppRoutes />
+            <NotificationPermissionProvider>
+              <AppRoutes />
+            </NotificationPermissionProvider>
           </AppProvider>
         </AIConsentProvider>
       </AuthProvider>

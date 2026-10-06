@@ -15,7 +15,8 @@
     "newAccount": "New account?",
     "alreadyHaveAccount": "Already have an account?",
     "fillEmailAndPassword": "Please enter your email and password.",
-    "signInWithApple": "Sign in with Apple"
+    "signInWithApple": "Sign in with Apple",
+    "emailPlaceholder": "Email"
   },
   "nav": {
     "home": "Home",
@@ -24,7 +25,8 @@
     "kitchen": "Kitchen",
     "budget": "Budget",
     "selfcare": "Self-Care",
-    "settings": "Settings"
+    "settings": "Settings",
+    "workout": "Workout"
   },
   "dashboard": {
     "goodMorning": "Good morning",
@@ -74,7 +76,28 @@
     "addEvent": "Add Event",
     "eventTitle": "Event title",
     "time": "Time",
-    "color": "Color"
+    "color": "Color",
+    "thisWeek": "This week",
+    "doneOfTotal": "{{done}}/{{total}} done",
+    "nothingScheduled": "Nothing scheduled — tap + Add Event",
+    "planMom": "Mom",
+    "planKids": "Kids",
+    "planFamily": "Family",
+    "timeOptional": "Time (optional)",
+    "setReminder": "Set Reminder",
+    "notifyAt": "Notify at {{time}} on {{date}}",
+    "reminderNeedsDateTime": "Requires date & time to be set",
+    "toggleReminder": "Toggle reminder",
+    "addToPhoneCalendar": "Add to Phone Calendar",
+    "reminderSet": "Reminder set",
+    "date": "Date",
+    "allDay": "All day",
+    "eventTitlePlaceholder": "What's happening?",
+    "addEventFor": "+ Add event for {{date}}",
+    "moreCount": "+{{count}} more",
+    "monthView": "Month",
+    "weekView": "Week",
+    "dayView": "Day"
   },
   "kids": {
     "title": "Kids",
@@ -126,7 +149,44 @@
     "saveStory": "Save Story",
     "ageToddler": "Toddler (2-4)",
     "ageYoung": "Young Child (5-8)",
-    "ageOlder": "Older Child (9-12)"
+    "ageOlder": "Older Child (9-12)",
+    "weekOfFour": "📅 Week {{week}} of 4",
+    "resetsMondays": "Resets Mondays",
+    "lunchBoxTitle": "🍱 Lunch Box",
+    "itemsPacked": "{{packed}}/{{total}} packed",
+    "addCustomItemPlaceholder": "Add custom item...",
+    "addItemsFromPresets": "Add items from presets above",
+    "swimmingPlaceholder": "Swimming",
+    "sportsCentrePlaceholder": "Sports Centre",
+    "lunchPresets": [
+      "🥪 Sandwich",
+      "🍎 Fruit",
+      "💧 Water",
+      "🍪 Snack",
+      "🥕 Veggies",
+      "🧃 Juice",
+      "🧀 Cheese",
+      "🥜 Nuts"
+    ],
+    "ageGroupBaby": "Baby (0-2y)",
+    "ageGroupToddlerFull": "Toddler (2-4y)",
+    "ageGroupPreschool": "Pre-School (4-7y)",
+    "ageGroupSchool": "School Age (7-10y)",
+    "selectKid": "Select a child",
+    "couldNotParseMealPlan": "Could not parse meal plan.",
+    "couldNotGenerateMealPlan": "Could not generate meal plan.",
+    "pleaseTryAgain": "Please try again.",
+    "generatingEllipsis": "⏳ Generating...",
+    "newMenu": "🔄 New Menu",
+    "tapGenerateMealPlan": "Tap Generate to create a personalised 7-day meal plan",
+    "generateMealPlanBtn": "🔄 Generate Meal Plan",
+    "ingredients": "Ingredients",
+    "howToPrepare": "How to prepare",
+    "textureLabel": "Texture",
+    "snacks": "Snacks",
+    "activityIdeasTab": "Activity Ideas",
+    "mealPlansTab": "🍽️ Meal Plans",
+    "lunchboxTab": "Lunch Box"
   },
   "kitchen": {
     "title": "Kitchen",
@@ -168,7 +228,75 @@
     "enterIngredients": "Enter the ingredients you have...",
     "suggestRecipes": "Suggest recipes",
     "recipeSuggestions": "Recipe suggestions",
-    "difficulty": "Difficulty"
+    "difficulty": "Difficulty",
+    "timerDone": "Done! ✓",
+    "reset": "Reset",
+    "categories": {
+      "produce": "Produce",
+      "meatFish": "Meat & Fish",
+      "dairy": "Dairy",
+      "pantry": "Pantry",
+      "bakery": "Bakery",
+      "other": "Other"
+    },
+    "pause": "⏸ Pause",
+    "start": "▶ Start",
+    "recipeComplete": "Recipe Complete!",
+    "howDidItGo": "How did it go?",
+    "stepXofY": "Step {{current}} of {{total}}",
+    "markDone": "Mark done",
+    "doneCheck": "✓ Done",
+    "finish": "🎉 Finish",
+    "ingredientsTab": "🛒 Ingredients",
+    "stepsTab": "📋 Steps",
+    "stepsTabWithProgress": "📋 Steps ({{done}}/{{total}})",
+    "cookTab": "👨‍🍳 Cook",
+    "chefsTip": "Chef's tip:",
+    "addAllToShoppingList": "🛒 Add all to shopping list",
+    "startCooking": "👨‍🍳 Start Cooking",
+    "enterCookMode": "👨‍🍳 Enter Cook Mode",
+    "saveRecipeBtn": "Save Recipe ♡",
+    "generateWeeklyMenuTitle": "Generate Weekly Menu ✨",
+    "aiPoweredMealPlanDesc": "AI-powered meal plan for your family",
+    "setPreferencesGenerate": "Set preferences & generate",
+    "couldNotGenerateMealPlan": "Could not generate meal plan. Please try again.",
+    "addingEllipsis": "Adding…",
+    "addIngredientsToShoppingList": "🛒 Add ingredients to shopping list",
+    "mealPlanPreferencesTitle": "Meal Plan Preferences",
+    "numberOfPeople": "Number of people",
+    "dietPreference": "Diet preference",
+    "cuisineLabel": "Cuisine",
+    "generateMenuBtn": "Generate Menu ✨",
+    "findingRecipeEllipsis": "Finding recipe…",
+    "dietAny": "Any",
+    "dietVegetarian": "Vegetarian",
+    "dietVegan": "Vegan",
+    "dietGlutenFree": "Gluten-free",
+    "dietDairyFree": "Dairy-free",
+    "cuisineAny": "Any",
+    "cuisineBritish": "British",
+    "cuisineItalian": "Italian",
+    "cuisineMediterranean": "Mediterranean",
+    "cuisineAsian": "Asian",
+    "cuisineMexican": "Mexican",
+    "itemsOfTotal": "{{bought}} of {{total}} items",
+    "generateFromMealsBtn": "Generate from this week's meals ✨",
+    "addItemPlaceholder": "Add item...",
+    "noItemsYet": "No items yet — add one above or generate from meals",
+    "boughtCount": "Bought ({{count}})",
+    "clearBoughtBtn": "Clear bought",
+    "findRecipeTitle": "Find a Recipe ✨",
+    "whatsInFridge": "What do you have in the fridge?",
+    "ingredientsPlaceholder": "e.g. chicken, rice, tomatoes...",
+    "servesLabel": "Serves:",
+    "generateRecipeBtn": "Generate Recipe",
+    "couldNotGenerateRecipe": "Could not generate recipe. Please try again.",
+    "viewFullRecipe": "View Full Recipe",
+    "cookNowBtn": "👨‍🍳 Cook Now",
+    "savedCheckmark": "Saved ✓",
+    "savedRecipesCount": "Saved Recipes ({{count}})",
+    "viewBtn": "View",
+    "cookBtn": "Cook"
   },
   "budget": {
     "title": "Budget",
@@ -196,7 +324,85 @@
     "cancel": "Cancel",
     "delete": "Delete",
     "monthlyLimit": "Monthly limit",
-    "limitPlaceholder": "Monthly budget (e.g. 2500)..."
+    "limitPlaceholder": "Monthly budget (e.g. 2500)...",
+    "totalSpent": "Total spent",
+    "proGateFeature": "Budget tracker — track spending, set limits & manage accounts",
+    "categories": {
+      "groceries": "Groceries",
+      "housing": "Housing",
+      "transport": "Transport",
+      "eatingOut": "Eating out",
+      "shopping": "Shopping",
+      "kids": "Kids",
+      "health": "Health",
+      "entertainment": "Entertainment",
+      "savings": "Savings",
+      "other": "Other"
+    },
+    "resetsMonthlyNote": "ℹ️ Budget resets on the 1st of each month",
+    "incomeLabel": "INCOME",
+    "expensesLabel": "EXPENSES",
+    "enterMonthlyBudgetPlaceholder": "Enter monthly budget...",
+    "setMonthlyBudget": "+ Set monthly budget",
+    "monthlyBudgetPrefix": "✏️ Monthly budget: {{amount}}",
+    "totalBudgetLabel": "Total budget",
+    "overBudgetBy": "⚠️ Over budget by {{amount}}",
+    "remainingSuffix": "{{amount}} remaining",
+    "biggestExpense": "Biggest expense",
+    "dailyAverage": "Daily average",
+    "perDay": "per day",
+    "projected": "Projected",
+    "daysLeftSuffix": "{{days}}d left",
+    "spendingByCategory": "Spending by Category",
+    "budgetByCategoryHeading": "Budget by Category",
+    "setCategoryLimitPlaceholder": "Set {{category}} limit...",
+    "descriptionOptionalPlaceholder": "Description (optional)",
+    "accountLabel": "Account",
+    "anyOption": "Any",
+    "saveTransactionBtn": "Save Transaction",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "searchTransactionsPlaceholder": "Search transactions...",
+    "allFilter": "All",
+    "sortNewest": "Newest",
+    "sortOldest": "Oldest",
+    "sortByAmount": "By amount",
+    "noTransactionsFound": "No transactions found",
+    "pdfNoTransactions": "No transactions found in PDF. Make sure it is a text-based bank statement (not a scanned image).",
+    "pdfReadFailed": "Failed to read PDF: {{msg}}",
+    "csvNoDataRows": "CSV has no data rows. Please check the file.",
+    "csvNoValidTransactions": "No valid transactions found. Make sure the file has Date, Description, and Amount columns.",
+    "csvParseFailed": "Failed to parse CSV. Please check the file format.",
+    "importSuccess_one": "✅ {{count}} transaction imported from {{bank}}",
+    "importSuccess_other": "✅ {{count}} transactions imported from {{bank}}",
+    "importBankStatement": "Import Bank Statement",
+    "uploadCsvOrPdfDesc": "Upload CSV or PDF — we'll detect transactions automatically",
+    "readingPdf": "Reading PDF...",
+    "chooseCsvOrPdf": "Choose CSV or PDF File",
+    "bankStatementAnyBank": "Bank statement from any bank",
+    "worksWithBanksPrefix": "Works with",
+    "worksWithBanksSuffix": "and most banks",
+    "transactionsFromBank": "{{count}} transactions from {{bank}}",
+    "moreRowsSuffix": "+{{count}} more rows (all will be imported)",
+    "importBtn_one": "📥 Import {{count}} Transaction",
+    "importBtn_other": "📥 Import {{count}} Transactions",
+    "myAccounts": "My Accounts",
+    "addAccountBtn": "+ Add",
+    "accountNamePlaceholder": "Account name",
+    "accountTypeCash": "Cash",
+    "accountTypeCurrent": "Current",
+    "accountTypeSavings": "Savings",
+    "accountTypeCredit": "Credit",
+    "startingBalancePlaceholder": "Starting balance (£)",
+    "saveAccountBtn": "Save Account",
+    "noAccountsYet": "No accounts added yet",
+    "lastTxPrefix": "Last: {{description}} · {{date}}",
+    "yourBank": "your bank",
+    "addedToCategory": "{{sign}}{{amount}} added to {{category}}",
+    "exceededBudgetAlert": "⚠️ You've exceeded your {{category}} budget!",
+    "tabOverview": "Overview",
+    "tabTransactions": "Transactions",
+    "tabAccounts": "Accounts"
   },
   "selfcare": {
     "title": "Self-Care",
@@ -358,7 +564,447 @@
       "Nourish your body, mind and soul 🍃",
       "You are the heart of your home 💗",
       "Celebrate how far you have come 🥂"
-    ]
+    ],
+    "wellnessThisWeek": "This week",
+    "tapToAdd": "Tap any card to add it to your personal list",
+    "treatmentSteps": {
+      "bath": [
+        "Fill the tub with warm water (37–39°C — not too hot)",
+        "Add 2 cups Epsom salt + a few drops of lavender essential oil",
+        "Optional: add a tablespoon of coconut oil for extra skin softness",
+        "Soak for 15–20 min — let muscles fully relax",
+        "Pat dry gently, then apply body lotion while skin is still slightly damp"
+      ],
+      "claywrap": [
+        "Mix kaolin or bentonite clay with warm water to a smooth paste",
+        "Apply a generous, even layer over body — avoid face and neck",
+        "Wrap loosely in cling film or a warm towel to lock in heat",
+        "Leave on for 20–25 min while you rest",
+        "Rinse off in the shower, then pat dry and moisturise well"
+      ],
+      "scrub": [
+        "Wet your skin in the shower with warm water",
+        "Take a generous amount of coffee or sugar scrub in your hands",
+        "Massage in circular motions starting from feet, moving upward",
+        "Pay extra attention to knees, elbows, and heels",
+        "Rinse thoroughly, then apply body oil or moisturiser immediately"
+      ],
+      "roseoil": [
+        "Warm a few drops of rose hip oil between your palms",
+        "Start at shoulders — use long, sweeping strokes down the arms",
+        "Work on the stomach in slow clockwise circles",
+        "Massage legs from ankle to thigh with firm upward pressure",
+        "Finish by gently pressing palms over your décolletage for 30s"
+      ],
+      "facesteam": [
+        "Boil water and pour into a bowl — add chamomile or rosemary if you have it",
+        "Cleanse your face thoroughly before steaming",
+        "Drape a towel over your head and lean over the bowl",
+        "Keep face 20–30 cm from the water — steam for 8–10 min",
+        "Pat dry, apply a toner, then follow with your serum and moisturiser"
+      ],
+      "coldplunge": [
+        "Start with a warm shower to open pores and relax muscles",
+        "Gradually turn the temperature to cold over 30–60 seconds",
+        "Focus on steady breathing — inhale deeply, exhale slowly",
+        "Stay under cold water for 2–3 min (build up to 5 min over time)",
+        "Finish, towel off quickly, and do light movement to rewarm"
+      ],
+      "greenteamask": [
+        "Mix 1 tbsp matcha or green tea powder with plain yoghurt or honey",
+        "Cleanse skin, then apply mask evenly to face and neck",
+        "Optionally apply a thin layer to arms or chest as an antioxidant boost",
+        "Leave on for 15–20 min — relax and avoid talking",
+        "Rinse with lukewarm water, follow with toner and moisturiser"
+      ],
+      "meditation": [
+        "Find a quiet spot — sit or lie down comfortably",
+        "Close your eyes and take 5 deep breaths: 4 sec in, 4 sec out",
+        "Body scan: mentally relax each body part from toes to crown",
+        "Focus on your breath — when thoughts come, gently return to breathing",
+        "End with 3 gratitude thoughts, then slowly open your eyes"
+      ]
+    },
+    "howTo": "How to",
+    "addToMyTreatments": "+ Add to My Treatments",
+    "alreadyInList": "✓ Already in your list",
+    "myTreatments": "My Treatments",
+    "everyDaySuffix": "Every {{day}}",
+    "timesDoneSuffix": "{{count}}× done",
+    "days": {
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday"
+    },
+    "routineNamePlaceholder": "Routine name (e.g. Lunchtime reset)",
+    "addStepPlaceholder": "Add a step...",
+    "morningAM": "Morning (AM)",
+    "eveningPM": "Evening (PM)",
+    "doneCountSuffix": "{{done}}/{{total}} done",
+    "productPlaceholderCeraVe": "e.g. CeraVe",
+    "productPlaceholderLRP": "e.g. La Roche-Posay",
+    "legendFullRoutine": "🟢 Full routine",
+    "legendPartial": "🟡 Partial",
+    "legendMissed": "⚪ Missed",
+    "getPersonalisedAdvice": "Get personalised skincare advice ✨",
+    "skinTypeLabel": "Skin type",
+    "concernsLabel": "Concerns",
+    "gettingAdvice": "Getting advice...",
+    "getAdviceBtn": "Get Advice",
+    "myProducts": "My Products",
+    "productNamePlaceholder": "Product name",
+    "productStepPlaceholder": "Step (e.g. Moisturiser)",
+    "addProductBtn": "Add Product",
+    "tapToAddProducts": "Tap + to add your products",
+    "concernHydration": "Hydration",
+    "concernBrightening": "Brightening",
+    "workoutTrackerTitle": "Workout Tracker",
+    "workoutsThisWeek_one": "{{count}} workout this week · {{mins}} min total",
+    "workoutsThisWeek_other": "{{count}} workouts this week · {{mins}} min total",
+    "logThisWorkout": "Log this workout",
+    "durationMinPlaceholder": "Duration (min)",
+    "logCheckBtn": "Log ✓",
+    "notesOptionalPlaceholder": "Notes (optional)",
+    "todayLabel": "Today",
+    "workoutStrength": "Strength",
+    "workoutCardio": "Cardio",
+    "workoutYoga": "Yoga",
+    "workoutHiit": "HIIT",
+    "workoutWalking": "Walking",
+    "workoutSwimming": "Swimming",
+    "levelBeginner": "Beginner",
+    "levelIntermediate": "Intermediate",
+    "levelAdvanced": "Advanced",
+    "calorieTrackerTitle": "Calorie Tracker",
+    "dailyGoalLabel": "Daily goal: {{goal}} kcal",
+    "weightGoalBtn": "⚖️ Weight Goal",
+    "setWeightGoalTitle": "Set Your Weight Goal",
+    "currentWeightLabel": "Current weight (kg)",
+    "goalWeightLabel": "Goal weight (kg)",
+    "timeframeLabel": "Timeframe",
+    "calculateGoalBtn": "Calculate My Goal",
+    "dailyCalorieGoalResult_one": "Your daily calorie goal: {{calories}} kcal (to {{action}} {{diff}} kg in {{months}} month)",
+    "dailyCalorieGoalResult_other": "Your daily calorie goal: {{calories}} kcal (to {{action}} {{diff}} kg in {{months}} months)",
+    "actionLose": "lose",
+    "actionGain": "gain",
+    "currentWeightDisplay": "Current: {{weight}} kg",
+    "goalWeightDisplay": "Goal: {{weight}} kg",
+    "needToLose": "You need to lose {{kg}} kg to reach your goal",
+    "kcalConsumed": "{{count}} kcal consumed",
+    "kcalOver": "{{count}} kcal over",
+    "kcalRemaining": "{{count}} kcal remaining",
+    "couldNotFindFoodInfo": "Could not find information. Please try again.",
+    "foodQueryPlaceholder": "What did you eat? (e.g. rice with chicken, salad, boiled egg)",
+    "addBtn": "+ Add",
+    "addMealBtn": "+ Add Meal",
+    "generatingEllipsis": "⏳ Generating...",
+    "aiMealPlanBtn": "✨ AI Meal Plan",
+    "couldNotParseMealPlan": "Could not parse meal plan. Please try again.",
+    "yourAiMealPlan": "✨ Your AI Meal Plan",
+    "addToShoppingListLink": "🛒 Add to shopping list",
+    "totalLabel": "Total",
+    "kcalOfGoal": "{{total}} kcal / {{goal}} kcal goal",
+    "addAllToTodayLog": "➕ Add all to today's log",
+    "recipeToggleHide": "hide",
+    "recipeToggleShow": "recipe",
+    "prepSuffix": "{{time}} prep",
+    "cookSuffix": "{{time}} cook",
+    "mealSnack": "Snack",
+    "tf1": "1 month",
+    "tf2": "2 months",
+    "tf3": "3 months",
+    "tf6": "6 months",
+    "motivationalFar": "💪 Every small step counts — you've got this!",
+    "motivationalGetting": "🌟 You're making amazing progress, keep going!",
+    "motivationalClose": "🎯 So close to your goal — stay consistent!",
+    "motivationalAlmost": "🏆 Almost there! The final stretch is the hardest.",
+    "motivationalReached": "✨ You've reached your goal weight — maintain it!",
+    "motivationalSetGoal": "🌸 Set your weight goal to get a personalised plan!",
+    "legendMoodLabel": "Mood",
+    "legendSleepLabel": "Sleep",
+    "legendWaterLabel": "Water",
+    "todaysAffirmation": "Today's affirmation",
+    "waterShort": "Water",
+    "weeklyOverview": "Weekly Overview",
+    "journalPlaceholder": "Write freely — this is your private space...",
+    "lessToggle": "less",
+    "moreToggle": "more",
+    "workoutGuides": {
+      "strength": {
+        "beginner": {
+          "title": "💪 Full Body — Beginner",
+          "location": "🏠 Home",
+          "duration": "25 min",
+          "items": [
+            "Warm-up: 5 min light marching in place",
+            "3×12 bodyweight squats",
+            "3×10 push-ups (knees ok)",
+            "3×12 reverse lunges each leg",
+            "3×15 glute bridges",
+            "3×10 superman holds (back extension)",
+            "Cool-down: stretch quads, chest & back 5 min"
+          ]
+        },
+        "intermediate": {
+          "title": "💪 Upper + Lower Split",
+          "location": "🏠 Home / 🏋️ Gym",
+          "duration": "40 min",
+          "items": [
+            "Warm-up: 5 min jumping jacks + arm circles",
+            "4×12 dumbbell goblet squats",
+            "4×10 dumbbell Romanian deadlifts",
+            "3×12 dumbbell chest press (floor or bench)",
+            "3×12 bent-over dumbbell rows each side",
+            "3×15 lateral raises",
+            "3×20 bicycle crunches",
+            "Cool-down: hip flexor + shoulder stretch 5 min"
+          ]
+        },
+        "advanced": {
+          "title": "💪 Strength & Power Circuit",
+          "location": "🏋️ Gym",
+          "duration": "55 min",
+          "items": [
+            "Warm-up: 8 min treadmill + dynamic stretches",
+            "4×8 barbell back squats (moderate weight)",
+            "4×8 barbell Romanian deadlifts",
+            "4×10 incline dumbbell press",
+            "4×10 cable seated rows",
+            "3×12 Bulgarian split squats each leg",
+            "3×15 cable lateral raises",
+            "3×12 tricep cable pushdowns",
+            "3×10 EZ-bar bicep curls",
+            "Cool-down: foam roll quads, hamstrings, lats"
+          ]
+        }
+      },
+      "cardio": {
+        "beginner": {
+          "title": "🏃 Gentle Cardio Walk",
+          "location": "🏠 Home / Outdoors",
+          "duration": "30 min",
+          "items": [
+            "5 min easy walk warm-up",
+            "20 min brisk walk (breathe but can talk)",
+            "5 min slow walk cool-down",
+            "Stretch calves, quads & hip flexors 5 min",
+            "Aim for 4×/week to build base fitness"
+          ]
+        },
+        "intermediate": {
+          "title": "🏃 Run-Walk Intervals",
+          "location": "🏠 Outdoors / Treadmill",
+          "duration": "35 min",
+          "items": [
+            "5 min brisk walk warm-up",
+            "Repeat 6×: 3 min jog + 1 min walk",
+            "5 min cool-down walk",
+            "Stretch hip flexors, calves & hamstrings",
+            "Progress by adding 1 jog interval each week"
+          ]
+        },
+        "advanced": {
+          "title": "🏃 Tempo + Sprint Session",
+          "location": "🏋️ Treadmill / Track",
+          "duration": "45 min",
+          "items": [
+            "10 min easy jog warm-up",
+            "15 min tempo run (comfortably hard pace)",
+            "5× 30s all-out sprints with 90s easy jog recovery",
+            "10 min easy jog cool-down",
+            "Stretch: piriformis, calves & hip flexors 5 min"
+          ]
+        }
+      },
+      "yoga": {
+        "beginner": {
+          "title": "🧘 Morning Flow — Gentle",
+          "location": "🏠 Home",
+          "duration": "20 min",
+          "items": [
+            "Mountain pose — 30s, breathe deep",
+            "Cat-Cow — 10 slow reps, loosen spine",
+            "Downward Dog — hold 30s, walk out heels",
+            "Low Lunge each side — 30s, open hip flexors",
+            "Child's pose — 1 min, rest & breathe",
+            "Seated forward fold — 45s, hamstrings",
+            "Supine twist each side — 30s, release back",
+            "Savasana — 3 min, full body relax"
+          ]
+        },
+        "intermediate": {
+          "title": "🧘 Vinyasa Flow",
+          "location": "🏠 Home / Studio",
+          "duration": "35 min",
+          "items": [
+            "5 min breathing & seated warm-up",
+            "5× Sun Salutation A (flow breath to movement)",
+            "Warrior I + II + Reverse Warrior — 45s each side",
+            "Triangle pose each side — 45s",
+            "Chair pose — 1 min hold",
+            "Plank → Chaturanga → Upward Dog — 5 reps",
+            "Pigeon pose each side — 1 min deep stretch",
+            "Seated spinal twist + forward fold",
+            "Savasana — 5 min"
+          ]
+        },
+        "advanced": {
+          "title": "🧘 Power Yoga + Balance",
+          "location": "🏠 Home / Studio",
+          "duration": "50 min",
+          "items": [
+            "10 min Surya Namaskar B series (8 rounds)",
+            "Crow pose (Bakasana) — hold attempts 3×",
+            "Handstand prep against wall — 3× 30s",
+            "Half moon pose each side — 1 min",
+            "Warrior III each side — 1 min balance hold",
+            "Wheel pose (Urdhva Dhanurasana) — 3× 20s",
+            "Forearm balance (Pincha) prep — 3× 30s",
+            "Yin finish: pigeon + dragon pose 2 min each",
+            "Yoga nidra / Savasana — 8 min"
+          ]
+        }
+      },
+      "hiit": {
+        "beginner": {
+          "title": "🔥 Low Impact HIIT",
+          "location": "🏠 Home",
+          "duration": "20 min",
+          "items": [
+            "Warm-up: 3 min arm swings + hip circles",
+            "3 rounds (40s work / 20s rest):",
+            "  • Step jacks (low impact jumping jacks)",
+            "  • Squat pulses",
+            "  • March in place with high knees",
+            "  • Modified push-ups",
+            "  • Standing oblique crunches",
+            "Cool-down: 5 min full body stretch"
+          ]
+        },
+        "intermediate": {
+          "title": "🔥 HIIT Circuit",
+          "location": "🏠 Home",
+          "duration": "30 min",
+          "items": [
+            "Warm-up: 5 min dynamic stretches",
+            "4 rounds (40s work / 15s rest):",
+            "  • Burpees",
+            "  • Jump squats",
+            "  • Push-up to shoulder tap",
+            "  • Speed skaters",
+            "  • Plank hip dips",
+            "  • Jump lunges",
+            "Rest 90s between rounds",
+            "Cool-down: 5 min stretch"
+          ]
+        },
+        "advanced": {
+          "title": "🔥 Advanced HIIT + Core",
+          "location": "🏠 Home / 🏋️ Gym",
+          "duration": "40 min",
+          "items": [
+            "Warm-up: 5 min jog + mobilisation",
+            "5 rounds (45s work / 10s rest):",
+            "  • Tuck jumps",
+            "  • Plyometric push-ups",
+            "  • Single-leg burpees (alt. legs)",
+            "  • Box jumps or jump squat variation",
+            "  • Dragon flag core holds",
+            "  • Lateral bound + stick",
+            "Rest 60s between rounds",
+            "Finisher: 3 min plank challenge",
+            "Cool-down: deep stretch 8 min"
+          ]
+        }
+      },
+      "walking": {
+        "beginner": {
+          "title": "🚶 Daily Steps Target",
+          "location": "🏠 Outdoors / Mall",
+          "duration": "30 min",
+          "items": [
+            "Aim for 7,000–8,000 steps/day",
+            "30 min easy walk, comfortable pace",
+            "Wear supportive shoes",
+            "🎧 Great for podcasts or music",
+            "Bonus: take stairs instead of lifts",
+            "Track with phone health app or watch"
+          ]
+        },
+        "intermediate": {
+          "title": "🚶 Power Walk + Hills",
+          "location": "🏠 Outdoors",
+          "duration": "45 min",
+          "items": [
+            "Aim for 10,000 steps/day",
+            "10 min easy warm-up walk",
+            "25 min brisk power walk (push pace)",
+            "Include hills or incline if available",
+            "10 min cool-down easy walk",
+            "Arm swing actively for extra calorie burn",
+            "Stretch hips & calves after"
+          ]
+        },
+        "advanced": {
+          "title": "🚶 Weighted Rucking",
+          "location": "🏠 Outdoors / Trails",
+          "duration": "60 min",
+          "items": [
+            "Load a backpack with 5–10 kg",
+            "10 min easy warm-up walk",
+            "40 min brisk walk with weight on back",
+            "Include hills — max calorie & strength benefit",
+            "10 min cool-down walk",
+            "Stretch hip flexors, glutes & upper back",
+            "Aim for 12,000–15,000 steps on ruck days"
+          ]
+        }
+      },
+      "swimming": {
+        "beginner": {
+          "title": "🏊 Easy Pool Session",
+          "location": "🏋️ Pool",
+          "duration": "30 min",
+          "items": [
+            "4 lengths easy warm-up (any stroke)",
+            "8 lengths main set — rest 30s every 2 lengths",
+            "Focus on breathing technique",
+            "2 lengths cool-down (backstroke)",
+            "Total ~30 min · great for joints"
+          ]
+        },
+        "intermediate": {
+          "title": "🏊 Endurance Swim",
+          "location": "🏋️ Pool",
+          "duration": "45 min",
+          "items": [
+            "200m warm-up: easy freestyle",
+            "400m main set: freestyle with flip turns",
+            "4× 50m kick sets with kickboard, rest 20s each",
+            "4× 50m pull sets with pull buoy, rest 20s each",
+            "200m cool-down: backstroke",
+            "Total ~1600m · stretch shoulders & hips after"
+          ]
+        },
+        "advanced": {
+          "title": "🏊 Swim Intervals",
+          "location": "🏋️ Pool",
+          "duration": "60 min",
+          "items": [
+            "400m warm-up: mixed strokes",
+            "8× 100m on 2:00 (aim negative splits)",
+            "4× 50m butterfly or breaststroke, rest 30s",
+            "8× 25m sprint on 1:00",
+            "200m cool-down: easy backstroke",
+            "Total ~2400m · foam roll shoulders & lats"
+          ]
+        }
+      }
+    }
   },
   "settings": {
     "title": "Settings",
@@ -382,39 +1028,194 @@
     "yes": "Yes",
     "no": "No",
     "save": "Save",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "aiAssistantTitle": "AI Assistant",
+    "allowAiFeatures": "Allow AI features",
+    "aiFeaturesDescription": "Sends your messages and relevant context to Anthropic to generate AI responses.",
+    "freeTrialLabel": "Free Trial",
+    "daysLeftSuffix": "d left",
+    "unlockAllFeatures": "Unlock all features — upgrade before your trial ends.",
+    "upgradeNow": "Upgrade Now",
+    "whatsIncluded": "What's included",
+    "everythingInStandardPlus": "Everything in Standard, plus:",
+    "renewsOn": "Renews {{date}}",
+    "managePortalNote": "Subscriptions purchased on web can be managed below. If you subscribed through the App Store, manage via <strong>iPhone Settings → Apple ID → Subscriptions</strong>.",
+    "openingPortal": "Opening portal...",
+    "manageSubscriptionBtn": "Manage Subscription",
+    "cancelAnytimeManaged": "Cancel anytime · Managed by Stripe",
+    "noActiveSubscription": "You don't have an active subscription.",
+    "choosePlanBtn": "Choose a Plan",
+    "purchasesSection": "Purchases",
+    "restorePurchases": "Restore Purchases",
+    "restoring": "Restoring…",
+    "restoreSuccess": "Purchases restored successfully.",
+    "restoreNone": "No purchases found to restore.",
+    "restoreIOSOnly": "Restore is only available in the mobile app.",
+    "restoreError": "Could not restore purchases. Please try again.",
+    "portalError": "Could not open subscription portal.",
+    "legalSection": "Legal",
+    "termsAndConditions": "Terms & Conditions",
+    "privacyPolicy": "Privacy Policy",
+    "deleteAccountTitle": "Delete Account",
+    "deleteAccountWarning": "This will permanently delete your account and all your data. This action cannot be undone.",
+    "deleteAccountLink": "Delete Account",
+    "deleting": "Deleting…",
+    "delete": "Delete",
+    "notifications": "Notifications",
+    "notificationsOff": "Notifications are off",
+    "openIOSSettings": "Open Settings",
+    "openAndroidSettings": "Open Settings",
+    "notifMasterSwitch": "Reminder notifications",
+    "notifCategoryCalendar": "Calendar & tasks",
+    "notifCategoryKids": "Kids",
+    "notifCategoryKitchen": "Meal plan",
+    "notifCategoryShopping": "Shopping list",
+    "notifCategorySelfcare": "Self-care",
+    "notifDefaultReminder": "Default reminder for new events",
+    "notifKitchenTime": "Meal reminder time",
+    "notifSelfcareTime": "Self-care reminder time",
+    "notifQuietHours": "Quiet hours",
+    "notifQuietHoursStart": "Start",
+    "notifQuietHoursEnd": "End",
+    "notifSendTest": "Send test notification",
+    "notifTestSent": "Sent — check in 5 seconds"
+  },
+  "reminder": {
+    "label": "Reminder",
+    "none": "None",
+    "atTime": "At time",
+    "min10": "10 minutes before",
+    "min30": "30 minutes before",
+    "hour1": "1 hour before",
+    "day1": "1 day before"
+  },
+  "notifications": {
+    "channelName": "Reminders",
+    "channelDescription": "Reminders for your calendar, tasks, kids, meals and self-care",
+    "permissionTitle": "Stay on top of your day",
+    "permissionBody": "Get reminders for your meetings, meals and me-time 🔔",
+    "allow": "Allow",
+    "notNow": "Not now",
+    "startsAt": "Starts at {{time}}",
+    "startsAtIn": "Starts at {{time}} · in {{duration}}",
+    "dueAt": "Due at {{time}}",
+    "dueAtIn": "Due at {{time}} · in {{duration}}",
+    "inMinutes_one": "{{count}} minute",
+    "inMinutes_other": "{{count}} minutes",
+    "inHour": "1 hour",
+    "inDay": "1 day",
+    "kitchenTitle": "MomManager",
+    "tonightMeal": "Tonight: {{meal}}",
+    "shoppingTitle": "MomManager",
+    "shoppingReminder": "{{count}} items waiting on your shopping list 🛒",
+    "selfcareTitle": "MomManager",
+    "selfcare1": "Take 5 minutes for yourself 💛",
+    "selfcare2": "A glass of water and a deep breath — you've earned it 🌸",
+    "selfcare3": "Stretch, breathe, smile. You deserve this moment 💆",
+    "selfcare4": "Even a tiny bit of rest counts today 🌿",
+    "selfcare5": "You're doing great. Take a moment for you ✨",
+    "testTitle": "MomManager",
+    "testBody": "Notifications are working! 🎉"
   },
   "paywall": {
-    "title": "Continue with MomManager Premium",
-    "subtitle": "Cancel anytime",
+    "chooseYourPlan": "Choose your plan",
+    "sevenDayTrialCancelAnytime": "7-day free trial • Cancel anytime",
+    "subscriptionRequired": "A subscription is required to use MomManager.",
     "monthly": "Monthly",
-    "annual": "Annual",
-    "bestValue": "BEST VALUE",
-    "monthlyPrice": "£9.99/month",
-    "annualPrice": "£79.99/year",
-    "startMonthly": "Start with Monthly",
-    "startAnnual": "Start with Annual",
-    "feature1": "All features",
-    "feature2": "AI Assistant",
-    "feature3": "Multi-language",
-    "feature4": "Currency converter",
-    "feature5": "Unlimited kids",
-    "trialExpiredMessage": "Your 7-day free trial has ended. Upgrade to continue using MomManager.",
-    "processing": "Processing...",
-    "startFreeTrial": "Start 7-Day Free Trial",
-    "activateTest": "Activate (Test Mode)",
-    "trialIncludes": "Includes 7 days free, then",
-    "orActivateTest": "— or for testing —",
-    "trialTermsTitle": "Free Trial Terms",
-    "trialTerm1": "7-day free trial included with all plans",
-    "trialTerm2": "After trial ends: £9.99/month or £79.99/year",
-    "trialTerm3": "Cancel anytime before trial ends to avoid charges",
-    "trialTerm4": "Payment will be charged to your account after the free trial"
+    "yearly": "Yearly",
+    "standardName": "Standard",
+    "proName": "Pro",
+    "billedMonthly": "billed monthly",
+    "billedYearly": "Just {{amount}} / month, billed yearly",
+    "mostPopular": "MOST POPULAR",
+    "everythingInStandardPlus": "Everything in Standard, plus:",
+    "soon": "Soon",
+    "redirecting": "Redirecting…",
+    "openingNativeSheet": "Opening purchase sheet…",
+    "startStandardTrial": "Start Standard – 7 Days Free",
+    "startProTrial": "Start Pro – 7 Days Free",
+    "tryFreeThen": "Try free for 7 days, then {{price}}. Cancel before trial ends to avoid being charged.",
+    "or": "or",
+    "startFreeTrialCta": "Try free for 7 days — no card needed",
+    "noPaymentOptionLabel": "NO PAYMENT REQUIRED",
+    "noPaymentSectionSubtitle": "Prefer not to enter payment details yet?",
+    "startingTrial": "Starting trial…",
+    "restorePurchases": "🔄 Restore Purchases",
+    "restoring": "Restoring…",
+    "footerRenewalNotice": "Subscription renews automatically at the plan price shown above. To avoid charges, cancel at least 24 hours before your 7-day trial ends.",
+    "manageIOS": "Manage or cancel anytime in iPhone Settings → Apple ID → Subscriptions.",
+    "manageOther": "Manage or cancel anytime in your account settings.",
+    "footerPaymentCharge": "Payment will be charged to your account at confirmation of purchase.",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfUse": "Terms of Use",
+    "purchaseCouldNotComplete": "Purchase could not be completed. Please try again.",
+    "mustBeSignedIn": "You must be signed in to subscribe.",
+    "openingCheckout": "Opening secure checkout…",
+    "redirectingCheckout": "Redirecting to secure checkout…",
+    "purchaseFailed": "Purchase failed: {{msg}}",
+    "unknownError": "unknown error",
+    "noPreviousPurchases": "No previous purchases found.",
+    "couldNotRestore": "Could not restore purchases.",
+    "purchaseNoPaymentMethod": "Add a payment method to your {{store}} account to start the free trial.",
+    "purchaseNotAllowed": "Purchases aren't allowed on this device. Check Screen Time / parental control settings.",
+    "purchaseNetworkError": "Network error — please check your connection and try again.",
+    "purchaseTimedOut": "This is taking longer than expected. Please try again.",
+    "purchasePending": "Your purchase is pending approval. We'll unlock your plan as soon as it's confirmed.",
+    "restoreTimedOut": "Restoring is taking longer than expected. Please try again.",
+    "tapRetry": "Tap to retry",
+    "standardFeatures": [
+      "Calendar & tasks with reminders & notifications",
+      "Mom & Kids separate plans",
+      "AI activity generator for kids",
+      "Kitchen & meal planning",
+      "Basic self-care routines",
+      "Basic budget tracker",
+      "9 languages supported"
+    ],
+    "proExtras": [
+      "Advanced skincare with AI product recommendations",
+      "Workout tracker with progress & streaks",
+      "Cross-family AI nutrition plans",
+      "Import bank statements (CSV & PDF)",
+      "AI weekly recap & predictions",
+      "Priority support"
+    ],
+    "offeringsUnavailable": "Could not load subscription plans. Please check your connection and try again.",
+    "retry": "Retry",
+    "remainingInTrial_one": "🌸 {{count}} day remaining in your free trial",
+    "remainingInTrial_other": "🌸 {{count}} days remaining in your free trial"
+  },
+  "trialDisclosure": {
+    "endsOn": "Your 7-day free trial ends on {{date}}.",
+    "endsOnIfStartedToday": "Your 7-day free trial ends on {{date}} if you start today.",
+    "chargedAfter": "After the trial you'll be charged {{price}} per {{period}} unless you cancel.",
+    "cancelGoogle": "Cancel anytime at least 24 hours before the trial ends in Google Play > Subscriptions.",
+    "cancelApple": "Cancel anytime at least 24 hours before the trial ends in iPhone Settings → Apple ID → Subscriptions.",
+    "cancelWeb": "Cancel anytime at least 24 hours before the trial ends in your account settings.",
+    "autoRenews": "Subscription renews automatically until cancelled.",
+    "periodMonth": "month",
+    "periodYear": "year",
+    "periodWeek": "week",
+    "periodDay": "day",
+    "freeEndsOn": "Your free trial ends on {{date}}.",
+    "freeDuration": "Your free trial lasts 7 days from the day you start it.",
+    "freeNoCharge": "No payment method is required — you won't be charged automatically.",
+    "freeNoAutoRenew": "This trial doesn't renew on its own. Choose a plan any time to keep full access after it ends."
   },
   "success": {
     "title": "Welcome to Premium!",
     "message": "Your subscription is now active. Enjoy all MomManager features!",
-    "continue": "Continue to App"
+    "continue": "Continue to App",
+    "confirmingPayment": "Confirming your payment…",
+    "paymentNotCompleted": "Payment not completed",
+    "cardNotCharged": "Your card was not charged.",
+    "tryAgain": "Try Again",
+    "planLabel": "Plan",
+    "planName": "{{plan}} {{period}} Plan",
+    "nextBillingDate": "Next billing date",
+    "statusLabel": "Status",
+    "statusActive": "✓ Active",
+    "receiptSentNote": "A receipt has been sent to your email by Stripe."
   },
   "ai": {
     "title": "AI Assistant",
@@ -423,7 +1224,13 @@
     "errorMessage": "Sorry, an error occurred. Please try again.",
     "send": "Send",
     "close": "Close",
-    "newChat": "New Chat"
+    "newChat": "New Chat",
+    "consentTitle": "AI Assistant & Your Data",
+    "consentIntro": "MomManager's AI features (the AI Assistant chat, meal plans, recipes, activity suggestions, and self-care advice) are powered by <strong>Anthropic</strong>, a third-party AI service.",
+    "consentDetails": "To generate a response, we send Anthropic the message or request you type, along with any relevant details you've entered for that feature — for example a child's name and age for a meal plan, dietary preferences, skin type, or weight/goal figures for self-care advice. We do <strong>not</strong> send your account credentials, payment details, or any data from features you haven't used.",
+    "consentFooter": "You can change your mind at any time in Settings → AI Assistant. Declining only disables AI features — the rest of MomManager works normally either way.",
+    "consentNotNow": "Not Now",
+    "consentAgree": "I Agree, Continue"
   },
   "common": {
     "loading": "Loading...",
@@ -442,6 +1249,271 @@
     "no": "No",
     "search": "Search",
     "noData": "No data available",
-    "required": "This field is required"
+    "required": "This field is required",
+    "toggleTheme": "Toggle theme"
+  },
+  "trialBanner": {
+    "trialEnded": "Your trial has ended — Choose a plan",
+    "daysLeft": "🌸 {{days}} day{{plural}} left in your free trial",
+    "choosePlan": "Choose plan",
+    "upgrade": "Upgrade"
+  },
+  "proGate": {
+    "proFeature": "Pro feature",
+    "upgradeToPro": "Upgrade to Pro"
+  },
+  "kidsActivities": {
+    "activityIdeas": "🧸 Activity Ideas",
+    "ageGroupLabel": "Age group",
+    "categoryLabel": "Category",
+    "pickAny": "(pick any)",
+    "durationLabel": "Duration",
+    "materialsLabel": "Materials",
+    "generateBtn": "Generate Activities ✨",
+    "generating": "Finding activities...",
+    "stepsLabel": "Steps",
+    "savedLabel": "Saved ✓",
+    "saveLabel": "Save ♡",
+    "savedActivitiesLabel": "Saved Activities",
+    "invalidResponse": "Invalid response format",
+    "couldNotGenerate": "Could not generate activities. Please try again.",
+    "ageGroups": {
+      "toddler": "0-2 yrs",
+      "young": "3-5 yrs",
+      "middle": "6-9 yrs",
+      "older": "10+ yrs"
+    },
+    "categories": {
+      "creative": "Creative",
+      "educational": "Educational",
+      "physical": "Physical",
+      "relaxing": "Relaxing",
+      "outdoor": "Outdoor",
+      "rainyDay": "Rainy day"
+    },
+    "durations": {
+      "min15": "15 min",
+      "min30": "30 min",
+      "hour1": "1 hour",
+      "afternoon": "Afternoon"
+    },
+    "materials": {
+      "none": "None needed",
+      "basic": "Basic",
+      "craft": "Craft supplies",
+      "kitchen": "Kitchen"
+    }
+  },
+  "fitness": {
+    "pushup": {
+      "muscle": "Chest & Triceps",
+      "mistakes": [
+        "Hips sagging or raised too high",
+        "Elbows flaring out wide",
+        "Not reaching full range of motion"
+      ]
+    },
+    "squat": {
+      "muscle": "Quads & Glutes",
+      "mistakes": [
+        "Knees caving inward",
+        "Heels rising off the floor",
+        "Rounding the lower back"
+      ]
+    },
+    "lunge": {
+      "muscle": "Quads & Glutes",
+      "mistakes": [
+        "Front knee going past the toes",
+        "Torso leaning too far forward",
+        "Losing balance — fix gaze straight ahead"
+      ]
+    },
+    "plank": {
+      "muscle": "Core & Abs",
+      "mistakes": [
+        "Hips too high or sagging",
+        "Holding breath instead of breathing",
+        "Head drooping down"
+      ]
+    },
+    "deadlift": {
+      "muscle": "Hamstrings & Back",
+      "mistakes": [
+        "Rounding the lower back",
+        "Bar drifting away from the body",
+        "Jerking the bar off the floor"
+      ]
+    },
+    "bicepCurl": {
+      "muscle": "Biceps",
+      "mistakes": [
+        "Swinging the body for momentum",
+        "Not controlling the lowering phase",
+        "Elbows moving away from torso"
+      ]
+    },
+    "shoulderPress": {
+      "muscle": "Shoulders & Triceps",
+      "mistakes": [
+        "Arching the lower back",
+        "Not fully extending elbows at top",
+        "Pressing forward instead of straight up"
+      ]
+    },
+    "latPulldown": {
+      "muscle": "Lats & Upper Back",
+      "mistakes": [
+        "Leaning back too far",
+        "Pulling with arms instead of lats",
+        "Raising shoulders toward ears"
+      ]
+    },
+    "gluteBridge": {
+      "muscle": "Glutes & Hamstrings",
+      "mistakes": [
+        "Hyperextending the lower back at top",
+        "Feet too far or close to hips",
+        "Knees collapsing inward"
+      ]
+    },
+    "mountainClimber": {
+      "muscle": "Core & Cardio",
+      "mistakes": [
+        "Hips bouncing up and down",
+        "Losing the flat back position",
+        "Moving too fast with poor control"
+      ]
+    },
+    "burpee": {
+      "muscle": "Full Body",
+      "mistakes": [
+        "Not lowering chest to floor on the way down",
+        "Jumping feet too wide",
+        "Landing with locked straight knees"
+      ]
+    },
+    "tricepDip": {
+      "muscle": "Triceps",
+      "mistakes": [
+        "Shrugging shoulders toward ears",
+        "Leaning too far forward",
+        "Elbows flaring outward"
+      ]
+    },
+    "calfRaise": {
+      "muscle": "Calves",
+      "mistakes": [
+        "No pause at the top",
+        "Rolling feet inward/outward",
+        "Using momentum instead of control"
+      ]
+    },
+    "russianTwist": {
+      "muscle": "Obliques & Core",
+      "mistakes": [
+        "Rounding the back",
+        "Rotating only the arms not the torso",
+        "Moving too fast without control"
+      ]
+    },
+    "legRaise": {
+      "muscle": "Abs & Hip Flexors",
+      "mistakes": [
+        "Lower back arching off the floor",
+        "Legs dropping too fast",
+        "Using momentum instead of muscle control"
+      ]
+    },
+    "generic": {
+      "muscle": "Full Body",
+      "mistakes": [
+        "Using too much momentum",
+        "Not maintaining proper posture",
+        "Skipping the full range of motion"
+      ]
+    },
+    "exerciseFallback": "Exercise"
+  },
+  "legal": {
+    "lastUpdated": "Last updated: April 2025",
+    "terms": {
+      "pageTitle": "Terms & Conditions",
+      "section1Title": "1. About Us",
+      "section1Body": "MomManager is operated by <strong>SoldOut Digital LTD</strong>, a company registered in England and Wales. Registered address: United Kingdom. Company number: 16208774.",
+      "section2Title": "2. Acceptance of Terms",
+      "section2Body": "By downloading, installing, or using the MomManager application (\"App\"), you agree to be bound by these Terms and Conditions. If you do not agree to these terms, please do not use the App.",
+      "section3Title": "3. Subscription and Payments",
+      "section3Body": "MomManager offers subscription-based access to premium features. Subscriptions are billed on a recurring basis (monthly or annually) through {{storeName}}. Payment will be charged to your account at confirmation of purchase. Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period. You can manage or cancel your subscription in your device's account settings. No refunds are provided for partial subscription periods, except as required by applicable law.",
+      "section4Title": "4. Free Trial",
+      "section4Body": "We may offer a free trial period for new users. At the end of the trial, your subscription will automatically begin and you will be charged the applicable subscription fee unless you cancel before the trial ends.",
+      "section5Title": "5. Use of the App",
+      "section5Body": "You agree to use MomManager only for lawful personal, non-commercial purposes. You must not misuse the App, attempt to gain unauthorised access to any part of it, or use it in a way that could damage, disable, or impair its functionality. You are responsible for maintaining the security of your account credentials.",
+      "section6Title": "6. AI Features",
+      "section6Body": "MomManager includes AI-powered features (such as meal suggestions, story generation, and chat assistance) powered by third-party AI providers. These features are provided for informational and entertainment purposes only. AI-generated content may not always be accurate, complete, or suitable for your specific situation. You should always use your own judgement and consult qualified professionals for medical, nutritional, financial, or legal advice.",
+      "section7Title": "7. Intellectual Property",
+      "section7Body": "All content, design, graphics, and software within the App are the intellectual property of SoldOut Digital LTD or its licensors and are protected by applicable copyright and intellectual property laws. You may not copy, modify, distribute, or reverse-engineer any part of the App without our prior written consent.",
+      "section8Title": "8. Limitation of Liability",
+      "section8Body": "To the fullest extent permitted by law, SoldOut Digital LTD shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of the App. Our total liability to you shall not exceed the amount you paid for your subscription in the 12 months preceding the claim.",
+      "section9Title": "9. Changes to Terms",
+      "section9Body": "We reserve the right to modify these Terms at any time. We will notify you of significant changes via the App or by email. Continued use of the App after changes constitutes acceptance of the revised Terms.",
+      "section10Title": "10. Governing Law",
+      "section10Body": "These Terms are governed by the laws of England and Wales. Any disputes shall be subject to the exclusive jurisdiction of the courts of England and Wales.",
+      "section11Title": "11. Contact",
+      "section11Body": "If you have any questions about these Terms, please contact us at <strong>support@mommanager.co.uk</strong>.",
+      "appleAppStore": "Apple App Store",
+      "yourAppStoreAccount": "your app store account"
+    },
+    "privacy": {
+      "pageTitle": "Privacy Policy",
+      "section1Title": "1. Who We Are",
+      "section1Body": "<strong>SoldOut Digital LTD</strong> (\"we\", \"us\", \"our\") is the data controller for personal data collected through MomManager. Registered address: United Kingdom. Company number: 16208774. Contact: <strong>support@mommanager.co.uk</strong>.",
+      "section2Title": "2. Data We Collect",
+      "section2Intro": "We collect the following types of personal data when you use MomManager:",
+      "section2Items": [
+        "<strong>Account data:</strong> email address, name, profile photo (if provided)",
+        "<strong>App data:</strong> tasks, children's information, meal plans, budget entries, and other content you create within the App — stored locally on your device or in your personal cloud storage",
+        "<strong>Usage data:</strong> app interactions, feature usage, and crash reports for improving the App",
+        "<strong>Payment data:</strong> subscription status (processed by Apple/Google — we do not store payment card details)"
+      ],
+      "section3Title": "3. How We Use Your Data",
+      "section3Intro": "We use your personal data to:",
+      "section3Items": [
+        "Provide and maintain the MomManager service",
+        "Manage your account and subscription",
+        "Improve the App through anonymised analytics",
+        "Send you important service communications",
+        "Comply with legal obligations"
+      ],
+      "section4Title": "4. AI Features and Data Processing",
+      "section4Body": "When you use AI-powered features (chat, meal suggestions, stories, etc.), your input text is sent to our AI provider (Anthropic, Inc.) to generate responses. We do not store AI conversations on our servers. Please do not share sensitive personal information such as passwords, financial account numbers, or medical records in AI chat.",
+      "section5Title": "5. Data Sharing",
+      "section5Intro": "We do not sell your personal data. We may share data with:",
+      "section5Items": [
+        "<strong>Service providers</strong> who assist in operating the App (e.g., authentication, analytics), under strict confidentiality agreements",
+        "<strong>Legal authorities</strong> when required by law"
+      ],
+      "section6Title": "6. Data Retention",
+      "section6Body": "We retain your account data for as long as your account is active. If you delete your account, we will delete your personal data within 30 days, except where we are required to retain it by law.",
+      "section7Title": "7. Your Rights",
+      "section7Intro": "Under UK GDPR and applicable data protection law, you have the right to:",
+      "section7Items": [
+        "Access the personal data we hold about you",
+        "Correct inaccurate data",
+        "Request deletion of your data (\"right to be forgotten\")",
+        "Object to or restrict processing of your data",
+        "Data portability",
+        "Lodge a complaint with the Information Commissioner's Office (ICO) at ico.org.uk"
+      ],
+      "section7Contact": "To exercise any of these rights, contact us at <strong>support@mommanager.co.uk</strong>.",
+      "section8Title": "8. Security",
+      "section8Body": "We implement appropriate technical and organisational measures to protect your personal data against unauthorised access, alteration, disclosure, or destruction. However, no internet transmission is completely secure, and we cannot guarantee absolute security.",
+      "section9Title": "9. Children's Privacy",
+      "section9Body": "MomManager is intended for use by adults (18+). We do not knowingly collect personal data from children under 13. If you believe a child has provided us with personal data, please contact us so we can delete it.",
+      "section10Title": "10. Changes to This Policy",
+      "section10Body": "We may update this Privacy Policy from time to time. We will notify you of significant changes via the App or by email. The latest version will always be available within the App.",
+      "section11Title": "11. Contact Us",
+      "section11Body": "For any privacy-related questions or requests, contact us at <strong>support@mommanager.co.uk</strong> or write to SoldOut Digital LTD, United Kingdom."
+    }
   }
 }

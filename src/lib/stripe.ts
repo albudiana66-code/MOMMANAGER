@@ -1,40 +1,87 @@
 import type { SubscriptionPlan } from '../types';
+import { supabase } from './supabase';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || '';
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
+// The edge functions verify the caller is a signed-in user, so requests must
+// carry the current user's own access token — the anon key alone is rejected.
+async function authHeaders(): Promise<Record<string, string>> {
+  const { data } = await supabase.auth.getSession();
+  const token = data.session?.access_token || SUPABASE_ANON_KEY;
+  return {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`,
+  };
+}
+
+async function currentUser(): Promise<{ id: string; email: string }> {
+  const { data } = await supabase.auth.getUser();
+  if (!data.user) throw new Error('You must be signed in to subscribe.');
+  return { id: data.user.id, email: data.user.email ?? '' };
+}
+
+export type Currency = 'gbp' | 'eur' | 'usd';
+
+export const CURRENCY_SYMBOL: Record<Currency, string> = { gbp: '£', eur: '€', usd: '$' };
+
+const EUR_COUNTRIES = new Set([
+  'FR', 'DE', 'IT', 'ES', 'PT', 'NL', 'BE', 'AT', 'IE', 'FI',
+  'GR', 'LU', 'SK', 'SI', 'EE', 'LV', 'LT', 'CY', 'MT',
+]);
+
+// Best-effort locale-based guess for the price shown on our own paywall —
+// the actual charge always follows Stripe's own Adaptive Pricing (detected
+// from the buyer's IP at checkout). This keeps the two screens showing the
+// same currency for the vast majority of users, since we mirror these same
+// GBP/EUR/USD amounts as currency_options on each Stripe Price object.
+export function detectCurrency(): Currency {
+  try {
+    const region = (navigator.language || 'en-GB').split('-')[1]?.toUpperCase();
+    if (region === 'GB') return 'gbp';
+    if (region === 'US') return 'usd';
+    if (region && EUR_COUNTRIES.has(region)) return 'eur';
+  } catch {
+    // navigator unavailable (SSR/tests) — fall through to default
+  }
+  return 'usd';
+}
+
 export const PRICES: Record<
   'standard_monthly' | 'standard_yearly' | 'pro_monthly' | 'pro_yearly',
-  { amount: number; currency: string; display: string; priceId: string }
+  { amount: number; currency: string; display: string; amounts: Record<Currency, number> }
 > = {
-  standard_monthly: { amount: 999,   currency: 'gbp', display: '£9.99/month',  priceId: 'price_1TWZzq1fZpEfuOBVxNQOHwTe' },
-  standard_yearly:  { amount: 7999,  currency: 'gbp', display: '£79.99/year',  priceId: 'price_1TWa1g1fZpEfuOBVoieAFEj1' },
-  pro_monthly:      { amount: 1499,  currency: 'gbp', display: '£14.99/month', priceId: 'price_1TlAs71fZpEfuOBVHMNV6KS2' },
-  pro_yearly:       { amount: 12999, currency: 'gbp', display: '£129.99/year', priceId: 'price_1TlAsS1fZpEfuOBVkuQSz4xR' },
+  standard_monthly: { amount: 499,  currency: 'gbp', display: '£4.99/month',  amounts: { gbp: 4.99,  eur: 5.99,  usd: 5.99 } },
+  standard_yearly:  { amount: 3999, currency: 'gbp', display: '£39.99/year',  amounts: { gbp: 39.99, eur: 47.99, usd: 49.99 } },
+  pro_monthly:      { amount: 799,  currency: 'gbp', display: '£7.99/month',  amounts: { gbp: 7.99,  eur: 8.99,  usd: 9.99 } },
+  pro_yearly:       { amount: 6399, currency: 'gbp', display: '£63.99/year',  amounts: { gbp: 63.99, eur: 71.99, usd: 79.99 } },
 };
+
+export function formatAmount(currency: Currency, amount: number): string {
+  return `${CURRENCY_SYMBOL[currency]}${amount.toFixed(2)}`;
+}
 
 /**
  * Creates a Stripe Checkout Session via the Supabase Edge Function.
- * Always uses GBP — no Payment Link fallback to avoid Adaptive Pricing issues.
+ *
+ * Sends the same currency already shown on the paywall so the checkout
+ * page can't show a different one — the edge function builds the line
+ * item's price inline in that currency rather than relying on Stripe's
+ * IP-based Adaptive Pricing, which could pick a different currency than
+ * the one the user already saw here.
  */
-export async function createCheckoutSession(
-  plan: SubscriptionPlan,
-  userId = '',
-  email = ''
-): Promise<string> {
+export async function createCheckoutSession(plan: SubscriptionPlan): Promise<string> {
   const planKey = plan as keyof typeof PRICES;
-  const priceId = PRICES[planKey]?.priceId ?? '';
-
-  if (!priceId) throw new Error('Invalid plan selected.');
+  if (!PRICES[planKey]) throw new Error('Invalid plan selected.');
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) throw new Error('Payment service not configured.');
+
+  const { id: userId, email } = await currentUser();
+  const currency = detectCurrency();
 
   const res = await fetch(`${SUPABASE_URL}/functions/v1/stripe-checkout`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-    },
-    body: JSON.stringify({ priceId, userId, email }),
+    headers: await authHeaders(),
+    body: JSON.stringify({ plan, userId, email, currency }),
   });
 
   const data = await res.json();
@@ -44,15 +91,14 @@ export async function createCheckoutSession(
   return data.url;
 }
 
-export async function createPortalSession(customerId: string): Promise<string> {
+// The server looks up the signed-in user's own Stripe customer — it no longer
+// accepts a client-supplied customerId (that would let anyone open anyone
+// else's billing portal).
+export async function createPortalSession(): Promise<string> {
   const response = await fetch(`${SUPABASE_URL}/functions/v1/create-portal`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-    },
+    headers: await authHeaders(),
     body: JSON.stringify({
-      customerId,
       returnUrl: window.location.origin + '/settings',
     }),
   });
@@ -75,7 +121,7 @@ export const STRIPE_PRICES = {
 export interface VerifiedSession {
   paid: boolean;
   status: string;
-  plan: 'monthly' | 'annual';
+  plan: SubscriptionPlan;
   planInterval: 'month' | 'year' | null;
   email: string;
   userId: string;
@@ -84,6 +130,19 @@ export interface VerifiedSession {
   nextBillingDate: string | null;
 }
 
-export async function verifySession(_sessionId: string): Promise<VerifiedSession> {
-  throw new Error('Stripe verification not configured');
+// Confirms payment directly with Stripe via the stripe-verify Edge Function.
+// The function itself updates the user's profile server-side — this call
+// only reports back what happened so the UI can reflect it.
+export async function verifySession(sessionId: string): Promise<VerifiedSession> {
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) throw new Error('Payment service not configured.');
+
+  const res = await fetch(`${SUPABASE_URL}/functions/v1/stripe-verify`, {
+    method: 'POST',
+    headers: await authHeaders(),
+    body: JSON.stringify({ sessionId }),
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Could not verify payment.');
+  return data as VerifiedSession;
 }

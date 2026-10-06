@@ -1,12 +1,14 @@
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { useApp } from '../../context/AppContext';
+import { useDateFnsLocale } from '../../hooks/useDateFnsLocale';
 import { format } from 'date-fns';
 
 export function GreetingCard() {
   const { t } = useTranslation();
   const { profile } = useAuth();
   const { theme, toggleTheme } = useApp();
+  const dateLocale = useDateFnsLocale();
   const hour = new Date().getHours();
 
   let greeting = t('dashboard.goodMorning');
@@ -72,7 +74,7 @@ export function GreetingCard() {
 
         {/* Date */}
         <p style={{ fontSize: 11, color: '#B8914A', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 8, fontWeight: 600 }}>
-          {format(new Date(), 'EEEE, MMMM d')}
+          {format(new Date(), 'EEEE, MMMM d', { locale: dateLocale })}
         </p>
 
         {/* Greeting */}
@@ -83,7 +85,7 @@ export function GreetingCard() {
         {/* Theme toggle — gold circle */}
         <button
           onClick={toggleTheme}
-          aria-label="Toggle theme"
+          aria-label={t('settings.toggleTheme')}
           style={{
             position: 'absolute',
             top: 18,

@@ -54,7 +54,17 @@
    ```
    https://mommanager.app
    http://localhost:5173
+   com.soldoutdigital.mommanager://auth-callback
+   com.soldoutdigital.mommanager://payment-callback
+   com.soldoutdigital.mommanager://payment-cancel
    ```
+   The three `com.soldoutdigital.mommanager://` entries are required for the
+   native app (iOS/Android). Supabase rejects any `redirectTo` that isn't on
+   this allow-list — without them, the native Google sign-in flow (which
+   requests `redirectTo: 'com.soldoutdigital.mommanager://auth-callback'`,
+   see `GOOGLE_NATIVE_REDIRECT` in `AuthContext.tsx`) never hands control
+   back to the app after the user signs in with Google; the in-app browser
+   sheet just sits there, which looks like the button doing nothing.
 
 ---
 

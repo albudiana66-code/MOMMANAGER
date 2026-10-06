@@ -1,4 +1,5 @@
 import { type ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useApp } from '../../context/AppContext';
 import { AppLogo } from '../ui/AppLogo';
 
@@ -11,6 +12,7 @@ interface HeaderProps {
 
 export function Header({ title, left, right, children }: HeaderProps) {
   const { theme, toggleTheme } = useApp();
+  const { t } = useTranslation();
 
   return (
     <header
@@ -44,7 +46,7 @@ export function Header({ title, left, right, children }: HeaderProps) {
               background: 'var(--bg-card)',
               border: '1px solid var(--border)',
             }}
-            aria-label="Toggle theme"
+            aria-label={t('common.toggleTheme')}
           >
             {theme === 'dark' ? '☀️' : '🌙'}
           </button>

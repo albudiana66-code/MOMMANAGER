@@ -15,7 +15,8 @@
     "newAccount": "Nouveau compte ?",
     "alreadyHaveAccount": "Déjà un compte ?",
     "fillEmailAndPassword": "Veuillez entrer votre email et mot de passe.",
-    "signInWithApple": "Se connecter avec Apple"
+    "signInWithApple": "Se connecter avec Apple",
+    "emailPlaceholder": "Email"
   },
   "nav": {
     "home": "Accueil",
@@ -24,7 +25,8 @@
     "kitchen": "Cuisine",
     "budget": "Budget",
     "selfcare": "Bien-être",
-    "settings": "Paramètres"
+    "settings": "Paramètres",
+    "workout": "Entraînement"
   },
   "dashboard": {
     "goodMorning": "Bonjour",
@@ -74,7 +76,28 @@
     "addEvent": "Ajouter un événement",
     "eventTitle": "Titre de l'événement",
     "time": "Heure",
-    "color": "Couleur"
+    "color": "Couleur",
+    "thisWeek": "Cette semaine",
+    "doneOfTotal": "{{done}}/{{total}} terminées",
+    "nothingScheduled": "Rien de prévu — appuyez sur + Ajouter un événement",
+    "planMom": "Maman",
+    "planKids": "Enfants",
+    "planFamily": "Famille",
+    "timeOptional": "Heure (facultatif)",
+    "setReminder": "Définir un rappel",
+    "notifyAt": "Notifier à {{time}} le {{date}}",
+    "reminderNeedsDateTime": "Nécessite une date et une heure",
+    "toggleReminder": "Activer/désactiver le rappel",
+    "addToPhoneCalendar": "Ajouter au calendrier du téléphone",
+    "reminderSet": "Rappel défini",
+    "date": "Date",
+    "allDay": "Toute la journée",
+    "eventTitlePlaceholder": "Que se passe-t-il ?",
+    "addEventFor": "+ Ajouter un événement pour {{date}}",
+    "moreCount": "+{{count}} de plus",
+    "monthView": "Mois",
+    "weekView": "Semaine",
+    "dayView": "Jour"
   },
   "kids": {
     "title": "Enfants",
@@ -126,7 +149,44 @@
     "saveStory": "Sauvegarder",
     "ageToddler": "Tout-petit (2-4)",
     "ageYoung": "Enfant (5-8)",
-    "ageOlder": "Grand (9-12)"
+    "ageOlder": "Grand (9-12)",
+    "weekOfFour": "📅 Semaine {{week}} sur 4",
+    "resetsMondays": "Se réinitialise le lundi",
+    "activityIdeasTab": "Idées d'activités",
+    "addCustomItemPlaceholder": "Ajouter un article personnalisé...",
+    "addItemsFromPresets": "Ajoutez des articles depuis les suggestions ci-dessus",
+    "ageGroupBaby": "Bébé (0-2 ans)",
+    "ageGroupPreschool": "Préscolaire (4-7 ans)",
+    "ageGroupSchool": "Âge scolaire (7-10 ans)",
+    "ageGroupToddlerFull": "Bambin (2-4 ans)",
+    "couldNotGenerateMealPlan": "Impossible de générer le plan de repas.",
+    "couldNotParseMealPlan": "Impossible d'analyser le plan de repas.",
+    "generateMealPlanBtn": "🔄 Générer un plan de repas",
+    "generatingEllipsis": "⏳ Génération...",
+    "howToPrepare": "Préparation",
+    "ingredients": "Ingrédients",
+    "itemsPacked": "{{packed}}/{{total}} préparés",
+    "lunchBoxTitle": "🍱 Boîte à déjeuner",
+    "lunchPresets": [
+      "🥪 Sandwich",
+      "🍎 Fruit",
+      "💧 Eau",
+      "🍪 Collation",
+      "🥕 Légumes",
+      "🧃 Jus",
+      "🧀 Fromage",
+      "🥜 Noix"
+    ],
+    "lunchboxTab": "Boîte à déjeuner",
+    "mealPlansTab": "🍽️ Plans de repas",
+    "newMenu": "🔄 Nouveau menu",
+    "pleaseTryAgain": "Veuillez réessayer.",
+    "selectKid": "Sélectionnez un enfant",
+    "snacks": "Collations",
+    "sportsCentrePlaceholder": "Centre sportif",
+    "swimmingPlaceholder": "Natation",
+    "tapGenerateMealPlan": "Appuyez sur Générer pour créer un plan de repas personnalisé sur 7 jours",
+    "textureLabel": "Texture"
   },
   "kitchen": {
     "title": "Cuisine",
@@ -168,7 +228,75 @@
     "enterIngredients": "Entrez vos ingrédients...",
     "suggestRecipes": "Suggérer des recettes",
     "recipeSuggestions": "Suggestions de recettes",
-    "difficulty": "Difficulté"
+    "difficulty": "Difficulté",
+    "timerDone": "Terminé ! ✓",
+    "reset": "Réinitialiser",
+    "categories": {
+      "produce": "Fruits et légumes",
+      "meatFish": "Viande et poisson",
+      "dairy": "Produits laitiers",
+      "pantry": "Épicerie",
+      "bakery": "Boulangerie",
+      "other": "Autre"
+    },
+    "pause": "⏸ Pause",
+    "start": "▶ Démarrer",
+    "recipeComplete": "Recette terminée !",
+    "howDidItGo": "Comment ça s'est passé ?",
+    "stepXofY": "Étape {{current}} sur {{total}}",
+    "markDone": "Marquer comme fait",
+    "doneCheck": "✓ Fait",
+    "finish": "🎉 Terminer",
+    "ingredientsTab": "🛒 Ingrédients",
+    "stepsTab": "📋 Étapes",
+    "stepsTabWithProgress": "📋 Étapes ({{done}}/{{total}})",
+    "cookTab": "👨‍🍳 Cuisiner",
+    "chefsTip": "Astuce du chef :",
+    "addAllToShoppingList": "🛒 Tout ajouter à la liste de courses",
+    "startCooking": "👨‍🍳 Commencer à cuisiner",
+    "enterCookMode": "👨‍🍳 Entrer en mode cuisine",
+    "saveRecipeBtn": "Enregistrer la recette ♡",
+    "generateWeeklyMenuTitle": "Générer le menu hebdomadaire ✨",
+    "aiPoweredMealPlanDesc": "Plan de repas IA pour votre famille",
+    "setPreferencesGenerate": "Définir les préférences et générer",
+    "couldNotGenerateMealPlan": "Impossible de générer le plan de repas. Veuillez réessayer.",
+    "addingEllipsis": "Ajout…",
+    "addIngredientsToShoppingList": "🛒 Ajouter les ingrédients à la liste de courses",
+    "mealPlanPreferencesTitle": "Préférences du plan de repas",
+    "numberOfPeople": "Nombre de personnes",
+    "dietPreference": "Préférence alimentaire",
+    "cuisineLabel": "Cuisine",
+    "generateMenuBtn": "Générer le menu ✨",
+    "findingRecipeEllipsis": "Recherche de recette…",
+    "dietAny": "Toutes",
+    "dietVegetarian": "Végétarien",
+    "dietVegan": "Végan",
+    "dietGlutenFree": "Sans gluten",
+    "dietDairyFree": "Sans lactose",
+    "cuisineAny": "Toutes",
+    "cuisineBritish": "Britannique",
+    "cuisineItalian": "Italienne",
+    "cuisineMediterranean": "Méditerranéenne",
+    "cuisineAsian": "Asiatique",
+    "cuisineMexican": "Mexicaine",
+    "itemsOfTotal": "{{bought}} sur {{total}} articles",
+    "generateFromMealsBtn": "Générer à partir des repas de la semaine ✨",
+    "addItemPlaceholder": "Ajouter un article...",
+    "noItemsYet": "Aucun article pour l'instant — ajoutez-en un ci-dessus ou générez à partir des repas",
+    "boughtCount": "Achetés ({{count}})",
+    "clearBoughtBtn": "Effacer les achetés",
+    "findRecipeTitle": "Trouver une recette ✨",
+    "whatsInFridge": "Qu'avez-vous dans le frigo ?",
+    "ingredientsPlaceholder": "ex. poulet, riz, tomates...",
+    "servesLabel": "Portions :",
+    "generateRecipeBtn": "Générer la recette",
+    "couldNotGenerateRecipe": "Impossible de générer la recette. Veuillez réessayer.",
+    "viewFullRecipe": "Voir la recette complète",
+    "cookNowBtn": "👨‍🍳 Cuisiner maintenant",
+    "savedCheckmark": "Enregistrée ✓",
+    "savedRecipesCount": "Recettes enregistrées ({{count}})",
+    "viewBtn": "Voir",
+    "cookBtn": "Cuisiner"
   },
   "budget": {
     "title": "Budget",
@@ -196,7 +324,85 @@
     "cancel": "Annuler",
     "delete": "Supprimer",
     "monthlyLimit": "Limite mensuelle",
-    "limitPlaceholder": "Budget mensuel (ex: 2500)..."
+    "limitPlaceholder": "Budget mensuel (ex: 2500)...",
+    "totalSpent": "Total dépensé",
+    "proGateFeature": "Suivi du budget — suivez vos dépenses, définissez des limites et gérez vos comptes",
+    "categories": {
+      "groceries": "Courses",
+      "housing": "Logement",
+      "transport": "Transport",
+      "eatingOut": "Restaurants",
+      "shopping": "Shopping",
+      "kids": "Enfants",
+      "health": "Santé",
+      "entertainment": "Divertissement",
+      "savings": "Épargne",
+      "other": "Autre"
+    },
+    "resetsMonthlyNote": "ℹ️ Le budget se réinitialise le 1er de chaque mois",
+    "incomeLabel": "REVENUS",
+    "expensesLabel": "DÉPENSES",
+    "enterMonthlyBudgetPlaceholder": "Entrez le budget mensuel...",
+    "setMonthlyBudget": "+ Définir le budget mensuel",
+    "monthlyBudgetPrefix": "✏️ Budget mensuel : {{amount}}",
+    "totalBudgetLabel": "Budget total",
+    "overBudgetBy": "⚠️ Dépassement de budget de {{amount}}",
+    "remainingSuffix": "{{amount}} restants",
+    "biggestExpense": "Plus grosse dépense",
+    "dailyAverage": "Moyenne quotidienne",
+    "perDay": "par jour",
+    "projected": "Projeté",
+    "daysLeftSuffix": "{{days}} j restants",
+    "spendingByCategory": "Dépenses par catégorie",
+    "budgetByCategoryHeading": "Budget par catégorie",
+    "setCategoryLimitPlaceholder": "Définir la limite pour {{category}}...",
+    "descriptionOptionalPlaceholder": "Description (optionnel)",
+    "accountLabel": "Compte",
+    "anyOption": "Tous",
+    "saveTransactionBtn": "Enregistrer la transaction",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
+    "searchTransactionsPlaceholder": "Rechercher des transactions...",
+    "allFilter": "Tout",
+    "sortNewest": "Plus récent",
+    "sortOldest": "Plus ancien",
+    "sortByAmount": "Par montant",
+    "noTransactionsFound": "Aucune transaction trouvée",
+    "pdfNoTransactions": "Aucune transaction trouvée dans le PDF. Assurez-vous qu'il s'agit d'un relevé bancaire textuel (pas une image scannée).",
+    "pdfReadFailed": "Échec de la lecture du PDF : {{msg}}",
+    "csvNoDataRows": "Le CSV ne contient aucune ligne de données. Vérifiez le fichier.",
+    "csvNoValidTransactions": "Aucune transaction valide trouvée. Assurez-vous que le fichier a des colonnes Date, Description et Montant.",
+    "csvParseFailed": "Échec de l'analyse du CSV. Vérifiez le format du fichier.",
+    "importSuccess_one": "✅ {{count}} transaction importée depuis {{bank}}",
+    "importSuccess_other": "✅ {{count}} transactions importées depuis {{bank}}",
+    "importBankStatement": "Importer un relevé bancaire",
+    "uploadCsvOrPdfDesc": "Téléchargez un CSV ou PDF — nous détecterons les transactions automatiquement",
+    "readingPdf": "Lecture du PDF...",
+    "chooseCsvOrPdf": "Choisir un fichier CSV ou PDF",
+    "bankStatementAnyBank": "Relevé bancaire de n'importe quelle banque",
+    "worksWithBanksPrefix": "Fonctionne avec",
+    "worksWithBanksSuffix": "et la plupart des banques",
+    "transactionsFromBank": "{{count}} transactions de {{bank}}",
+    "moreRowsSuffix": "+{{count}} lignes supplémentaires (toutes seront importées)",
+    "importBtn_one": "📥 Importer {{count}} transaction",
+    "importBtn_other": "📥 Importer {{count}} transactions",
+    "myAccounts": "Mes comptes",
+    "addAccountBtn": "+ Ajouter",
+    "accountNamePlaceholder": "Nom du compte",
+    "accountTypeCash": "Espèces",
+    "accountTypeCurrent": "Courant",
+    "accountTypeSavings": "Épargne",
+    "accountTypeCredit": "Crédit",
+    "startingBalancePlaceholder": "Solde initial (£)",
+    "saveAccountBtn": "Enregistrer le compte",
+    "noAccountsYet": "Aucun compte ajouté pour le moment",
+    "lastTxPrefix": "Dernière : {{description}} · {{date}}",
+    "yourBank": "votre banque",
+    "addedToCategory": "{{sign}}{{amount}} ajouté à {{category}}",
+    "exceededBudgetAlert": "⚠️ Vous avez dépassé votre budget {{category}} !",
+    "tabOverview": "Aperçu",
+    "tabTransactions": "Transactions",
+    "tabAccounts": "Comptes"
   },
   "selfcare": {
     "title": "Bien-être",
@@ -358,7 +564,447 @@
       "Nourrissez votre corps, votre esprit et votre âme 🍃",
       "Vous êtes le cœur de votre foyer 💗",
       "Célébrez le chemin parcouru 🥂"
-    ]
+    ],
+    "wellnessThisWeek": "Cette semaine",
+    "tapToAdd": "Appuyez sur une carte pour l'ajouter à votre liste personnelle",
+    "treatmentSteps": {
+      "bath": [
+        "Remplissez la baignoire d'eau tiède (37–39°C — pas trop chaude)",
+        "Ajoutez 2 tasses de sel d'Epsom et quelques gouttes d'huile essentielle de lavande",
+        "Optionnel : ajoutez une cuillère à soupe d'huile de coco pour plus de douceur",
+        "Trempez-vous 15–20 min — laissez vos muscles se détendre complètement",
+        "Séchez-vous délicatement, puis appliquez une lotion pendant que la peau est encore légèrement humide"
+      ],
+      "claywrap": [
+        "Mélangez de l'argile kaolin ou bentonite avec de l'eau tiède jusqu'à obtenir une pâte lisse",
+        "Appliquez une couche généreuse et uniforme sur le corps — évitez le visage et le cou",
+        "Enveloppez lâchement dans du film plastique ou une serviette chaude pour conserver la chaleur",
+        "Laissez poser 20–25 min pendant que vous vous reposez",
+        "Rincez sous la douche, puis séchez et hydratez bien"
+      ],
+      "scrub": [
+        "Mouillez votre peau sous la douche avec de l'eau tiède",
+        "Prenez une quantité généreuse de gommage au café ou au sucre dans vos mains",
+        "Massez en mouvements circulaires en partant des pieds vers le haut",
+        "Portez une attention particulière aux genoux, coudes et talons",
+        "Rincez abondamment, puis appliquez immédiatement de l'huile ou une lotion pour le corps"
+      ],
+      "roseoil": [
+        "Réchauffez quelques gouttes d'huile de rose musquée entre vos paumes",
+        "Commencez par les épaules — utilisez de longs mouvements glissants le long des bras",
+        "Travaillez le ventre en lents cercles dans le sens des aiguilles d'une montre",
+        "Massez les jambes de la cheville à la cuisse avec une pression ferme vers le haut",
+        "Terminez en pressant doucement les paumes sur votre décolleté pendant 30s"
+      ],
+      "facesteam": [
+        "Faites bouillir de l'eau et versez-la dans un bol — ajoutez camomille ou romarin si vous en avez",
+        "Nettoyez soigneusement votre visage avant la vapeur",
+        "Drapez une serviette sur votre tête et penchez-vous au-dessus du bol",
+        "Gardez le visage à 20–30 cm de l'eau — vapeur pendant 8–10 min",
+        "Séchez, appliquez un tonique, puis suivez avec votre sérum et votre hydratant"
+      ],
+      "coldplunge": [
+        "Commencez par une douche chaude pour ouvrir les pores et détendre les muscles",
+        "Baissez progressivement la température vers le froid sur 30–60 secondes",
+        "Concentrez-vous sur une respiration régulière — inspirez profondément, expirez lentement",
+        "Restez sous l'eau froide 2–3 min (augmentez jusqu'à 5 min avec le temps)",
+        "Terminez, séchez-vous rapidement et bougez légèrement pour vous réchauffer"
+      ],
+      "greenteamask": [
+        "Mélangez 1 c. à soupe de matcha ou de thé vert en poudre avec du yaourt nature ou du miel",
+        "Nettoyez la peau, puis appliquez le masque uniformément sur le visage et le cou",
+        "Optionnel : appliquez une fine couche sur les bras ou la poitrine pour un effet antioxydant",
+        "Laissez poser 15–20 min — détendez-vous et évitez de parler",
+        "Rincez à l'eau tiède, suivez avec un tonique et un hydratant"
+      ],
+      "meditation": [
+        "Trouvez un endroit calme — asseyez-vous ou allongez-vous confortablement",
+        "Fermez les yeux et prenez 5 respirations profondes : 4 sec inspiration, 4 sec expiration",
+        "Scan corporel : détendez mentalement chaque partie du corps, des orteils au sommet du crâne",
+        "Concentrez-vous sur votre respiration — quand des pensées surviennent, revenez doucement à la respiration",
+        "Terminez par 3 pensées de gratitude, puis ouvrez lentement les yeux"
+      ]
+    },
+    "workoutGuides": {
+      "strength": {
+        "beginner": {
+          "title": "💪 Corps Entier — Débutant",
+          "location": "🏠 Maison",
+          "duration": "25 min",
+          "items": [
+            "Échauffement : 5 min marche légère sur place",
+            "3×12 squats au poids du corps",
+            "3×10 pompes (sur les genoux ok)",
+            "3×12 fentes arrière chaque jambe",
+            "3×15 ponts fessiers",
+            "3×10 extensions dorsales type « superman »",
+            "Retour au calme : étirer quadriceps, poitrine & dos 5 min"
+          ]
+        },
+        "intermediate": {
+          "title": "💪 Split Haut + Bas",
+          "location": "🏠 Maison / 🏋️ Salle",
+          "duration": "40 min",
+          "items": [
+            "Échauffement : 5 min jumping jacks + cercles de bras",
+            "4×12 squats gobelet avec haltères",
+            "4×10 soulevés de terre roumains avec haltères",
+            "3×12 développé couché haltères (sol ou banc)",
+            "3×12 rowing haltère buste penché chaque côté",
+            "3×15 élévations latérales",
+            "3×20 crunchs vélo",
+            "Retour au calme : étirement fléchisseurs de hanche + épaules 5 min"
+          ]
+        },
+        "advanced": {
+          "title": "💪 Circuit Force & Puissance",
+          "location": "🏋️ Salle",
+          "duration": "55 min",
+          "items": [
+            "Échauffement : 8 min tapis de course + étirements dynamiques",
+            "4×8 squats arrière à la barre (poids modéré)",
+            "4×8 soulevés de terre roumains à la barre",
+            "4×10 développé incliné haltères",
+            "4×10 rowing à la poulie assis",
+            "3×12 fentes bulgares chaque jambe",
+            "3×15 élévations latérales à la poulie",
+            "3×12 extensions triceps à la poulie",
+            "3×10 curl biceps à la barre EZ",
+            "Retour au calme : rouleau de massage quadriceps, ischio-jambiers, dorsaux"
+          ]
+        }
+      },
+      "cardio": {
+        "beginner": {
+          "title": "🏃 Marche Cardio Douce",
+          "location": "🏠 Maison / Extérieur",
+          "duration": "30 min",
+          "items": [
+            "5 min marche facile — échauffement",
+            "20 min marche rapide (respirer mais pouvoir parler)",
+            "5 min marche lente — retour au calme",
+            "Étirer mollets, quadriceps & fléchisseurs de hanche 5 min",
+            "Visez 4×/semaine pour construire une base de forme"
+          ]
+        },
+        "intermediate": {
+          "title": "🏃 Intervalles Course-Marche",
+          "location": "🏠 Extérieur / Tapis",
+          "duration": "35 min",
+          "items": [
+            "5 min marche rapide — échauffement",
+            "Répéter 6× : 3 min jogging + 1 min marche",
+            "5 min marche — retour au calme",
+            "Étirer fléchisseurs de hanche, mollets & ischio-jambiers",
+            "Progressez en ajoutant 1 intervalle de jogging chaque semaine"
+          ]
+        },
+        "advanced": {
+          "title": "🏃 Séance Tempo + Sprint",
+          "location": "🏋️ Tapis / Piste",
+          "duration": "45 min",
+          "items": [
+            "10 min jogging facile — échauffement",
+            "15 min course tempo (allure confortablement difficile)",
+            "5× sprints de 30s avec récupération 90s jogging facile",
+            "10 min jogging facile — retour au calme",
+            "Étirement : piriforme, mollets & fléchisseurs de hanche 5 min"
+          ]
+        }
+      },
+      "yoga": {
+        "beginner": {
+          "title": "🧘 Flux Matinal — Doux",
+          "location": "🏠 Maison",
+          "duration": "20 min",
+          "items": [
+            "Posture de la montagne — 30s, respirer profondément",
+            "Chat-Vache — 10 répétitions lentes, assouplir la colonne",
+            "Chien tête en bas — tenir 30s, talons vers le sol",
+            "Fente basse chaque côté — 30s, ouvrir les fléchisseurs de hanche",
+            "Posture de l'enfant — 1 min, se reposer et respirer",
+            "Flexion avant assise — 45s, ischio-jambiers",
+            "Torsion allongée chaque côté — 30s, détendre le dos",
+            "Savasana — 3 min, relaxation complète"
+          ]
+        },
+        "intermediate": {
+          "title": "🧘 Flux Vinyasa",
+          "location": "🏠 Maison / Studio",
+          "duration": "35 min",
+          "items": [
+            "5 min respiration & échauffement assis",
+            "5× Salutation au Soleil A (mouvement synchronisé à la respiration)",
+            "Guerrier I + II + Guerrier Inversé — 45s chaque côté",
+            "Posture du triangle chaque côté — 45s",
+            "Posture de la chaise — tenir 1 min",
+            "Planche → Chaturanga → Chien tête en haut — 5 répétitions",
+            "Posture du pigeon chaque côté — 1 min étirement profond",
+            "Torsion vertébrale assise + flexion avant",
+            "Savasana — 5 min"
+          ]
+        },
+        "advanced": {
+          "title": "🧘 Power Yoga + Équilibre",
+          "location": "🏠 Maison / Studio",
+          "duration": "50 min",
+          "items": [
+            "10 min série Surya Namaskar B (8 tours)",
+            "Posture du corbeau (Bakasana) — tentatives de maintien 3×",
+            "Préparation à l'équilibre sur les mains contre le mur — 3× 30s",
+            "Posture de la demi-lune chaque côté — 1 min",
+            "Guerrier III chaque côté — 1 min maintien de l'équilibre",
+            "Posture de la roue (Urdhva Dhanurasana) — 3× 20s",
+            "Préparation à l'équilibre sur avant-bras (Pincha) — 3× 30s",
+            "Fin en yin : pigeon + dragon 2 min chacune",
+            "Yoga nidra / Savasana — 8 min"
+          ]
+        }
+      },
+      "hiit": {
+        "beginner": {
+          "title": "🔥 HIIT à Faible Impact",
+          "location": "🏠 Maison",
+          "duration": "20 min",
+          "items": [
+            "Échauffement : 3 min balancements de bras + cercles de hanches",
+            "3 tours (40s travail / 20s repos) :",
+            "  • Step jacks (jumping jacks à faible impact)",
+            "  • Pulsations de squat",
+            "  • Marche sur place genoux hauts",
+            "  • Pompes modifiées",
+            "  • Crunchs obliques debout",
+            "Retour au calme : 5 min étirement corps entier"
+          ]
+        },
+        "intermediate": {
+          "title": "🔥 Circuit HIIT",
+          "location": "🏠 Maison",
+          "duration": "30 min",
+          "items": [
+            "Échauffement : 5 min étirements dynamiques",
+            "4 tours (40s travail / 15s repos) :",
+            "  • Burpees",
+            "  • Squats sautés",
+            "  • Pompe avec touche d'épaule",
+            "  • Patineurs (speed skaters)",
+            "  • Planche avec bascule de hanches",
+            "  • Fentes sautées",
+            "Repos 90s entre les tours",
+            "Retour au calme : 5 min étirement"
+          ]
+        },
+        "advanced": {
+          "title": "🔥 HIIT Avancé + Core",
+          "location": "🏠 Maison / 🏋️ Salle",
+          "duration": "40 min",
+          "items": [
+            "Échauffement : 5 min jogging + mobilisation",
+            "5 tours (45s travail / 10s repos) :",
+            "  • Sauts groupés",
+            "  • Pompes pliométriques",
+            "  • Burpees sur une jambe (alterner)",
+            "  • Sauts sur box ou variante de squat sauté",
+            "  • Maintiens gainage « dragon flag »",
+            "  • Bonds latéraux + stabilisation",
+            "Repos 60s entre les tours",
+            "Finisher : défi planche 3 min",
+            "Retour au calme : étirement profond 8 min"
+          ]
+        }
+      },
+      "walking": {
+        "beginner": {
+          "title": "🚶 Objectif de Pas Quotidien",
+          "location": "🏠 Extérieur / Centre commercial",
+          "duration": "30 min",
+          "items": [
+            "Visez 7 000–8 000 pas/jour",
+            "30 min marche facile, allure confortable",
+            "Portez des chaussures de soutien",
+            "🎧 Idéal pour podcasts ou musique",
+            "Bonus : prenez les escaliers plutôt que l'ascenseur",
+            "Suivez avec une appli santé ou une montre"
+          ]
+        },
+        "intermediate": {
+          "title": "🚶 Marche Rapide + Côtes",
+          "location": "🏠 Extérieur",
+          "duration": "45 min",
+          "items": [
+            "Visez 10 000 pas/jour",
+            "10 min marche facile — échauffement",
+            "25 min marche rapide (allure soutenue)",
+            "Incluez des côtes ou du dénivelé si possible",
+            "10 min marche facile — retour au calme",
+            "Balancez activement les bras pour brûler plus de calories",
+            "Étirez hanches & mollets après"
+          ]
+        },
+        "advanced": {
+          "title": "🚶 Marche Lestée (Rucking)",
+          "location": "🏠 Extérieur / Sentiers",
+          "duration": "60 min",
+          "items": [
+            "Chargez un sac à dos de 5–10 kg",
+            "10 min marche facile — échauffement",
+            "40 min marche rapide avec poids sur le dos",
+            "Incluez des côtes — bénéfice max calorique & musculaire",
+            "10 min marche — retour au calme",
+            "Étirez fléchisseurs de hanche, fessiers & haut du dos",
+            "Visez 12 000–15 000 pas les jours de rucking"
+          ]
+        }
+      },
+      "swimming": {
+        "beginner": {
+          "title": "🏊 Séance Piscine Facile",
+          "location": "🏋️ Piscine",
+          "duration": "30 min",
+          "items": [
+            "4 longueurs échauffement facile (n'importe quelle nage)",
+            "8 longueurs série principale — repos 30s toutes les 2 longueurs",
+            "Concentrez-vous sur la technique de respiration",
+            "2 longueurs retour au calme (dos crawlé)",
+            "Total ~30 min · excellent pour les articulations"
+          ]
+        },
+        "intermediate": {
+          "title": "🏊 Nage d'Endurance",
+          "location": "🏋️ Piscine",
+          "duration": "45 min",
+          "items": [
+            "200m échauffement : crawl facile",
+            "400m série principale : crawl avec virages",
+            "4× 50m battements avec planche, repos 20s chacun",
+            "4× 50m tractions avec pull buoy, repos 20s chacun",
+            "200m retour au calme : dos crawlé",
+            "Total ~1600m · étirer épaules & hanches après"
+          ]
+        },
+        "advanced": {
+          "title": "🏊 Intervalles de Nage",
+          "location": "🏋️ Piscine",
+          "duration": "60 min",
+          "items": [
+            "400m échauffement : nages mixtes",
+            "8× 100m sur 2:00 (viser des négatives splits)",
+            "4× 50m papillon ou brasse, repos 30s",
+            "8× 25m sprint sur 1:00",
+            "200m retour au calme : dos crawlé facile",
+            "Total ~2400m · rouleau de massage épaules & dorsaux"
+          ]
+        }
+      }
+    },
+    "howTo": "Comment faire",
+    "addToMyTreatments": "+ Ajouter à mes soins",
+    "alreadyInList": "✓ Déjà dans votre liste",
+    "myTreatments": "Mes soins",
+    "everyDaySuffix": "Chaque {{day}}",
+    "timesDoneSuffix": "{{count}}× effectué",
+    "days": {
+      "monday": "Lundi",
+      "tuesday": "Mardi",
+      "wednesday": "Mercredi",
+      "thursday": "Jeudi",
+      "friday": "Vendredi",
+      "saturday": "Samedi",
+      "sunday": "Dimanche"
+    },
+    "routineNamePlaceholder": "Nom de la routine (ex. pause déjeuner)",
+    "addStepPlaceholder": "Ajouter une étape...",
+    "morningAM": "Matin (AM)",
+    "eveningPM": "Soir (PM)",
+    "doneCountSuffix": "{{done}}/{{total}} effectués",
+    "productPlaceholderCeraVe": "ex. CeraVe",
+    "productPlaceholderLRP": "ex. La Roche-Posay",
+    "legendFullRoutine": "🟢 Routine complète",
+    "legendPartial": "🟡 Partiel",
+    "legendMissed": "⚪ Manqué",
+    "getPersonalisedAdvice": "Obtenir des conseils personnalisés ✨",
+    "skinTypeLabel": "Type de peau",
+    "concernsLabel": "Préoccupations",
+    "gettingAdvice": "Récupération des conseils...",
+    "getAdviceBtn": "Obtenir des conseils",
+    "myProducts": "Mes produits",
+    "productNamePlaceholder": "Nom du produit",
+    "productStepPlaceholder": "Étape (ex. Hydratant)",
+    "addProductBtn": "Ajouter un produit",
+    "tapToAddProducts": "Appuyez sur + pour ajouter vos produits",
+    "concernHydration": "Hydratation",
+    "concernBrightening": "Éclat",
+    "workoutTrackerTitle": "Suivi d'entraînement",
+    "workoutsThisWeek_one": "{{count}} séance cette semaine · {{mins}} min au total",
+    "workoutsThisWeek_other": "{{count}} séances cette semaine · {{mins}} min au total",
+    "logThisWorkout": "Enregistrer cette séance",
+    "durationMinPlaceholder": "Durée (min)",
+    "logCheckBtn": "Enregistrer ✓",
+    "notesOptionalPlaceholder": "Notes (optionnel)",
+    "todayLabel": "Aujourd'hui",
+    "workoutStrength": "Force",
+    "workoutCardio": "Cardio",
+    "workoutYoga": "Yoga",
+    "workoutHiit": "HIIT",
+    "workoutWalking": "Marche",
+    "workoutSwimming": "Natation",
+    "levelBeginner": "Débutant",
+    "levelIntermediate": "Intermédiaire",
+    "levelAdvanced": "Avancé",
+    "calorieTrackerTitle": "Suivi calorique",
+    "dailyGoalLabel": "Objectif quotidien : {{goal}} kcal",
+    "weightGoalBtn": "⚖️ Objectif de poids",
+    "setWeightGoalTitle": "Définir votre objectif de poids",
+    "currentWeightLabel": "Poids actuel (kg)",
+    "goalWeightLabel": "Poids objectif (kg)",
+    "timeframeLabel": "Délai",
+    "calculateGoalBtn": "Calculer mon objectif",
+    "dailyCalorieGoalResult_one": "Votre objectif calorique quotidien : {{calories}} kcal (pour {{action}} {{diff}} kg en {{months}} mois)",
+    "dailyCalorieGoalResult_other": "Votre objectif calorique quotidien : {{calories}} kcal (pour {{action}} {{diff}} kg en {{months}} mois)",
+    "actionLose": "perdre",
+    "actionGain": "prendre",
+    "currentWeightDisplay": "Actuel : {{weight}} kg",
+    "goalWeightDisplay": "Objectif : {{weight}} kg",
+    "needToLose": "Vous devez perdre {{kg}} kg pour atteindre votre objectif",
+    "kcalConsumed": "{{count}} kcal consommées",
+    "kcalOver": "{{count}} kcal en trop",
+    "kcalRemaining": "{{count}} kcal restantes",
+    "couldNotFindFoodInfo": "Impossible de trouver des informations. Veuillez réessayer.",
+    "foodQueryPlaceholder": "Qu'avez-vous mangé ? (ex. riz au poulet, salade, œuf dur)",
+    "addBtn": "+ Ajouter",
+    "addMealBtn": "+ Ajouter un repas",
+    "generatingEllipsis": "⏳ Génération...",
+    "aiMealPlanBtn": "✨ Plan de repas IA",
+    "couldNotParseMealPlan": "Impossible d'analyser le plan de repas. Veuillez réessayer.",
+    "yourAiMealPlan": "✨ Votre plan de repas IA",
+    "addToShoppingListLink": "🛒 Ajouter à la liste de courses",
+    "totalLabel": "Total",
+    "kcalOfGoal": "{{total}} kcal / objectif {{goal}} kcal",
+    "addAllToTodayLog": "➕ Tout ajouter au journal du jour",
+    "recipeToggleHide": "masquer",
+    "recipeToggleShow": "recette",
+    "prepSuffix": "{{time}} préparation",
+    "cookSuffix": "{{time}} cuisson",
+    "mealSnack": "Collation",
+    "tf1": "1 mois",
+    "tf2": "2 mois",
+    "tf3": "3 mois",
+    "tf6": "6 mois",
+    "motivationalFar": "💪 Chaque petit pas compte — vous pouvez le faire !",
+    "motivationalGetting": "🌟 Vous faites des progrès incroyables, continuez !",
+    "motivationalClose": "🎯 Vous êtes si proche de votre objectif — restez régulière !",
+    "motivationalAlmost": "🏆 Presque arrivée ! La dernière ligne droite est la plus dure.",
+    "motivationalReached": "✨ Vous avez atteint votre poids cible — maintenez-le !",
+    "motivationalSetGoal": "🌸 Définissez votre objectif de poids pour un plan personnalisé !",
+    "legendMoodLabel": "Humeur",
+    "legendSleepLabel": "Sommeil",
+    "legendWaterLabel": "Eau",
+    "todaysAffirmation": "Affirmation du jour",
+    "waterShort": "Eau",
+    "weeklyOverview": "Aperçu hebdomadaire",
+    "journalPlaceholder": "Écrivez librement — c'est votre espace privé...",
+    "lessToggle": "moins",
+    "moreToggle": "plus"
   },
   "settings": {
     "title": "Paramètres",
@@ -382,39 +1028,139 @@
     "yes": "Oui",
     "no": "Non",
     "save": "Enregistrer",
-    "cancel": "Annuler"
+    "cancel": "Annuler",
+    "aiAssistantTitle": "Assistant IA",
+    "allowAiFeatures": "Autoriser les fonctionnalités IA",
+    "aiFeaturesDescription": "Envoie vos messages et le contexte pertinent à Anthropic pour générer des réponses IA.",
+    "freeTrialLabel": "Essai gratuit",
+    "daysLeftSuffix": "j restants",
+    "unlockAllFeatures": "Débloquez toutes les fonctionnalités — passez à un forfait avant la fin de votre essai.",
+    "upgradeNow": "Passer au forfait maintenant",
+    "whatsIncluded": "Ce qui est inclus",
+    "everythingInStandardPlus": "Tout ce qui est dans Standard, plus :",
+    "renewsOn": "Renouvellement le {{date}}",
+    "managePortalNote": "Les abonnements achetés sur le web peuvent être gérés ci-dessous. Si vous vous êtes abonné via l'App Store, gérez via <strong>Réglages iPhone → Apple ID → Abonnements</strong>.",
+    "openingPortal": "Ouverture du portail...",
+    "manageSubscriptionBtn": "Gérer l'abonnement",
+    "cancelAnytimeManaged": "Annulez à tout moment · Géré par Stripe",
+    "noActiveSubscription": "Vous n'avez pas d'abonnement actif.",
+    "choosePlanBtn": "Choisir un forfait",
+    "purchasesSection": "Achats",
+    "restorePurchases": "Restaurer les achats",
+    "restoring": "Restauration…",
+    "restoreSuccess": "Achats restaurés avec succès.",
+    "restoreNone": "Aucun achat trouvé à restaurer.",
+    "restoreIOSOnly": "La restauration n'est disponible que dans l'application mobile.",
+    "restoreError": "Impossible de restaurer les achats. Réessayez.",
+    "portalError": "Impossible d'ouvrir le portail d'abonnement.",
+    "legalSection": "Mentions légales",
+    "termsAndConditions": "Conditions générales",
+    "privacyPolicy": "Politique de confidentialité",
+    "deleteAccountTitle": "Supprimer le compte",
+    "deleteAccountWarning": "Cela supprimera définitivement votre compte et toutes vos données. Cette action est irréversible.",
+    "deleteAccountLink": "Supprimer le compte",
+    "deleting": "Suppression…",
+    "delete": "Supprimer"
   },
   "paywall": {
-    "title": "Continuer avec MomManager Premium",
-    "subtitle": "Annulez à tout moment",
     "monthly": "Mensuel",
-    "annual": "Annuel",
-    "bestValue": "MEILLEURE OFFRE",
-    "monthlyPrice": "£9.99/mois",
-    "annualPrice": "£79.99/an",
-    "startMonthly": "Commencer mensuel",
-    "startAnnual": "Commencer annuel",
-    "feature1": "Toutes les fonctionnalités",
-    "feature2": "Assistant IA",
-    "feature3": "Multilingue",
-    "feature4": "Convertisseur de devises",
-    "feature5": "Enfants illimités",
-    "trialExpiredMessage": "Votre essai gratuit de 7 jours est terminé. Mettez à niveau pour continuer.",
-    "processing": "Traitement...",
-    "startFreeTrial": "Commencer 7 jours gratuits",
-    "activateTest": "Activer (Mode test)",
-    "trialIncludes": "Inclut 7 jours gratuits, puis",
-    "orActivateTest": "— ou pour les tests —",
-    "trialTermsTitle": "Conditions de l'essai gratuit",
-    "trialTerm1": "Essai gratuit de 7 jours inclus avec tous les forfaits",
-    "trialTerm2": "Après l'essai : £9.99/mois ou £79.99/an",
-    "trialTerm3": "Annulez avant la fin de l'essai pour éviter tout prélèvement",
-    "trialTerm4": "Le paiement sera débité de votre compte après la période d'essai"
+    "chooseYourPlan": "Choisissez votre forfait",
+    "sevenDayTrialCancelAnytime": "Essai gratuit de 7 jours • Annulez à tout moment",
+    "subscriptionRequired": "Un abonnement est nécessaire pour utiliser MomManager.",
+    "yearly": "Annuel",
+    "standardName": "Standard",
+    "proName": "Pro",
+    "billedMonthly": "facturé mensuellement",
+    "billedYearly": "{{amount}}/mois, facturé annuellement",
+    "mostPopular": "LE PLUS POPULAIRE",
+    "everythingInStandardPlus": "Tout ce qui est dans Standard, plus :",
+    "soon": "Bientôt",
+    "redirecting": "Redirection…",
+    "openingNativeSheet": "Ouverture de la fenêtre d'achat…",
+    "startStandardTrial": "Démarrer Standard – 7 jours gratuits",
+    "startProTrial": "Démarrer Pro – 7 jours gratuits",
+    "tryFreeThen": "Essayez gratuitement pendant 7 jours, puis {{price}}. Annulez avant la fin de l'essai pour éviter d'être facturé.",
+    "or": "ou",
+    "startFreeTrialCta": "Essayer gratuitement 7 jours — sans carte",
+    "noPaymentOptionLabel": "SANS PAIEMENT",
+    "noPaymentSectionSubtitle": "Vous préférez ne pas renseigner de moyen de paiement maintenant ?",
+    "startingTrial": "Démarrage de l'essai…",
+    "restorePurchases": "🔄 Restaurer les achats",
+    "restoring": "Restauration…",
+    "footerRenewalNotice": "L'abonnement se renouvelle automatiquement au prix du forfait indiqué ci-dessus. Pour éviter d'être facturé, annulez au moins 24 heures avant la fin de votre essai de 7 jours.",
+    "manageIOS": "Gérez ou annulez à tout moment dans Réglages iPhone → Apple ID → Abonnements.",
+    "manageOther": "Gérez ou annulez à tout moment dans les paramètres de votre compte.",
+    "footerPaymentCharge": "Le paiement sera débité de votre compte à la confirmation de l'achat.",
+    "privacyPolicy": "Politique de confidentialité",
+    "termsOfUse": "Conditions d'utilisation",
+    "purchaseCouldNotComplete": "L'achat n'a pas pu être finalisé. Réessayez.",
+    "mustBeSignedIn": "Vous devez être connecté pour vous abonner.",
+    "openingCheckout": "Ouverture du paiement sécurisé…",
+    "redirectingCheckout": "Redirection vers le paiement sécurisé…",
+    "purchaseFailed": "Échec de l'achat : {{msg}}",
+    "unknownError": "erreur inconnue",
+    "noPreviousPurchases": "Aucun achat précédent trouvé.",
+    "couldNotRestore": "Impossible de restaurer les achats.",
+    "purchaseNoPaymentMethod": "Ajoutez un moyen de paiement à votre compte {{store}} pour démarrer l'essai gratuit.",
+    "purchaseNotAllowed": "Les achats ne sont pas autorisés sur cet appareil. Vérifiez les paramètres de temps d'écran / contrôle parental.",
+    "purchaseNetworkError": "Erreur réseau — vérifiez votre connexion et réessayez.",
+    "purchaseTimedOut": "Cela prend plus de temps que prévu. Veuillez réessayer.",
+    "purchasePending": "Votre achat est en attente d'approbation. Nous débloquerons votre forfait dès qu'il sera confirmé.",
+    "restoreTimedOut": "La restauration prend plus de temps que prévu. Veuillez réessayer.",
+    "tapRetry": "Appuyez pour réessayer",
+    "standardFeatures": [
+      "Calendrier et tâches avec rappels et notifications",
+      "Plans séparés pour Maman et Enfants",
+      "Générateur d'activités IA pour les enfants",
+      "Cuisine et planification des repas",
+      "Routines de soins personnels de base",
+      "Suivi de budget de base",
+      "9 langues prises en charge"
+    ],
+    "proExtras": [
+      "Soins de la peau avancés avec recommandations de produits par IA",
+      "Suivi d'entraînement avec progrès et séries",
+      "Plans nutritionnels IA pour toute la famille",
+      "Import de relevés bancaires (CSV et PDF)",
+      "Récapitulatif hebdomadaire IA et prévisions",
+      "Support prioritaire"
+    ],
+    "offeringsUnavailable": "Impossible de charger les forfaits d'abonnement. Vérifiez votre connexion et réessayez.",
+    "retry": "Réessayer",
+    "remainingInTrial_one": "🌸 {{count}} jour restant dans votre essai gratuit",
+    "remainingInTrial_other": "🌸 {{count}} jours restants dans votre essai gratuit"
+  },
+  "trialDisclosure": {
+    "endsOn": "Votre essai gratuit de 7 jours se termine le {{date}}.",
+    "endsOnIfStartedToday": "Votre essai gratuit de 7 jours se terminerait le {{date}} si vous commencez aujourd'hui.",
+    "chargedAfter": "Après l'essai, {{price}} par {{period}} vous seront facturés, sauf annulation.",
+    "cancelGoogle": "Annulez à tout moment, au moins 24 heures avant la fin de l'essai, dans Google Play > Abonnements.",
+    "cancelApple": "Annulez à tout moment, au moins 24 heures avant la fin de l'essai, dans Réglages iPhone → Apple ID → Abonnements.",
+    "cancelWeb": "Annulez à tout moment, au moins 24 heures avant la fin de l'essai, dans les paramètres de votre compte.",
+    "autoRenews": "L'abonnement se renouvelle automatiquement jusqu'à annulation.",
+    "periodMonth": "mois",
+    "periodYear": "an",
+    "periodWeek": "semaine",
+    "periodDay": "jour",
+    "freeEndsOn": "Votre essai gratuit se termine le {{date}}.",
+    "freeDuration": "L'essai gratuit dure 7 jours à partir de son activation.",
+    "freeNoCharge": "Aucun moyen de paiement requis — vous ne serez pas facturé automatiquement.",
+    "freeNoAutoRenew": "Cet essai ne se renouvelle pas automatiquement. Choisissez une formule à tout moment pour conserver l'accès complet une fois l'essai terminé."
   },
   "success": {
     "title": "Bienvenue Premium!",
     "message": "Votre abonnement est actif. Profitez de toutes les fonctionnalités!",
-    "continue": "Continuer"
+    "continue": "Continuer",
+    "confirmingPayment": "Confirmation du paiement…",
+    "paymentNotCompleted": "Paiement non finalisé",
+    "cardNotCharged": "Votre carte n'a pas été débitée.",
+    "tryAgain": "Réessayer",
+    "planLabel": "Forfait",
+    "planName": "Forfait {{plan}} {{period}}",
+    "nextBillingDate": "Prochaine date de facturation",
+    "statusLabel": "Statut",
+    "statusActive": "✓ Actif",
+    "receiptSentNote": "Un reçu a été envoyé à votre adresse email par Stripe."
   },
   "ai": {
     "title": "Assistant IA",
@@ -423,7 +1169,13 @@
     "errorMessage": "Désolé, une erreur s'est produite. Réessayez.",
     "send": "Envoyer",
     "close": "Fermer",
-    "newChat": "Nouvelle discussion"
+    "newChat": "Nouvelle discussion",
+    "consentTitle": "Assistant IA et vos données",
+    "consentIntro": "Les fonctionnalités IA de MomManager (le chat de l'Assistant IA, les plans de repas, les recettes, les suggestions d'activités et les conseils de soins personnels) sont propulsées par <strong>Anthropic</strong>, un service IA tiers.",
+    "consentDetails": "Pour générer une réponse, nous envoyons à Anthropic le message ou la demande que vous saisissez, ainsi que tout détail pertinent que vous avez fourni pour cette fonctionnalité — par exemple le nom et l'âge d'un enfant pour un plan de repas, des préférences alimentaires, un type de peau, ou des chiffres de poids/objectif pour des conseils de soins personnels. Nous n'envoyons <strong>jamais</strong> vos identifiants de compte, vos informations de paiement, ni aucune donnée de fonctionnalités que vous n'avez pas utilisées.",
+    "consentFooter": "Vous pouvez changer d'avis à tout moment dans Réglages → Assistant IA. Refuser désactive uniquement les fonctionnalités IA — le reste de MomManager fonctionne normalement dans tous les cas.",
+    "consentNotNow": "Pas maintenant",
+    "consentAgree": "J'accepte, continuer"
   },
   "common": {
     "loading": "Chargement...",
@@ -442,6 +1194,271 @@
     "no": "Non",
     "search": "Rechercher",
     "noData": "Aucune donnée disponible",
-    "required": "Ce champ est obligatoire"
+    "required": "Ce champ est obligatoire",
+    "toggleTheme": "Changer de thème"
+  },
+  "trialBanner": {
+    "trialEnded": "Votre essai est terminé — Choisissez un forfait",
+    "daysLeft": "🌸 {{days}} jours restants dans votre essai gratuit",
+    "choosePlan": "Choisir un forfait",
+    "upgrade": "Améliorer"
+  },
+  "proGate": {
+    "proFeature": "Fonctionnalité Pro",
+    "upgradeToPro": "Passer à Pro"
+  },
+  "kidsActivities": {
+    "activityIdeas": "🧸 Idées d'activités",
+    "ageGroupLabel": "Tranche d'âge",
+    "categoryLabel": "Catégorie",
+    "pickAny": "(choisissez-en autant que vous voulez)",
+    "durationLabel": "Durée",
+    "materialsLabel": "Matériaux",
+    "generateBtn": "Générer des activités ✨",
+    "generating": "Recherche d'activités...",
+    "stepsLabel": "Étapes",
+    "savedLabel": "Enregistré ✓",
+    "saveLabel": "Enregistrer ♡",
+    "savedActivitiesLabel": "Activités enregistrées",
+    "invalidResponse": "Format de réponse invalide",
+    "couldNotGenerate": "Impossible de générer des activités. Réessayez.",
+    "ageGroups": {
+      "toddler": "0-2 ans",
+      "young": "3-5 ans",
+      "middle": "6-9 ans",
+      "older": "10+ ans"
+    },
+    "categories": {
+      "creative": "Créatif",
+      "educational": "Éducatif",
+      "physical": "Physique",
+      "relaxing": "Relaxant",
+      "outdoor": "Extérieur",
+      "rainyDay": "Jour de pluie"
+    },
+    "durations": {
+      "min15": "15 min",
+      "min30": "30 min",
+      "hour1": "1 heure",
+      "afternoon": "Après-midi"
+    },
+    "materials": {
+      "none": "Rien de nécessaire",
+      "basic": "Basique",
+      "craft": "Matériel de bricolage",
+      "kitchen": "Cuisine"
+    }
+  },
+  "fitness": {
+    "pushup": {
+      "muscle": "Pectoraux et triceps",
+      "mistakes": [
+        "Hanches affaissées ou trop hautes",
+        "Coudes trop écartés",
+        "Amplitude de mouvement incomplète"
+      ]
+    },
+    "squat": {
+      "muscle": "Quadriceps et fessiers",
+      "mistakes": [
+        "Genoux qui rentrent vers l'intérieur",
+        "Talons qui se soulèvent du sol",
+        "Arrondissement du bas du dos"
+      ]
+    },
+    "lunge": {
+      "muscle": "Quadriceps et fessiers",
+      "mistakes": [
+        "Genou avant qui dépasse les orteils",
+        "Torse trop penché vers l'avant",
+        "Perte d'équilibre — fixez le regard droit devant vous"
+      ]
+    },
+    "plank": {
+      "muscle": "Abdominaux et gainage",
+      "mistakes": [
+        "Hanches trop hautes ou affaissées",
+        "Retenir sa respiration au lieu de respirer normalement",
+        "Tête qui tombe vers le bas"
+      ]
+    },
+    "deadlift": {
+      "muscle": "Ischio-jambiers et dos",
+      "mistakes": [
+        "Arrondissement du bas du dos",
+        "La barre s'éloigne du corps",
+        "Arrachage brusque de la barre du sol"
+      ]
+    },
+    "bicepCurl": {
+      "muscle": "Biceps",
+      "mistakes": [
+        "Balancement du corps pour l'élan",
+        "Manque de contrôle en phase de descente",
+        "Coudes qui s'éloignent du torse"
+      ]
+    },
+    "shoulderPress": {
+      "muscle": "Épaules et triceps",
+      "mistakes": [
+        "Cambrure du bas du dos",
+        "Coudes non complètement tendus en haut",
+        "Poussée vers l'avant au lieu de tout droit vers le haut"
+      ]
+    },
+    "latPulldown": {
+      "muscle": "Dorsaux et haut du dos",
+      "mistakes": [
+        "Se pencher trop en arrière",
+        "Tirer avec les bras au lieu des dorsaux",
+        "Épaules qui remontent vers les oreilles"
+      ]
+    },
+    "gluteBridge": {
+      "muscle": "Fessiers et ischio-jambiers",
+      "mistakes": [
+        "Hyperextension du bas du dos en haut",
+        "Pieds trop loin ou trop près des hanches",
+        "Genoux qui s'effondrent vers l'intérieur"
+      ]
+    },
+    "mountainClimber": {
+      "muscle": "Gainage et cardio",
+      "mistakes": [
+        "Hanches qui rebondissent de haut en bas",
+        "Perte de la position de dos plat",
+        "Mouvement trop rapide avec un contrôle médiocre"
+      ]
+    },
+    "burpee": {
+      "muscle": "Corps entier",
+      "mistakes": [
+        "La poitrine ne descend pas jusqu'au sol",
+        "Pieds qui sautent trop écartés",
+        "Atterrissage avec les genoux bloqués"
+      ]
+    },
+    "tricepDip": {
+      "muscle": "Triceps",
+      "mistakes": [
+        "Épaules qui remontent vers les oreilles",
+        "Penché trop en avant",
+        "Coudes trop écartés"
+      ]
+    },
+    "calfRaise": {
+      "muscle": "Mollets",
+      "mistakes": [
+        "Pas de pause en haut",
+        "Pieds qui roulent vers l'intérieur/l'extérieur",
+        "Utilisation de l'élan au lieu du contrôle"
+      ]
+    },
+    "russianTwist": {
+      "muscle": "Obliques et gainage",
+      "mistakes": [
+        "Arrondissement du dos",
+        "Rotation des bras seulement, pas du torse",
+        "Mouvement trop rapide sans contrôle"
+      ]
+    },
+    "legRaise": {
+      "muscle": "Abdominaux et fléchisseurs de hanche",
+      "mistakes": [
+        "Le bas du dos se cambre du sol",
+        "Les jambes descendent trop vite",
+        "Utilisation de l'élan au lieu du contrôle musculaire"
+      ]
+    },
+    "generic": {
+      "muscle": "Corps entier",
+      "mistakes": [
+        "Trop d'élan utilisé",
+        "Mauvaise posture",
+        "Amplitude de mouvement incomplète"
+      ]
+    },
+    "exerciseFallback": "Exercice"
+  },
+  "legal": {
+    "lastUpdated": "Dernière mise à jour : avril 2025",
+    "terms": {
+      "pageTitle": "Conditions générales",
+      "section1Title": "1. Qui sommes-nous",
+      "section1Body": "MomManager est exploité par <strong>SoldOut Digital LTD</strong>, une société immatriculée en Angleterre et au Pays de Galles. Adresse enregistrée : Royaume-Uni. Numéro de société : 16208774.",
+      "section2Title": "2. Acceptation des conditions",
+      "section2Body": "En téléchargeant, installant ou utilisant l'application MomManager (l'\"Application\"), vous acceptez d'être lié par ces Conditions générales. Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser l'Application.",
+      "section3Title": "3. Abonnement et paiements",
+      "section3Body": "MomManager propose un accès par abonnement aux fonctionnalités premium. Les abonnements sont facturés de manière récurrente (mensuellement ou annuellement) via {{storeName}}. Le paiement sera débité de votre compte à la confirmation de l'achat. Les abonnements se renouvellent automatiquement sauf annulation au moins 24 heures avant la fin de la période en cours. Vous pouvez gérer ou annuler votre abonnement dans les paramètres de compte de votre appareil. Aucun remboursement n'est accordé pour les périodes d'abonnement partielles, sauf si la loi applicable l'exige.",
+      "section4Title": "4. Essai gratuit",
+      "section4Body": "Nous pouvons proposer une période d'essai gratuite pour les nouveaux utilisateurs. À la fin de l'essai, votre abonnement débutera automatiquement et vous serez facturé du montant applicable, sauf si vous annulez avant la fin de l'essai.",
+      "section5Title": "5. Utilisation de l'Application",
+      "section5Body": "Vous acceptez d'utiliser MomManager uniquement à des fins personnelles, légales et non commerciales. Vous ne devez pas abuser de l'Application, tenter d'obtenir un accès non autorisé à une partie de celle-ci, ni l'utiliser d'une manière qui pourrait endommager, désactiver ou altérer sa fonctionnalité. Vous êtes responsable du maintien de la sécurité des identifiants de votre compte.",
+      "section6Title": "6. Fonctionnalités IA",
+      "section6Body": "MomManager inclut des fonctionnalités basées sur l'IA (telles que des suggestions de repas, la génération d'histoires et l'assistance par chat) propulsées par des fournisseurs d'IA tiers. Ces fonctionnalités sont fournies à des fins d'information et de divertissement uniquement. Le contenu généré par l'IA peut ne pas toujours être précis, complet ou adapté à votre situation spécifique. Vous devez toujours faire preuve de discernement et consulter des professionnels qualifiés pour des conseils médicaux, nutritionnels, financiers ou juridiques.",
+      "section7Title": "7. Propriété intellectuelle",
+      "section7Body": "Tout le contenu, le design, les graphiques et les logiciels de l'Application sont la propriété intellectuelle de SoldOut Digital LTD ou de ses concédants de licence et sont protégés par les lois applicables sur le droit d'auteur et la propriété intellectuelle. Vous ne pouvez pas copier, modifier, distribuer ou effectuer une ingénierie inverse d'une partie de l'Application sans notre consentement écrit préalable.",
+      "section8Title": "8. Limitation de responsabilité",
+      "section8Body": "Dans toute la mesure permise par la loi, SoldOut Digital LTD ne sera pas responsable des dommages indirects, accessoires, spéciaux, consécutifs ou punitifs résultant de votre utilisation de l'Application. Notre responsabilité totale envers vous ne dépassera pas le montant que vous avez payé pour votre abonnement au cours des 12 mois précédant la réclamation.",
+      "section9Title": "9. Modifications des conditions",
+      "section9Body": "Nous nous réservons le droit de modifier ces Conditions à tout moment. Nous vous informerons des changements importants via l'Application ou par email. La poursuite de l'utilisation de l'Application après des modifications constitue une acceptation des Conditions révisées.",
+      "section10Title": "10. Droit applicable",
+      "section10Body": "Ces Conditions sont régies par les lois d'Angleterre et du Pays de Galles. Tout litige sera soumis à la compétence exclusive des tribunaux d'Angleterre et du Pays de Galles.",
+      "section11Title": "11. Contact",
+      "section11Body": "Si vous avez des questions concernant ces Conditions, veuillez nous contacter à <strong>support@mommanager.co.uk</strong>.",
+      "appleAppStore": "Apple App Store",
+      "yourAppStoreAccount": "votre compte de magasin d'applications"
+    },
+    "privacy": {
+      "pageTitle": "Politique de confidentialité",
+      "section1Title": "1. Qui sommes-nous",
+      "section1Body": "<strong>SoldOut Digital LTD</strong> (\"nous\", \"notre\") est le responsable du traitement des données personnelles collectées via MomManager. Adresse enregistrée : Royaume-Uni. Numéro de société : 16208774. Contact : <strong>support@mommanager.co.uk</strong>.",
+      "section2Title": "2. Données que nous collectons",
+      "section2Intro": "Nous collectons les types de données personnelles suivants lorsque vous utilisez MomManager :",
+      "section2Items": [
+        "<strong>Données de compte :</strong> adresse email, nom, photo de profil (si fournie)",
+        "<strong>Données de l'application :</strong> tâches, informations sur les enfants, plans de repas, entrées budgétaires et autre contenu que vous créez dans l'Application — stockés localement sur votre appareil ou dans votre stockage cloud personnel",
+        "<strong>Données d'utilisation :</strong> interactions avec l'application, utilisation des fonctionnalités et rapports de plantage pour améliorer l'Application",
+        "<strong>Données de paiement :</strong> statut de l'abonnement (traité par Apple/Google — nous ne stockons pas les détails de carte de paiement)"
+      ],
+      "section3Title": "3. Comment nous utilisons vos données",
+      "section3Intro": "Nous utilisons vos données personnelles pour :",
+      "section3Items": [
+        "Fournir et maintenir le service MomManager",
+        "Gérer votre compte et votre abonnement",
+        "Améliorer l'Application grâce à des analyses anonymisées",
+        "Vous envoyer des communications de service importantes",
+        "Respecter les obligations légales"
+      ],
+      "section4Title": "4. Fonctionnalités IA et traitement des données",
+      "section4Body": "Lorsque vous utilisez des fonctionnalités basées sur l'IA (chat, suggestions de repas, histoires, etc.), le texte que vous saisissez est envoyé à notre fournisseur d'IA (Anthropic, Inc.) pour générer des réponses. Nous ne stockons pas les conversations IA sur nos serveurs. Veuillez ne pas partager d'informations personnelles sensibles telles que des mots de passe, des numéros de compte financier ou des dossiers médicaux dans le chat IA.",
+      "section5Title": "5. Partage des données",
+      "section5Intro": "Nous ne vendons pas vos données personnelles. Nous pouvons partager des données avec :",
+      "section5Items": [
+        "<strong>Des prestataires de services</strong> qui aident à exploiter l'Application (ex. authentification, analytique), dans le cadre d'accords de confidentialité stricts",
+        "<strong>Les autorités légales</strong> lorsque la loi l'exige"
+      ],
+      "section6Title": "6. Conservation des données",
+      "section6Body": "Nous conservons les données de votre compte tant que votre compte est actif. Si vous supprimez votre compte, nous supprimerons vos données personnelles dans les 30 jours, sauf si nous sommes tenus de les conserver par la loi.",
+      "section7Title": "7. Vos droits",
+      "section7Intro": "En vertu du RGPD britannique et de la loi applicable sur la protection des données, vous avez le droit de :",
+      "section7Items": [
+        "Accéder aux données personnelles que nous détenons à votre sujet",
+        "Corriger les données inexactes",
+        "Demander la suppression de vos données (\"droit à l'oubli\")",
+        "Vous opposer au traitement de vos données ou le restreindre",
+        "La portabilité des données",
+        "Déposer une plainte auprès de l'Information Commissioner's Office (ICO) sur ico.org.uk"
+      ],
+      "section7Contact": "Pour exercer l'un de ces droits, contactez-nous à <strong>support@mommanager.co.uk</strong>.",
+      "section8Title": "8. Sécurité",
+      "section8Body": "Nous mettons en œuvre des mesures techniques et organisationnelles appropriées pour protéger vos données personnelles contre l'accès non autorisé, l'altération, la divulgation ou la destruction. Cependant, aucune transmission internet n'est totalement sécurisée, et nous ne pouvons garantir une sécurité absolue.",
+      "section9Title": "9. Confidentialité des enfants",
+      "section9Body": "MomManager est destiné à être utilisé par des adultes (18+). Nous ne collectons pas sciemment de données personnelles d'enfants de moins de 13 ans. Si vous pensez qu'un enfant nous a fourni des données personnelles, veuillez nous contacter afin que nous puissions les supprimer.",
+      "section10Title": "10. Modifications de cette politique",
+      "section10Body": "Nous pouvons mettre à jour cette Politique de confidentialité de temps à autre. Nous vous informerons des changements importants via l'Application ou par email. La dernière version sera toujours disponible dans l'Application.",
+      "section11Title": "11. Nous contacter",
+      "section11Body": "Pour toute question ou demande relative à la confidentialité, contactez-nous à <strong>support@mommanager.co.uk</strong> ou écrivez à SoldOut Digital LTD, Royaume-Uni."
+    }
   }
 }

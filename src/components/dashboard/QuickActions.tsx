@@ -111,7 +111,7 @@ function DumbbellWatermark({ color }: { color: string }) {
   );
 }
 
-const ACTIONS: { emoji: string; labelKey: string; label?: string; to: string; accent: string; Watermark: (p: { color: string }) => React.ReactElement }[] = [
+const ACTIONS: { emoji: string; labelKey: string; to: string; accent: string; Watermark: (p: { color: string }) => React.ReactElement }[] = [
   {
     emoji: '📅',
     labelKey: 'nav.tasks',
@@ -149,8 +149,7 @@ const ACTIONS: { emoji: string; labelKey: string; label?: string; to: string; ac
   },
   {
     emoji: '💪',
-    labelKey: '',
-    label: 'Workout' as string | undefined,
+    labelKey: 'nav.workout',
     to: '/self-care',
     accent: '#7BAFC4',
     Watermark: DumbbellWatermark,
@@ -231,7 +230,7 @@ export function QuickActions() {
               position: 'relative',
               zIndex: 2,
             }}>
-              {a.label ?? t(a.labelKey)}
+              {t(a.labelKey)}
             </span>
 
             {/* Bottom accent strip */}

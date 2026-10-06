@@ -142,7 +142,7 @@ function trialEndingEmail(name: string): string {
     <p style="color:#7A7585;font-size:16px;margin:0 0 24px;">Hi ${name}, your MomManager free trial is ending soon.</p>
     <p style="color:#7A7585;font-size:14px;margin:0 0 24px;">To keep access to all your tasks, meal plans, kids activities and self-care routines, choose a plan before your trial ends.</p>
     <a href="https://mommanager.app/paywall" style="display:block;background:linear-gradient(135deg,#C4788A,#B5697B);color:white;text-align:center;padding:16px;border-radius:12px;text-decoration:none;font-weight:600;font-size:16px;">Choose a plan 🌸</a>
-    <p style="color:#B0ACBA;font-size:12px;text-align:center;margin-top:16px;">Starting from £9.99/month · Cancel anytime</p>
+    <p style="color:#B0ACBA;font-size:12px;text-align:center;margin-top:16px;">Starting from £4.99/month · Cancel anytime</p>
   `);
 }
 
@@ -152,7 +152,7 @@ function trialExpiredEmail(name: string): string {
     <p style="color:#7A7585;font-size:16px;margin:0 0 24px;">Hi ${name}, your MomManager free trial has ended.</p>
     <p style="color:#7A7585;font-size:14px;margin:0 0 24px;">Your data is safe — subscribe now to regain access to all your family planning tools.</p>
     <a href="https://mommanager.app/paywall" style="display:block;background:linear-gradient(135deg,#C4788A,#B5697B);color:white;text-align:center;padding:16px;border-radius:12px;text-decoration:none;font-weight:600;font-size:16px;">Subscribe now 🌸</a>
-    <p style="color:#B0ACBA;font-size:12px;text-align:center;margin-top:16px;">Starting from £9.99/month · Cancel anytime</p>
+    <p style="color:#B0ACBA;font-size:12px;text-align:center;margin-top:16px;">Starting from £4.99/month · Cancel anytime</p>
   `);
 }
 

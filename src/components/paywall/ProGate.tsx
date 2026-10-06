@@ -1,5 +1,6 @@
 import { type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useSubscription } from '../../hooks/useSubscription';
 
 interface ProGateProps {
@@ -8,6 +9,7 @@ interface ProGateProps {
 }
 
 export function ProGate({ children, feature }: ProGateProps) {
+  const { t } = useTranslation();
   const { canUseProFeature } = useSubscription();
   const navigate = useNavigate();
 
@@ -38,7 +40,7 @@ export function ProGate({ children, feature }: ProGateProps) {
 
         <div className="text-center px-4">
           <p className="font-semibold text-sm" style={{ color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
-            Pro feature
+            {t('proGate.proFeature')}
           </p>
           {feature && (
             <p className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>{feature}</p>
@@ -50,7 +52,7 @@ export function ProGate({ children, feature }: ProGateProps) {
           className="px-5 py-2 rounded-xl text-sm font-medium text-white"
           style={{ background: 'linear-gradient(135deg, var(--accent-gold) 0%, #B8935A 100%)', boxShadow: '0 4px 12px rgba(201,169,110,0.3)' }}
         >
-          Upgrade to Pro
+          {t('proGate.upgradeToPro')}
         </button>
       </div>
     </div>

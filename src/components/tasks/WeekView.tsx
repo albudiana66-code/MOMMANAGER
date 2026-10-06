@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import {
   startOfWeek, endOfWeek, eachDayOfInterval,
   format, isSameDay, addWeeks, subWeeks,
 } from 'date-fns';
 import type { Task, CalendarEvent } from '../../types';
+import { useDateFnsLocale } from '../../hooks/useDateFnsLocale';
 
 interface WeekViewProps {
   tasks: Task[];
@@ -20,6 +22,8 @@ const PLAN_COLORS: Record<string, string> = {
 };
 
 export function WeekView({ tasks, events, onDayClick, onAddEvent }: WeekViewProps) {
+  const { t } = useTranslation();
+  const dateLocale = useDateFnsLocale();
   const [weekBase, setWeekBase] = useState(new Date());
   const today = new Date();
 
@@ -49,7 +53,7 @@ export function WeekView({ tasks, events, onDayClick, onAddEvent }: WeekViewProp
           </svg>
         </button>
         <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>
-          {format(weekStart, 'MMM d')} — {format(weekEnd, 'MMM d, yyyy')}
+          {format(weekStart, 'MMM d', { locale: dateLocale })} — {format(weekEnd, 'MMM d, yyyy', { locale: dateLocale })}
         </span>
         <button
           onClick={() => setWeekBase((d) => addWeeks(d, 1))}
@@ -93,7 +97,7 @@ export function WeekView({ tasks, events, onDayClick, onAddEvent }: WeekViewProp
                 }}
               >
                 <span style={{ fontSize: 9, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase' as const, color: isToday ? 'var(--accent)' : 'var(--text-muted)' }}>
-                  {format(day, 'EEE')}
+                  {format(day, 'EEE', { locale: dateLocale })}
                 </span>
                 <span
                   className="flex items-center justify-center rounded-full"
@@ -126,7 +130,7 @@ export function WeekView({ tasks, events, onDayClick, onAddEvent }: WeekViewProp
                   </div>
                 ))}
                 {overflow > 0 && (
-                  <span style={{ fontSize: 9, color: 'var(--text-muted)', paddingLeft: 4 }}>+{overflow} more</span>
+                  <span style={{ fontSize: 9, color: 'var(--text-muted)', paddingLeft: 4 }}>{t('tasks.moreCount', { count: overflow })}</span>
                 )}
                 {items.length === 0 && (
                   <div

@@ -15,7 +15,8 @@
     "newAccount": "Nowe konto?",
     "alreadyHaveAccount": "Masz już konto?",
     "fillEmailAndPassword": "Proszę podać email i hasło.",
-    "signInWithApple": "Zaloguj się przez Apple"
+    "signInWithApple": "Zaloguj się przez Apple",
+    "emailPlaceholder": "Email"
   },
   "nav": {
     "home": "Strona główna",
@@ -24,7 +25,8 @@
     "kitchen": "Kuchnia",
     "budget": "Budżet",
     "selfcare": "Pielęgnacja",
-    "settings": "Ustawienia"
+    "settings": "Ustawienia",
+    "workout": "Trening"
   },
   "dashboard": {
     "goodMorning": "Dzień dobry",
@@ -74,7 +76,28 @@
     "addEvent": "Dodaj wydarzenie",
     "eventTitle": "Tytuł wydarzenia",
     "time": "Czas",
-    "color": "Kolor"
+    "color": "Kolor",
+    "thisWeek": "W tym tygodniu",
+    "doneOfTotal": "{{done}}/{{total}} ukończono",
+    "nothingScheduled": "Nic nie zaplanowano — dotknij + Dodaj wydarzenie",
+    "planMom": "Mama",
+    "planKids": "Dzieci",
+    "planFamily": "Rodzina",
+    "timeOptional": "Godzina (opcjonalnie)",
+    "setReminder": "Ustaw przypomnienie",
+    "notifyAt": "Powiadom o {{time}} dnia {{date}}",
+    "reminderNeedsDateTime": "Wymaga ustawienia daty i godziny",
+    "toggleReminder": "Przełącz przypomnienie",
+    "addToPhoneCalendar": "Dodaj do kalendarza telefonu",
+    "reminderSet": "Przypomnienie ustawione",
+    "date": "Data",
+    "allDay": "Cały dzień",
+    "eventTitlePlaceholder": "Co się dzieje?",
+    "addEventFor": "+ Dodaj wydarzenie na {{date}}",
+    "moreCount": "+{{count}} więcej",
+    "monthView": "Miesiąc",
+    "weekView": "Tydzień",
+    "dayView": "Dzień"
   },
   "kids": {
     "title": "Dzieci",
@@ -126,7 +149,44 @@
     "saveStory": "Zapisz bajkę",
     "ageToddler": "Maluch (2-4)",
     "ageYoung": "Dziecko (5-8)",
-    "ageOlder": "Starsze (9-12)"
+    "ageOlder": "Starsze (9-12)",
+    "weekOfFour": "📅 Tydzień {{week}} z 4",
+    "resetsMondays": "Resetuje się w poniedziałki",
+    "activityIdeasTab": "Pomysły na aktywności",
+    "addCustomItemPlaceholder": "Dodaj własny element...",
+    "addItemsFromPresets": "Dodaj elementy z powyższych propozycji",
+    "ageGroupBaby": "Niemowlę (0-2 lata)",
+    "ageGroupPreschool": "Przedszkolak (4-7 lat)",
+    "ageGroupSchool": "Wiek szkolny (7-10 lat)",
+    "ageGroupToddlerFull": "Maluch (2-4 lata)",
+    "couldNotGenerateMealPlan": "Nie udało się wygenerować planu posiłków.",
+    "couldNotParseMealPlan": "Nie udało się przetworzyć planu posiłków.",
+    "generateMealPlanBtn": "🔄 Generuj plan posiłków",
+    "generatingEllipsis": "⏳ Generowanie...",
+    "howToPrepare": "Sposób przygotowania",
+    "ingredients": "Składniki",
+    "itemsPacked": "{{packed}}/{{total}} spakowane",
+    "lunchBoxTitle": "🍱 Lunchbox",
+    "lunchPresets": [
+      "🥪 Kanapka",
+      "🍎 Owoc",
+      "💧 Woda",
+      "🍪 Przekąska",
+      "🥕 Warzywa",
+      "🧃 Sok",
+      "🧀 Ser",
+      "🥜 Orzechy"
+    ],
+    "lunchboxTab": "Lunchbox",
+    "mealPlansTab": "🍽️ Plany posiłków",
+    "newMenu": "🔄 Nowe menu",
+    "pleaseTryAgain": "Spróbuj ponownie.",
+    "selectKid": "Wybierz dziecko",
+    "snacks": "Przekąski",
+    "sportsCentrePlaceholder": "Centrum sportowe",
+    "swimmingPlaceholder": "Pływanie",
+    "tapGenerateMealPlan": "Dotknij Generuj, aby utworzyć spersonalizowany 7-dniowy plan posiłków",
+    "textureLabel": "Konsystencja"
   },
   "kitchen": {
     "title": "Kuchnia",
@@ -168,7 +228,75 @@
     "enterIngredients": "Wpisz składniki, które masz...",
     "suggestRecipes": "Zaproponuj przepisy",
     "recipeSuggestions": "Proponowane przepisy",
-    "difficulty": "Trudność"
+    "difficulty": "Trudność",
+    "timerDone": "Gotowe! ✓",
+    "reset": "Zresetuj",
+    "categories": {
+      "produce": "Warzywa i owoce",
+      "meatFish": "Mięso i ryby",
+      "dairy": "Nabiał",
+      "pantry": "Spiżarnia",
+      "bakery": "Pieczywo",
+      "other": "Inne"
+    },
+    "pause": "⏸ Pauza",
+    "start": "▶ Start",
+    "recipeComplete": "Przepis ukończony!",
+    "howDidItGo": "Jak poszło?",
+    "stepXofY": "Krok {{current}} z {{total}}",
+    "markDone": "Oznacz jako gotowe",
+    "doneCheck": "✓ Gotowe",
+    "finish": "🎉 Zakończ",
+    "ingredientsTab": "🛒 Składniki",
+    "stepsTab": "📋 Kroki",
+    "stepsTabWithProgress": "📋 Kroki ({{done}}/{{total}})",
+    "cookTab": "👨‍🍳 Gotowanie",
+    "chefsTip": "Wskazówka szefa kuchni:",
+    "addAllToShoppingList": "🛒 Dodaj wszystko do listy zakupów",
+    "startCooking": "👨‍🍳 Zacznij gotować",
+    "enterCookMode": "👨‍🍳 Wejdź w tryb gotowania",
+    "saveRecipeBtn": "Zapisz przepis ♡",
+    "generateWeeklyMenuTitle": "Wygeneruj menu tygodniowe ✨",
+    "aiPoweredMealPlanDesc": "Plan posiłków AI dla Twojej rodziny",
+    "setPreferencesGenerate": "Ustaw preferencje i generuj",
+    "couldNotGenerateMealPlan": "Nie udało się wygenerować planu posiłków. Spróbuj ponownie.",
+    "addingEllipsis": "Dodawanie…",
+    "addIngredientsToShoppingList": "🛒 Dodaj składniki do listy zakupów",
+    "mealPlanPreferencesTitle": "Preferencje planu posiłków",
+    "numberOfPeople": "Liczba osób",
+    "dietPreference": "Preferencja dietetyczna",
+    "cuisineLabel": "Kuchnia",
+    "generateMenuBtn": "Generuj menu ✨",
+    "findingRecipeEllipsis": "Szukanie przepisu…",
+    "dietAny": "Dowolna",
+    "dietVegetarian": "Wegetariańska",
+    "dietVegan": "Wegańska",
+    "dietGlutenFree": "Bezglutenowa",
+    "dietDairyFree": "Bez nabiału",
+    "cuisineAny": "Dowolna",
+    "cuisineBritish": "Brytyjska",
+    "cuisineItalian": "Włoska",
+    "cuisineMediterranean": "Śródziemnomorska",
+    "cuisineAsian": "Azjatycka",
+    "cuisineMexican": "Meksykańska",
+    "itemsOfTotal": "{{bought}} z {{total}} produktów",
+    "generateFromMealsBtn": "Generuj z posiłków tego tygodnia ✨",
+    "addItemPlaceholder": "Dodaj produkt...",
+    "noItemsYet": "Brak produktów — dodaj powyżej lub wygeneruj z posiłków",
+    "boughtCount": "Kupione ({{count}})",
+    "clearBoughtBtn": "Wyczyść kupione",
+    "findRecipeTitle": "Znajdź przepis ✨",
+    "whatsInFridge": "Co masz w lodówce?",
+    "ingredientsPlaceholder": "np. kurczak, ryż, pomidory...",
+    "servesLabel": "Porcje:",
+    "generateRecipeBtn": "Generuj przepis",
+    "couldNotGenerateRecipe": "Nie udało się wygenerować przepisu. Spróbuj ponownie.",
+    "viewFullRecipe": "Zobacz pełny przepis",
+    "cookNowBtn": "👨‍🍳 Gotuj teraz",
+    "savedCheckmark": "Zapisano ✓",
+    "savedRecipesCount": "Zapisane przepisy ({{count}})",
+    "viewBtn": "Zobacz",
+    "cookBtn": "Gotuj"
   },
   "budget": {
     "title": "Budżet",
@@ -196,7 +324,89 @@
     "cancel": "Anuluj",
     "delete": "Usuń",
     "monthlyLimit": "Limit miesięczny",
-    "limitPlaceholder": "Budżet miesięczny..."
+    "limitPlaceholder": "Budżet miesięczny...",
+    "totalSpent": "Łącznie wydano",
+    "proGateFeature": "Śledzenie budżetu — śledź wydatki, ustawiaj limity i zarządzaj kontami",
+    "categories": {
+      "groceries": "Zakupy spożywcze",
+      "housing": "Mieszkanie",
+      "transport": "Transport",
+      "eatingOut": "Jedzenie na mieście",
+      "shopping": "Zakupy",
+      "kids": "Dzieci",
+      "health": "Zdrowie",
+      "entertainment": "Rozrywka",
+      "savings": "Oszczędności",
+      "other": "Inne"
+    },
+    "resetsMonthlyNote": "ℹ️ Budżet resetuje się 1. dnia każdego miesiąca",
+    "incomeLabel": "PRZYCHÓD",
+    "expensesLabel": "WYDATKI",
+    "enterMonthlyBudgetPlaceholder": "Wpisz miesięczny budżet...",
+    "setMonthlyBudget": "+ Ustaw miesięczny budżet",
+    "monthlyBudgetPrefix": "✏️ Miesięczny budżet: {{amount}}",
+    "totalBudgetLabel": "Całkowity budżet",
+    "overBudgetBy": "⚠️ Przekroczono budżet o {{amount}}",
+    "remainingSuffix": "pozostało {{amount}}",
+    "biggestExpense": "Największy wydatek",
+    "dailyAverage": "Średnia dzienna",
+    "perDay": "dziennie",
+    "projected": "Prognoza",
+    "daysLeftSuffix": "pozostało {{days}} dni",
+    "spendingByCategory": "Wydatki wg kategorii",
+    "budgetByCategoryHeading": "Budżet wg kategorii",
+    "setCategoryLimitPlaceholder": "Ustaw limit dla {{category}}...",
+    "descriptionOptionalPlaceholder": "Opis (opcjonalnie)",
+    "accountLabel": "Konto",
+    "anyOption": "Dowolne",
+    "saveTransactionBtn": "Zapisz transakcję",
+    "today": "Dziś",
+    "yesterday": "Wczoraj",
+    "searchTransactionsPlaceholder": "Szukaj transakcji...",
+    "allFilter": "Wszystkie",
+    "sortNewest": "Najnowsze",
+    "sortOldest": "Najstarsze",
+    "sortByAmount": "Wg kwoty",
+    "noTransactionsFound": "Nie znaleziono transakcji",
+    "pdfNoTransactions": "Nie znaleziono transakcji w PDF. Upewnij się, że to tekstowy wyciąg bankowy (nie zeskanowany obraz).",
+    "pdfReadFailed": "Nie udało się odczytać PDF: {{msg}}",
+    "csvNoDataRows": "Plik CSV nie zawiera wierszy danych. Sprawdź plik.",
+    "csvNoValidTransactions": "Nie znaleziono prawidłowych transakcji. Upewnij się, że plik ma kolumny Data, Opis i Kwota.",
+    "csvParseFailed": "Nie udało się przetworzyć CSV. Sprawdź format pliku.",
+    "importSuccess_one": "✅ {{count}} transakcja zaimportowana z {{bank}}",
+    "importSuccess_other": "✅ {{count}} transakcji zaimportowanych z {{bank}}",
+    "importBankStatement": "Importuj wyciąg bankowy",
+    "uploadCsvOrPdfDesc": "Prześlij CSV lub PDF — automatycznie wykryjemy transakcje",
+    "readingPdf": "Odczytywanie PDF...",
+    "chooseCsvOrPdf": "Wybierz plik CSV lub PDF",
+    "bankStatementAnyBank": "Wyciąg z dowolnego banku",
+    "worksWithBanksPrefix": "Działa z",
+    "worksWithBanksSuffix": "i większością banków",
+    "transactionsFromBank": "{{count}} transakcji z {{bank}}",
+    "moreRowsSuffix": "+{{count}} kolejnych wierszy (wszystkie zostaną zaimportowane)",
+    "importBtn_one": "📥 Importuj {{count}} transakcję",
+    "importBtn_other": "📥 Importuj {{count}} transakcji",
+    "myAccounts": "Moje konta",
+    "addAccountBtn": "+ Dodaj",
+    "accountNamePlaceholder": "Nazwa konta",
+    "accountTypeCash": "Gotówka",
+    "accountTypeCurrent": "Bieżące",
+    "accountTypeSavings": "Oszczędnościowe",
+    "accountTypeCredit": "Kredytowe",
+    "startingBalancePlaceholder": "Saldo początkowe (£)",
+    "saveAccountBtn": "Zapisz konto",
+    "noAccountsYet": "Nie dodano jeszcze żadnych kont",
+    "lastTxPrefix": "Ostatnia: {{description}} · {{date}}",
+    "yourBank": "twój bank",
+    "addedToCategory": "{{sign}}{{amount}} dodano do {{category}}",
+    "exceededBudgetAlert": "⚠️ Przekroczono budżet dla {{category}}!",
+    "tabOverview": "Przegląd",
+    "tabTransactions": "Transakcje",
+    "tabAccounts": "Konta",
+    "importSuccess_few": "✅ {{count}} transakcje zaimportowane z {{bank}}",
+    "importSuccess_many": "✅ {{count}} transakcji zaimportowanych z {{bank}}",
+    "importBtn_few": "📥 Importuj {{count}} transakcje",
+    "importBtn_many": "📥 Importuj {{count}} transakcji"
   },
   "selfcare": {
     "title": "Pielęgnacja",
@@ -358,7 +568,451 @@
       "Odżywiaj ciało, umysł i duszę 🍃",
       "Jesteś sercem swojego domu 💗",
       "Świętuj, jak daleko dotarłaś 🥂"
-    ]
+    ],
+    "wellnessThisWeek": "W tym tygodniu",
+    "tapToAdd": "Dotknij karty, aby dodać ją do swojej osobistej listy",
+    "treatmentSteps": {
+      "bath": [
+        "Napełnij wannę ciepłą wodą (37–39°C — nie za gorącą)",
+        "Dodaj 2 szklanki soli Epsom i kilka kropli olejku eterycznego lawendowego",
+        "Opcjonalnie: dodaj łyżkę oleju kokosowego dla dodatkowej miękkości skóry",
+        "Namocz się przez 15–20 min — pozwól mięśniom całkowicie się rozluźnić",
+        "Delikatnie osusz, a następnie nałóż balsam do ciała, gdy skóra jest jeszcze lekko wilgotna"
+      ],
+      "claywrap": [
+        "Wymieszaj glinkę kaolinową lub bentonitową z ciepłą wodą do gładkiej pasty",
+        "Nałóż obfitą, równą warstwę na ciało — unikaj twarzy i szyi",
+        "Owiń luźno folią spożywczą lub ciepłym ręcznikiem, aby zatrzymać ciepło",
+        "Zostaw na 20–25 min, odpoczywając",
+        "Spłucz pod prysznicem, następnie osusz i dobrze nawilż"
+      ],
+      "scrub": [
+        "Zmocz skórę pod prysznicem ciepłą wodą",
+        "Weź obfitą ilość peelingu kawowego lub cukrowego w dłonie",
+        "Masuj ruchami okrężnymi, zaczynając od stóp w górę",
+        "Zwróć szczególną uwagę na kolana, łokcie i pięty",
+        "Dokładnie spłucz, a następnie od razu nałóż olejek lub balsam do ciała"
+      ],
+      "roseoil": [
+        "Ogrzej kilka kropli olejku z dzikiej róży między dłońmi",
+        "Zacznij od ramion — używaj długich, płynnych ruchów w dół rąk",
+        "Pracuj na brzuchu powolnymi ruchami okrężnymi zgodnie z ruchem wskazówek zegara",
+        "Masuj nogi od kostki do uda pewnym naciskiem w górę",
+        "Zakończ delikatnie dociskając dłonie do dekoltu przez 30 sekund"
+      ],
+      "facesteam": [
+        "Zagotuj wodę i wlej do miski — dodaj rumianek lub rozmaryn, jeśli masz",
+        "Dokładnie oczyść twarz przed parowaniem",
+        "Zarzuć ręcznik na głowę i pochyl się nad miską",
+        "Trzymaj twarz 20–30 cm od wody — parowanie przez 8–10 min",
+        "Osusz, nałóż tonik, a następnie serum i krem nawilżający"
+      ],
+      "coldplunge": [
+        "Zacznij od ciepłego prysznica, aby otworzyć pory i rozluźnić mięśnie",
+        "Stopniowo zmieniaj temperaturę na zimną przez 30–60 sekund",
+        "Skup się na równomiernym oddychaniu — głęboki wdech, powolny wydech",
+        "Zostań pod zimną wodą 2–3 min (z czasem zwiększ do 5 min)",
+        "Zakończ, szybko się wytrzyj i trochę się poruszaj, aby się rozgrzać"
+      ],
+      "greenteamask": [
+        "Wymieszaj 1 łyżkę matchy lub proszku zielonej herbaty ze zwykłym jogurtem lub miodem",
+        "Oczyść skórę, a następnie nałóż maskę równomiernie na twarz i szyję",
+        "Opcjonalnie nałóż cienką warstwę na ramiona lub klatkę piersiową dla efektu antyoksydacyjnego",
+        "Zostaw na 15–20 min — zrelaksuj się i unikaj mówienia",
+        "Spłucz letnią wodą, następnie użyj toniku i kremu nawilżającego"
+      ],
+      "meditation": [
+        "Znajdź ciche miejsce — usiądź lub połóż się wygodnie",
+        "Zamknij oczy i weź 5 głębokich oddechów: 4 sek wdech, 4 sek wydech",
+        "Skanowanie ciała: w myślach rozluźnij każdą część ciała od stóp do czubka głowy",
+        "Skup się na oddechu — gdy pojawiają się myśli, delikatnie wróć do oddechu",
+        "Zakończ trzema myślami wdzięczności, a następnie powoli otwórz oczy"
+      ]
+    },
+    "workoutGuides": {
+      "strength": {
+        "beginner": {
+          "title": "💪 Całe Ciało — Początkujący",
+          "location": "🏠 Dom",
+          "duration": "25 min",
+          "items": [
+            "Rozgrzewka: 5 min lekki marsz w miejscu",
+            "3×12 przysiadów z masą ciała",
+            "3×10 pompek (na kolanach też ok)",
+            "3×12 wykroków w tył na każdą nogę",
+            "3×15 mostów pośladkowych",
+            "3×10 „supermanów” (wyprosty grzbietu)",
+            "Wyciszenie: rozciąganie czworogłowych, klatki i pleców 5 min"
+          ]
+        },
+        "intermediate": {
+          "title": "💪 Split Góra + Dół",
+          "location": "🏠 Dom / 🏋️ Siłownia",
+          "duration": "40 min",
+          "items": [
+            "Rozgrzewka: 5 min pajacyki + krążenia ramion",
+            "4×12 przysiady goblet z hantlami",
+            "4×10 martwy ciąg rumuński z hantlami",
+            "3×12 wyciskanie hantli (podłoga lub ławka)",
+            "3×12 wiosłowanie hantlą w opadzie na każdą stronę",
+            "3×15 unoszenie ramion bokiem",
+            "3×20 brzuszki rowerkowe",
+            "Wyciszenie: rozciąganie zginaczy bioder + barków 5 min"
+          ]
+        },
+        "advanced": {
+          "title": "💪 Obwód Siłowo-Mocowy",
+          "location": "🏋️ Siłownia",
+          "duration": "55 min",
+          "items": [
+            "Rozgrzewka: 8 min bieżnia + rozciąganie dynamiczne",
+            "4×8 przysiady ze sztangą (umiarkowany ciężar)",
+            "4×8 martwy ciąg rumuński ze sztangą",
+            "4×10 wyciskanie hantli na skosie",
+            "4×10 wiosłowanie na wyciągu siedząc",
+            "3×12 przysiady bułgarskie na każdą nogę",
+            "3×15 unoszenie ramion bokiem na wyciągu",
+            "3×12 prostowanie triceps na wyciągu",
+            "3×10 uginanie ramion ze sztangą EZ",
+            "Wyciszenie: rolowanie czworogłowych, dwugłowych ud, najszerszych"
+          ]
+        }
+      },
+      "cardio": {
+        "beginner": {
+          "title": "🏃 Łagodny Spacer Cardio",
+          "location": "🏠 Dom / Na zewnątrz",
+          "duration": "30 min",
+          "items": [
+            "5 min łagodny spacer — rozgrzewka",
+            "20 min szybki spacer (można rozmawiać)",
+            "5 min wolny spacer — wyciszenie",
+            "Rozciąganie łydek, czworogłowych i zginaczy bioder 5 min",
+            "Ćwicz 4×/tydzień, aby zbudować bazową kondycję"
+          ]
+        },
+        "intermediate": {
+          "title": "🏃 Interwały Bieg-Marsz",
+          "location": "🏠 Na zewnątrz / Bieżnia",
+          "duration": "35 min",
+          "items": [
+            "5 min szybki spacer — rozgrzewka",
+            "Powtórz 6×: 3 min truchtu + 1 min marszu",
+            "5 min spacer — wyciszenie",
+            "Rozciąganie zginaczy bioder, łydek i dwugłowych ud",
+            "Postępuj, dodając 1 interwał biegu co tydzień"
+          ]
+        },
+        "advanced": {
+          "title": "🏃 Sesja Tempo + Sprint",
+          "location": "🏋️ Bieżnia / Bieżnia stadionowa",
+          "duration": "45 min",
+          "items": [
+            "10 min lekki trucht — rozgrzewka",
+            "15 min bieg tempowy (komfortowo trudne tempo)",
+            "5× sprinty 30s z regeneracją 90s lekkiego truchtu",
+            "10 min lekki trucht — wyciszenie",
+            "Rozciąganie: mięsień gruszkowaty, łydki i zginacze bioder 5 min"
+          ]
+        }
+      },
+      "yoga": {
+        "beginner": {
+          "title": "🧘 Poranny Flow — Łagodny",
+          "location": "🏠 Dom",
+          "duration": "20 min",
+          "items": [
+            "Pozycja góry — 30s, głęboki oddech",
+            "Kot-Krowa — 10 wolnych powtórzeń, rozluźnij kręgosłup",
+            "Pies z głową w dół — trzymaj 30s, pięty w kierunku podłogi",
+            "Niski wykrok na każdą stronę — 30s, otwórz zginacze bioder",
+            "Pozycja dziecka — 1 min, odpocznij i oddychaj",
+            "Skłon w przód siedząc — 45s, dwugłowe ud",
+            "Skręt na leżąco na każdą stronę — 30s, rozluźnij plecy",
+            "Savasana — 3 min, pełne rozluźnienie"
+          ]
+        },
+        "intermediate": {
+          "title": "🧘 Vinyasa Flow",
+          "location": "🏠 Dom / Studio",
+          "duration": "35 min",
+          "items": [
+            "5 min oddychanie i rozgrzewka na siedząco",
+            "5× Pozdrowienie Słońca A (ruch zsynchronizowany z oddechem)",
+            "Wojownik I + II + Odwrócony Wojownik — 45s na każdą stronę",
+            "Pozycja trójkąta na każdą stronę — 45s",
+            "Pozycja krzesła — trzymaj 1 min",
+            "Deska → Chaturanga → Pies z głową w górę — 5 powtórzeń",
+            "Pozycja gołębia na każdą stronę — 1 min głębokie rozciąganie",
+            "Skręt kręgosłupa siedząc + skłon w przód",
+            "Savasana — 5 min"
+          ]
+        },
+        "advanced": {
+          "title": "🧘 Power Yoga + Równowaga",
+          "location": "🏠 Dom / Studio",
+          "duration": "50 min",
+          "items": [
+            "10 min seria Surya Namaskar B (8 rund)",
+            "Pozycja wrony (Bakasana) — próby utrzymania 3×",
+            "Przygotowanie do stania na rękach przy ścianie — 3× 30s",
+            "Pozycja półksiężyca na każdą stronę — 1 min",
+            "Wojownik III na każdą stronę — 1 min utrzymanie równowagi",
+            "Pozycja koła (Urdhva Dhanurasana) — 3× 20s",
+            "Przygotowanie do równowagi na przedramionach (Pincha) — 3× 30s",
+            "Finał yin: gołąb + smok po 2 min każda",
+            "Yoga nidra / Savasana — 8 min"
+          ]
+        }
+      },
+      "hiit": {
+        "beginner": {
+          "title": "🔥 HIIT o Niskim Wpływie",
+          "location": "🏠 Dom",
+          "duration": "20 min",
+          "items": [
+            "Rozgrzewka: 3 min wymachy ramion + krążenia bioder",
+            "3 rundy (40s praca / 20s odpoczynek):",
+            "  • Step jacks (pajacyki o niskim wpływie)",
+            "  • Pulsujące przysiady",
+            "  • Marsz w miejscu z wysokimi kolanami",
+            "  • Zmodyfikowane pompki",
+            "  • Skosy brzucha stojąc",
+            "Wyciszenie: 5 min rozciąganie całego ciała"
+          ]
+        },
+        "intermediate": {
+          "title": "🔥 Obwód HIIT",
+          "location": "🏠 Dom",
+          "duration": "30 min",
+          "items": [
+            "Rozgrzewka: 5 min rozciąganie dynamiczne",
+            "4 rundy (40s praca / 15s odpoczynek):",
+            "  • Burpees",
+            "  • Przysiady z wyskokiem",
+            "  • Pompka z dotknięciem barku",
+            "  • Łyżwiarze (speed skaters)",
+            "  • Deska z rotacją bioder",
+            "  • Wykroki z wyskokiem",
+            "Odpoczynek 90s między rundami",
+            "Wyciszenie: 5 min rozciąganie"
+          ]
+        },
+        "advanced": {
+          "title": "🔥 Zaawansowany HIIT + Core",
+          "location": "🏠 Dom / 🏋️ Siłownia",
+          "duration": "40 min",
+          "items": [
+            "Rozgrzewka: 5 min trucht + mobilizacja",
+            "5 rund (45s praca / 10s odpoczynek):",
+            "  • Wyskoki z przyciąganiem kolan",
+            "  • Pompki plyometryczne",
+            "  • Burpees na jednej nodze (naprzemiennie)",
+            "  • Wyskoki na skrzynię lub wariant przysiadu z wyskokiem",
+            "  • Utrzymania core „dragon flag”",
+            "  • Skoki boczne + zatrzymanie",
+            "Odpoczynek 60s między rundami",
+            "Finisher: 3 min wyzwanie deski",
+            "Wyciszenie: głębokie rozciąganie 8 min"
+          ]
+        }
+      },
+      "walking": {
+        "beginner": {
+          "title": "🚶 Dzienny Cel Kroków",
+          "location": "🏠 Na zewnątrz / Centrum handlowe",
+          "duration": "30 min",
+          "items": [
+            "Cel: 7 000–8 000 kroków/dzień",
+            "30 min łagodny spacer, wygodne tempo",
+            "Noś wspierające buty",
+            "🎧 Świetne do podcastów lub muzyki",
+            "Bonus: wybieraj schody zamiast windy",
+            "Śledź za pomocą aplikacji zdrowotnej lub zegarka"
+          ]
+        },
+        "intermediate": {
+          "title": "🚶 Power Walk + Wzniesienia",
+          "location": "🏠 Na zewnątrz",
+          "duration": "45 min",
+          "items": [
+            "Cel: 10 000 kroków/dzień",
+            "10 min łagodny spacer rozgrzewkowy",
+            "25 min szybki power walk (wymuś tempo)",
+            "Uwzględnij wzniesienia, jeśli dostępne",
+            "10 min łagodny spacer wyciszający",
+            "Aktywnie machaj ramionami dla dodatkowego spalania kalorii",
+            "Rozciągnij biodra i łydki po treningu"
+          ]
+        },
+        "advanced": {
+          "title": "🚶 Marsz z Obciążeniem (Rucking)",
+          "location": "🏠 Na zewnątrz / Szlaki",
+          "duration": "60 min",
+          "items": [
+            "Załaduj plecak 5–10 kg",
+            "10 min łagodny spacer rozgrzewkowy",
+            "40 min szybki marsz z obciążeniem na plecach",
+            "Uwzględnij wzniesienia — maksymalna korzyść kaloryczna i siłowa",
+            "10 min spacer wyciszający",
+            "Rozciągnij zginacze bioder, pośladki i górną część pleców",
+            "Cel: 12 000–15 000 kroków w dni z ruckingiem"
+          ]
+        }
+      },
+      "swimming": {
+        "beginner": {
+          "title": "🏊 Łatwa Sesja na Basenie",
+          "location": "🏋️ Basen",
+          "duration": "30 min",
+          "items": [
+            "4 długości łatwa rozgrzewka (dowolny styl)",
+            "8 długości seria główna — odpoczynek 30s co 2 długości",
+            "Skup się na technice oddychania",
+            "2 długości wyciszenie (grzbiet)",
+            "Razem ~30 min · świetne dla stawów"
+          ]
+        },
+        "intermediate": {
+          "title": "🏊 Pływanie Wytrzymałościowe",
+          "location": "🏋️ Basen",
+          "duration": "45 min",
+          "items": [
+            "200m rozgrzewka: łatwy kraul",
+            "400m seria główna: kraul z nawrotami",
+            "4× 50m serie nóg z deską, odpoczynek 20s każda",
+            "4× 50m serie ramion z pull buoy, odpoczynek 20s każda",
+            "200m wyciszenie: grzbiet",
+            "Razem ~1600m · rozciągnij barki i biodra po"
+          ]
+        },
+        "advanced": {
+          "title": "🏊 Interwały Pływackie",
+          "location": "🏋️ Basen",
+          "duration": "60 min",
+          "items": [
+            "400m rozgrzewka: style mieszane",
+            "8× 100m na 2:00 (dąż do negatywnych splitów)",
+            "4× 50m motylek lub klasyk, odpoczynek 30s",
+            "8× 25m sprint na 1:00",
+            "200m wyciszenie: łatwy grzbiet",
+            "Razem ~2400m · rolowanie barków i najszerszych"
+          ]
+        }
+      }
+    },
+    "howTo": "Jak to zrobić",
+    "addToMyTreatments": "+ Dodaj do moich zabiegów",
+    "alreadyInList": "✓ Już na Twojej liście",
+    "myTreatments": "Moje zabiegi",
+    "everyDaySuffix": "Co {{day}}",
+    "timesDoneSuffix": "{{count}}× wykonano",
+    "days": {
+      "monday": "Poniedziałek",
+      "tuesday": "Wtorek",
+      "wednesday": "Środa",
+      "thursday": "Czwartek",
+      "friday": "Piątek",
+      "saturday": "Sobota",
+      "sunday": "Niedziela"
+    },
+    "routineNamePlaceholder": "Nazwa rutyny (np. reset na lunch)",
+    "addStepPlaceholder": "Dodaj krok...",
+    "morningAM": "Rano (AM)",
+    "eveningPM": "Wieczorem (PM)",
+    "doneCountSuffix": "{{done}}/{{total}} wykonano",
+    "productPlaceholderCeraVe": "np. CeraVe",
+    "productPlaceholderLRP": "np. La Roche-Posay",
+    "legendFullRoutine": "🟢 Pełna rutyna",
+    "legendPartial": "🟡 Częściowo",
+    "legendMissed": "⚪ Pominięto",
+    "getPersonalisedAdvice": "Uzyskaj spersonalizowaną poradę pielęgnacyjną ✨",
+    "skinTypeLabel": "Typ skóry",
+    "concernsLabel": "Problemy",
+    "gettingAdvice": "Pobieranie porady...",
+    "getAdviceBtn": "Uzyskaj poradę",
+    "myProducts": "Moje produkty",
+    "productNamePlaceholder": "Nazwa produktu",
+    "productStepPlaceholder": "Krok (np. Krem nawilżający)",
+    "addProductBtn": "Dodaj produkt",
+    "tapToAddProducts": "Dotknij +, aby dodać swoje produkty",
+    "concernHydration": "Nawilżenie",
+    "concernBrightening": "Rozjaśnienie",
+    "workoutTrackerTitle": "Śledzenie treningów",
+    "workoutsThisWeek_one": "{{count}} trening w tym tygodniu · {{mins}} min łącznie",
+    "workoutsThisWeek_other": "{{count}} treningów w tym tygodniu · {{mins}} min łącznie",
+    "logThisWorkout": "Zapisz ten trening",
+    "durationMinPlaceholder": "Czas trwania (min)",
+    "logCheckBtn": "Zapisz ✓",
+    "notesOptionalPlaceholder": "Notatki (opcjonalnie)",
+    "todayLabel": "Dziś",
+    "workoutStrength": "Siłowy",
+    "workoutCardio": "Cardio",
+    "workoutYoga": "Joga",
+    "workoutHiit": "HIIT",
+    "workoutWalking": "Marsz",
+    "workoutSwimming": "Pływanie",
+    "levelBeginner": "Początkujący",
+    "levelIntermediate": "Średniozaawansowany",
+    "levelAdvanced": "Zaawansowany",
+    "calorieTrackerTitle": "Licznik kalorii",
+    "dailyGoalLabel": "Cel dzienny: {{goal}} kcal",
+    "weightGoalBtn": "⚖️ Cel wagowy",
+    "setWeightGoalTitle": "Ustaw swój cel wagowy",
+    "currentWeightLabel": "Obecna waga (kg)",
+    "goalWeightLabel": "Docelowa waga (kg)",
+    "timeframeLabel": "Ramy czasowe",
+    "calculateGoalBtn": "Oblicz mój cel",
+    "dailyCalorieGoalResult_one": "Twój dzienny cel kaloryczny: {{calories}} kcal (aby {{action}} {{diff}} kg w {{months}} miesiąc)",
+    "dailyCalorieGoalResult_other": "Twój dzienny cel kaloryczny: {{calories}} kcal (aby {{action}} {{diff}} kg w {{months}} miesięcy)",
+    "actionLose": "schudnąć",
+    "actionGain": "przytyć",
+    "currentWeightDisplay": "Obecnie: {{weight}} kg",
+    "goalWeightDisplay": "Cel: {{weight}} kg",
+    "needToLose": "Musisz schudnąć {{kg}} kg, aby osiągnąć swój cel",
+    "kcalConsumed": "{{count}} kcal spożyte",
+    "kcalOver": "{{count}} kcal ponad limit",
+    "kcalRemaining": "{{count}} kcal pozostało",
+    "couldNotFindFoodInfo": "Nie udało się znaleźć informacji. Spróbuj ponownie.",
+    "foodQueryPlaceholder": "Co jadłaś? (np. ryż z kurczakiem, sałatka, jajko na twardo)",
+    "addBtn": "+ Dodaj",
+    "addMealBtn": "+ Dodaj posiłek",
+    "generatingEllipsis": "⏳ Generowanie...",
+    "aiMealPlanBtn": "✨ Plan posiłków AI",
+    "couldNotParseMealPlan": "Nie udało się przetworzyć planu posiłków. Spróbuj ponownie.",
+    "yourAiMealPlan": "✨ Twój plan posiłków AI",
+    "addToShoppingListLink": "🛒 Dodaj do listy zakupów",
+    "totalLabel": "Razem",
+    "kcalOfGoal": "{{total}} kcal / cel {{goal}} kcal",
+    "addAllToTodayLog": "➕ Dodaj wszystko do dzisiejszego dziennika",
+    "recipeToggleHide": "ukryj",
+    "recipeToggleShow": "przepis",
+    "prepSuffix": "{{time}} przygotowanie",
+    "cookSuffix": "{{time}} gotowanie",
+    "mealSnack": "Przekąska",
+    "tf1": "1 miesiąc",
+    "tf2": "2 miesiące",
+    "tf3": "3 miesiące",
+    "tf6": "6 miesięcy",
+    "motivationalFar": "💪 Każdy mały krok się liczy — dasz radę!",
+    "motivationalGetting": "🌟 Robisz niesamowite postępy, tak trzymaj!",
+    "motivationalClose": "🎯 Jesteś tak blisko celu — bądź konsekwentna!",
+    "motivationalAlmost": "🏆 Prawie na miejscu! Ostatni odcinek jest najtrudniejszy.",
+    "motivationalReached": "✨ Osiągnęłaś docelową wagę — utrzymaj ją!",
+    "motivationalSetGoal": "🌸 Ustaw swój cel wagowy, aby otrzymać spersonalizowany plan!",
+    "legendMoodLabel": "Nastrój",
+    "legendSleepLabel": "Sen",
+    "legendWaterLabel": "Woda",
+    "todaysAffirmation": "Dzisiejsza afirmacja",
+    "waterShort": "Woda",
+    "weeklyOverview": "Podsumowanie tygodnia",
+    "journalPlaceholder": "Pisz swobodnie — to Twoja prywatna przestrzeń...",
+    "lessToggle": "mniej",
+    "moreToggle": "więcej",
+    "workoutsThisWeek_few": "{{count}} treningi w tym tygodniu · {{mins}} min łącznie",
+    "workoutsThisWeek_many": "{{count}} treningów w tym tygodniu · {{mins}} min łącznie",
+    "dailyCalorieGoalResult_few": "Twój dzienny cel kaloryczny: {{calories}} kcal (aby {{action}} {{diff}} kg w {{months}} miesiące)",
+    "dailyCalorieGoalResult_many": "Twój dzienny cel kaloryczny: {{calories}} kcal (aby {{action}} {{diff}} kg w {{months}} miesięcy)"
   },
   "settings": {
     "title": "Ustawienia",
@@ -382,39 +1036,139 @@
     "yes": "Tak",
     "no": "Nie",
     "save": "Zapisz",
-    "cancel": "Anuluj"
+    "cancel": "Anuluj",
+    "aiAssistantTitle": "Asystent AI",
+    "allowAiFeatures": "Zezwól na funkcje AI",
+    "aiFeaturesDescription": "Wysyła Twoje wiadomości i odpowiedni kontekst do Anthropic w celu generowania odpowiedzi AI.",
+    "freeTrialLabel": "Bezpłatny okres próbny",
+    "daysLeftSuffix": "dni pozostało",
+    "unlockAllFeatures": "Odblokuj wszystkie funkcje — zaktualizuj plan przed zakończeniem okresu próbnego.",
+    "upgradeNow": "Zaktualizuj teraz",
+    "whatsIncluded": "Co jest zawarte",
+    "everythingInStandardPlus": "Wszystko z planu Standard, plus:",
+    "renewsOn": "Odnawia się {{date}}",
+    "managePortalNote": "Subskrypcjami zakupionymi w sieci można zarządzać poniżej. Jeśli zasubskrybowałeś przez App Store, zarządzaj poprzez <strong>Ustawienia iPhone → Apple ID → Subskrypcje</strong>.",
+    "openingPortal": "Otwieranie portalu...",
+    "manageSubscriptionBtn": "Zarządzaj subskrypcją",
+    "cancelAnytimeManaged": "Anuluj w dowolnym momencie · Zarządzane przez Stripe",
+    "noActiveSubscription": "Nie masz aktywnej subskrypcji.",
+    "choosePlanBtn": "Wybierz plan",
+    "purchasesSection": "Zakupy",
+    "restorePurchases": "Przywróć zakupy",
+    "restoring": "Przywracanie…",
+    "restoreSuccess": "Zakupy pomyślnie przywrócone.",
+    "restoreNone": "Nie znaleziono zakupów do przywrócenia.",
+    "restoreIOSOnly": "Przywracanie jest dostępne tylko w aplikacji mobilnej.",
+    "restoreError": "Nie udało się przywrócić zakupów. Spróbuj ponownie.",
+    "portalError": "Nie udało się otworzyć portalu subskrypcji.",
+    "legalSection": "Informacje prawne",
+    "termsAndConditions": "Regulamin",
+    "privacyPolicy": "Polityka prywatności",
+    "deleteAccountTitle": "Usuń konto",
+    "deleteAccountWarning": "To trwale usunie Twoje konto i wszystkie Twoje dane. Tej czynności nie można cofnąć.",
+    "deleteAccountLink": "Usuń konto",
+    "deleting": "Usuwanie…",
+    "delete": "Usuń"
   },
   "paywall": {
-    "title": "Kontynuuj z MomManager Premium",
-    "subtitle": "Anuluj w dowolnym momencie",
     "monthly": "Miesięcznie",
-    "annual": "Rocznie",
-    "bestValue": "NAJLEPSZA OFERTA",
-    "monthlyPrice": "£9.99/miesiąc",
-    "annualPrice": "£79.99/rok",
-    "startMonthly": "Zacznij miesięcznie",
-    "startAnnual": "Zacznij rocznie",
-    "feature1": "Wszystkie funkcje",
-    "feature2": "Asystent AI",
-    "feature3": "Wielojęzyczność",
-    "feature4": "Przelicznik walut",
-    "feature5": "Nieograniczona liczba dzieci",
-    "trialExpiredMessage": "Twój 7-dniowy okres próbny dobiegł końca. Ulepsz, aby kontynuować.",
-    "processing": "Przetwarzanie...",
-    "startFreeTrial": "Zacznij 7 dni za darmo",
-    "activateTest": "Aktywuj (Tryb testowy)",
-    "trialIncludes": "Zawiera 7 dni za darmo, potem",
-    "orActivateTest": "— lub do testowania —",
-    "trialTermsTitle": "Warunki okresu próbnego",
-    "trialTerm1": "7-dniowy bezpłatny okres próbny we wszystkich planach",
-    "trialTerm2": "Po zakończeniu próby: £9.99/miesiąc lub £79.99/rok",
-    "trialTerm3": "Anuluj w dowolnym momencie przed końcem okresu próbnego, aby uniknąć opłat",
-    "trialTerm4": "Płatność zostanie pobrana z Twojego konta po zakończeniu okresu próbnego"
+    "chooseYourPlan": "Wybierz swój plan",
+    "sevenDayTrialCancelAnytime": "7 dni za darmo • Anuluj w dowolnym momencie",
+    "subscriptionRequired": "Do korzystania z MomManager wymagana jest subskrypcja.",
+    "yearly": "Rocznie",
+    "standardName": "Standard",
+    "proName": "Pro",
+    "billedMonthly": "rozliczane miesięcznie",
+    "billedYearly": "{{amount}}/mies., rozliczane rocznie",
+    "mostPopular": "NAJPOPULARNIEJSZY",
+    "everythingInStandardPlus": "Wszystko z planu Standard, plus:",
+    "soon": "Wkrótce",
+    "redirecting": "Przekierowywanie…",
+    "openingNativeSheet": "Otwieranie okna zakupu…",
+    "startStandardTrial": "Rozpocznij Standard – 7 dni za darmo",
+    "startProTrial": "Rozpocznij Pro – 7 dni za darmo",
+    "tryFreeThen": "Wypróbuj za darmo przez 7 dni, potem {{price}}. Anuluj przed końcem okresu próbnego, aby uniknąć opłaty.",
+    "or": "lub",
+    "startFreeTrialCta": "Wypróbuj za darmo przez 7 dni — bez karty",
+    "noPaymentOptionLabel": "BEZ PŁATNOŚCI",
+    "noPaymentSectionSubtitle": "Wolisz nie podawać teraz danych płatności?",
+    "startingTrial": "Rozpoczynanie okresu próbnego…",
+    "restorePurchases": "🔄 Przywróć zakupy",
+    "restoring": "Przywracanie…",
+    "footerRenewalNotice": "Subskrypcja odnawia się automatycznie w cenie planu pokazanej powyżej. Aby uniknąć opłaty, anuluj co najmniej 24 godziny przed zakończeniem 7-dniowego okresu próbnego.",
+    "manageIOS": "Zarządzaj lub anuluj w dowolnym momencie w Ustawienia iPhone → Apple ID → Subskrypcje.",
+    "manageOther": "Zarządzaj lub anuluj w dowolnym momencie w ustawieniach konta.",
+    "footerPaymentCharge": "Płatność zostanie pobrana z Twojego konta po potwierdzeniu zakupu.",
+    "privacyPolicy": "Polityka prywatności",
+    "termsOfUse": "Warunki użytkowania",
+    "purchaseCouldNotComplete": "Nie udało się sfinalizować zakupu. Spróbuj ponownie.",
+    "mustBeSignedIn": "Musisz być zalogowany, aby subskrybować.",
+    "openingCheckout": "Otwieranie bezpiecznej płatności…",
+    "redirectingCheckout": "Przekierowywanie do bezpiecznej płatności…",
+    "purchaseFailed": "Zakup nieudany: {{msg}}",
+    "unknownError": "nieznany błąd",
+    "noPreviousPurchases": "Nie znaleziono wcześniejszych zakupów.",
+    "couldNotRestore": "Nie udało się przywrócić zakupów.",
+    "purchaseNoPaymentMethod": "Dodaj metodę płatności do konta {{store}}, aby rozpocząć bezpłatny okres próbny.",
+    "purchaseNotAllowed": "Zakupy nie są dozwolone na tym urządzeniu. Sprawdź ustawienia czasu ekranowego / kontroli rodzicielskiej.",
+    "purchaseNetworkError": "Błąd sieci — sprawdź połączenie i spróbuj ponownie.",
+    "purchaseTimedOut": "To trwa dłużej niż zwykle. Spróbuj ponownie.",
+    "purchasePending": "Twój zakup oczekuje na zatwierdzenie. Odblokujemy Twój plan, gdy tylko zostanie potwierdzony.",
+    "restoreTimedOut": "Przywracanie trwa dłużej niż zwykle. Spróbuj ponownie.",
+    "tapRetry": "Dotknij, aby spróbować ponownie",
+    "standardFeatures": [
+      "Kalendarz i zadania z przypomnieniami i powiadomieniami",
+      "Osobne plany dla Mamy i Dzieci",
+      "Generator aktywności AI dla dzieci",
+      "Kuchnia i planowanie posiłków",
+      "Podstawowe rutyny pielęgnacyjne",
+      "Podstawowe śledzenie budżetu",
+      "Obsługa 9 języków"
+    ],
+    "proExtras": [
+      "Zaawansowana pielęgnacja skóry z rekomendacjami produktów AI",
+      "Śledzenie treningów z postępami i seriami",
+      "Plany żywieniowe AI dla całej rodziny",
+      "Import wyciągów bankowych (CSV i PDF)",
+      "Cotygodniowe podsumowanie AI i prognozy",
+      "Priorytetowe wsparcie"
+    ],
+    "offeringsUnavailable": "Nie udało się wczytać planów subskrypcji. Sprawdź połączenie i spróbuj ponownie.",
+    "retry": "Spróbuj ponownie",
+    "remainingInTrial_one": "🌸 Pozostał {{count}} dzień bezpłatnego okresu próbnego",
+    "remainingInTrial_other": "🌸 Pozostało {{count}} dni bezpłatnego okresu próbnego"
+  },
+  "trialDisclosure": {
+    "endsOn": "Twój 7-dniowy bezpłatny okres próbny kończy się {{date}}.",
+    "endsOnIfStartedToday": "Twój 7-dniowy bezpłatny okres próbny zakończyłby się {{date}}, jeśli zaczniesz dzisiaj.",
+    "chargedAfter": "Po okresie próbnym zostanie naliczona opłata {{price}} za {{period}}, chyba że anulujesz.",
+    "cancelGoogle": "Możesz anulować w dowolnym momencie, co najmniej 24 godziny przed końcem okresu próbnego, w Google Play > Subskrypcje.",
+    "cancelApple": "Możesz anulować w dowolnym momencie, co najmniej 24 godziny przed końcem okresu próbnego, w Ustawieniach iPhone'a → Apple ID → Subskrypcje.",
+    "cancelWeb": "Możesz anulować w dowolnym momencie, co najmniej 24 godziny przed końcem okresu próbnego, w ustawieniach konta.",
+    "autoRenews": "Subskrypcja odnawia się automatycznie do momentu anulowania.",
+    "periodMonth": "miesiąc",
+    "periodYear": "rok",
+    "periodWeek": "tydzień",
+    "periodDay": "dzień",
+    "freeEndsOn": "Twój bezpłatny okres próbny kończy się {{date}}.",
+    "freeDuration": "Bezpłatny okres próbny trwa 7 dni od aktywacji.",
+    "freeNoCharge": "Metoda płatności nie jest wymagana — nie zostaniesz automatycznie obciążony opłatą.",
+    "freeNoAutoRenew": "Ten okres próbny nie odnawia się automatycznie. Wybierz plan w dowolnym momencie, aby zachować pełny dostęp po jego zakończeniu."
   },
   "success": {
     "title": "Witaj w Premium!",
     "message": "Twoja subskrypcja jest aktywna!",
-    "continue": "Kontynuuj"
+    "continue": "Kontynuuj",
+    "confirmingPayment": "Potwierdzanie płatności…",
+    "paymentNotCompleted": "Płatność niezakończona",
+    "cardNotCharged": "Twoja karta nie została obciążona.",
+    "tryAgain": "Spróbuj ponownie",
+    "planLabel": "Plan",
+    "planName": "Plan {{plan}} {{period}}",
+    "nextBillingDate": "Następna data rozliczenia",
+    "statusLabel": "Status",
+    "statusActive": "✓ Aktywny",
+    "receiptSentNote": "Paragon został wysłany na Twój e-mail przez Stripe."
   },
   "ai": {
     "title": "Asystent AI",
@@ -423,7 +1177,13 @@
     "errorMessage": "Wystąpił błąd. Spróbuj ponownie.",
     "send": "Wyślij",
     "close": "Zamknij",
-    "newChat": "Nowy czat"
+    "newChat": "Nowy czat",
+    "consentTitle": "Asystent AI i Twoje dane",
+    "consentIntro": "Funkcje AI MomManager (czat Asystenta AI, plany posiłków, przepisy, propozycje aktywności i porady dotyczące pielęgnacji) są obsługiwane przez <strong>Anthropic</strong>, zewnętrzną usługę AI.",
+    "consentDetails": "Aby wygenerować odpowiedź, wysyłamy do Anthropic wiadomość lub zapytanie, które wpisujesz, wraz z odpowiednimi szczegółami, które podałeś dla danej funkcji — na przykład imię i wiek dziecka dla planu posiłków, preferencje żywieniowe, typ skóry lub wagę/cel dla porad pielęgnacyjnych. <strong>Nigdy</strong> nie wysyłamy danych logowania do konta, danych płatności ani danych z nieużywanych funkcji.",
+    "consentFooter": "Możesz zmienić zdanie w dowolnym momencie w Ustawienia → Asystent AI. Odmowa wyłącza tylko funkcje AI — reszta MomManager działa normalnie w każdym przypadku.",
+    "consentNotNow": "Nie teraz",
+    "consentAgree": "Zgadzam się, kontynuuj"
   },
   "common": {
     "loading": "Ładowanie...",
@@ -442,6 +1202,271 @@
     "no": "Nie",
     "search": "Szukaj",
     "noData": "Brak danych",
-    "required": "To pole jest wymagane"
+    "required": "To pole jest wymagane",
+    "toggleTheme": "Przełącz motyw"
+  },
+  "trialBanner": {
+    "trialEnded": "Twój okres próbny się zakończył — Wybierz plan",
+    "daysLeft": "🌸 Pozostało {{days}} dni bezpłatnego okresu próbnego",
+    "choosePlan": "Wybierz plan",
+    "upgrade": "Ulepsz"
+  },
+  "proGate": {
+    "proFeature": "Funkcja Pro",
+    "upgradeToPro": "Przejdź na Pro"
+  },
+  "kidsActivities": {
+    "activityIdeas": "🧸 Pomysły na aktywności",
+    "ageGroupLabel": "Grupa wiekowa",
+    "categoryLabel": "Kategoria",
+    "pickAny": "(wybierz dowolne)",
+    "durationLabel": "Czas trwania",
+    "materialsLabel": "Materiały",
+    "generateBtn": "Generuj aktywności ✨",
+    "generating": "Wyszukiwanie aktywności...",
+    "stepsLabel": "Kroki",
+    "savedLabel": "Zapisano ✓",
+    "saveLabel": "Zapisz ♡",
+    "savedActivitiesLabel": "Zapisane aktywności",
+    "invalidResponse": "Nieprawidłowy format odpowiedzi",
+    "couldNotGenerate": "Nie udało się wygenerować aktywności. Spróbuj ponownie.",
+    "ageGroups": {
+      "toddler": "0-2 lata",
+      "young": "3-5 lat",
+      "middle": "6-9 lat",
+      "older": "10+ lat"
+    },
+    "categories": {
+      "creative": "Kreatywne",
+      "educational": "Edukacyjne",
+      "physical": "Fizyczne",
+      "relaxing": "Relaksujące",
+      "outdoor": "Na świeżym powietrzu",
+      "rainyDay": "Deszczowy dzień"
+    },
+    "durations": {
+      "min15": "15 min",
+      "min30": "30 min",
+      "hour1": "1 godzina",
+      "afternoon": "Popołudnie"
+    },
+    "materials": {
+      "none": "Nic nie potrzeba",
+      "basic": "Podstawowe",
+      "craft": "Materiały do majsterkowania",
+      "kitchen": "Kuchnia"
+    }
+  },
+  "fitness": {
+    "pushup": {
+      "muscle": "Klatka piersiowa i triceps",
+      "mistakes": [
+        "Biodra opadające lub zbyt wysoko",
+        "Łokcie zbyt szeroko rozstawione",
+        "Niepełny zakres ruchu"
+      ]
+    },
+    "squat": {
+      "muscle": "Czworogłowe i pośladki",
+      "mistakes": [
+        "Kolana zapadające się do środka",
+        "Pięty unoszące się z podłogi",
+        "Zaokrąglanie dolnej części pleców"
+      ]
+    },
+    "lunge": {
+      "muscle": "Czworogłowe i pośladki",
+      "mistakes": [
+        "Przednie kolano wychodzi poza palce stóp",
+        "Tułów zbyt pochylony do przodu",
+        "Utrata równowagi — utrzymuj wzrok prosto przed sobą"
+      ]
+    },
+    "plank": {
+      "muscle": "Brzuch i core",
+      "mistakes": [
+        "Biodra zbyt wysoko lub opadające",
+        "Wstrzymywanie oddechu zamiast normalnego oddychania",
+        "Głowa opadająca w dół"
+      ]
+    },
+    "deadlift": {
+      "muscle": "Dwugłowe uda i plecy",
+      "mistakes": [
+        "Zaokrąglanie dolnej części pleców",
+        "Sztanga oddalająca się od ciała",
+        "Gwałtowne szarpnięcie sztangi z podłogi"
+      ]
+    },
+    "bicepCurl": {
+      "muscle": "Biceps",
+      "mistakes": [
+        "Kołysanie ciałem w celu uzyskania rozpędu",
+        "Brak kontroli podczas opuszczania",
+        "Łokcie oddalające się od tułowia"
+      ]
+    },
+    "shoulderPress": {
+      "muscle": "Barki i triceps",
+      "mistakes": [
+        "Wygięcie dolnej części pleców",
+        "Niepełne wyprostowanie łokci na górze",
+        "Wypychanie do przodu zamiast prosto w górę"
+      ]
+    },
+    "latPulldown": {
+      "muscle": "Najszersze grzbietu i górna część pleców",
+      "mistakes": [
+        "Zbyt mocne odchylanie się do tyłu",
+        "Ciągnięcie rękami zamiast najszerszymi",
+        "Unoszenie barków w kierunku uszu"
+      ]
+    },
+    "gluteBridge": {
+      "muscle": "Pośladki i dwugłowe uda",
+      "mistakes": [
+        "Przeprost dolnej części pleców na górze",
+        "Stopy zbyt daleko lub blisko bioder",
+        "Kolana zapadające się do środka"
+      ]
+    },
+    "mountainClimber": {
+      "muscle": "Core i kardio",
+      "mistakes": [
+        "Biodra podskakujące góra-dół",
+        "Utrata płaskiej pozycji pleców",
+        "Zbyt szybki ruch przy słabej kontroli"
+      ]
+    },
+    "burpee": {
+      "muscle": "Całe ciało",
+      "mistakes": [
+        "Klatka piersiowa nie schodzi całkowicie do podłogi",
+        "Stopy skaczące zbyt szeroko",
+        "Lądowanie z zablokowanymi kolanami"
+      ]
+    },
+    "tricepDip": {
+      "muscle": "Triceps",
+      "mistakes": [
+        "Barki unoszące się w kierunku uszu",
+        "Zbyt mocne pochylanie się do przodu",
+        "Łokcie rozstawione na zewnątrz"
+      ]
+    },
+    "calfRaise": {
+      "muscle": "Łydki",
+      "mistakes": [
+        "Brak pauzy na górze",
+        "Stopy zataczające się do środka/na zewnątrz",
+        "Używanie rozpędu zamiast kontroli"
+      ]
+    },
+    "russianTwist": {
+      "muscle": "Skośne brzucha i core",
+      "mistakes": [
+        "Zaokrąglanie pleców",
+        "Obracanie tylko ramionami, nie tułowiem",
+        "Zbyt szybki ruch bez kontroli"
+      ]
+    },
+    "legRaise": {
+      "muscle": "Brzuch i zginacze bioder",
+      "mistakes": [
+        "Dolna część pleców unosi się z podłogi",
+        "Nogi opadają zbyt szybko",
+        "Używanie rozpędu zamiast kontroli mięśniowej"
+      ]
+    },
+    "generic": {
+      "muscle": "Całe ciało",
+      "mistakes": [
+        "Zbyt duże użycie rozpędu",
+        "Brak prawidłowej postawy",
+        "Pomijanie pełnego zakresu ruchu"
+      ]
+    },
+    "exerciseFallback": "Ćwiczenie"
+  },
+  "legal": {
+    "lastUpdated": "Ostatnia aktualizacja: kwiecień 2025",
+    "terms": {
+      "pageTitle": "Regulamin",
+      "section1Title": "1. O nas",
+      "section1Body": "MomManager jest prowadzony przez <strong>SoldOut Digital LTD</strong>, spółkę zarejestrowaną w Anglii i Walii. Zarejestrowany adres: Wielka Brytania. Numer spółki: 16208774.",
+      "section2Title": "2. Akceptacja warunków",
+      "section2Body": "Pobierając, instalując lub korzystając z aplikacji MomManager (\"Aplikacja\"), zgadzasz się przestrzegać niniejszego Regulaminu. Jeśli nie zgadzasz się z tymi warunkami, prosimy nie korzystać z Aplikacji.",
+      "section3Title": "3. Subskrypcja i płatności",
+      "section3Body": "MomManager oferuje dostęp oparty na subskrypcji do funkcji premium. Subskrypcje są rozliczane cyklicznie (miesięcznie lub rocznie) za pośrednictwem {{storeName}}. Płatność zostanie pobrana z Twojego konta po potwierdzeniu zakupu. Subskrypcje odnawiają się automatycznie, chyba że zostaną anulowane co najmniej 24 godziny przed końcem bieżącego okresu. Możesz zarządzać lub anulować subskrypcję w ustawieniach konta swojego urządzenia. Zwroty za częściowe okresy subskrypcji nie są udzielane, z wyjątkiem przypadków wymaganych przez obowiązujące prawo.",
+      "section4Title": "4. Bezpłatny okres próbny",
+      "section4Body": "Możemy oferować bezpłatny okres próbny dla nowych użytkowników. Po zakończeniu okresu próbnego Twoja subskrypcja rozpocznie się automatycznie i zostanie naliczona odpowiednia opłata subskrypcyjna, chyba że anulujesz przed zakończeniem okresu próbnego.",
+      "section5Title": "5. Korzystanie z Aplikacji",
+      "section5Body": "Zgadzasz się korzystać z MomManager wyłącznie w zgodnych z prawem, osobistych, niekomercyjnych celach. Nie możesz nadużywać Aplikacji, próbować uzyskać nieautoryzowany dostęp do jakiejkolwiek jej części, ani korzystać z niej w sposób, który mógłby uszkodzić, wyłączyć lub osłabić jej funkcjonalność. Odpowiadasz za utrzymanie bezpieczeństwa danych logowania do swojego konta.",
+      "section6Title": "6. Funkcje AI",
+      "section6Body": "MomManager zawiera funkcje oparte na AI (takie jak propozycje posiłków, generowanie historii i pomoc w czacie) obsługiwane przez zewnętrznych dostawców AI. Funkcje te są udostępniane wyłącznie w celach informacyjnych i rozrywkowych. Treści generowane przez AI mogą nie zawsze być dokładne, kompletne lub odpowiednie dla Twojej konkretnej sytuacji. Zawsze powinieneś kierować się własnym osądem i konsultować się z wykwalifikowanymi specjalistami w sprawach medycznych, żywieniowych, finansowych lub prawnych.",
+      "section7Title": "7. Własność intelektualna",
+      "section7Body": "Cała zawartość, projekt, grafika i oprogramowanie w Aplikacji stanowią własność intelektualną SoldOut Digital LTD lub jej licencjodawców i są chronione obowiązującymi przepisami dotyczącymi praw autorskich i własności intelektualnej. Nie możesz kopiować, modyfikować, dystrybuować ani dokonywać inżynierii wstecznej żadnej części Aplikacji bez naszej uprzedniej pisemnej zgody.",
+      "section8Title": "8. Ograniczenie odpowiedzialności",
+      "section8Body": "W maksymalnym zakresie dozwolonym przez prawo, SoldOut Digital LTD nie ponosi odpowiedzialności za żadne pośrednie, przypadkowe, specjalne, wynikowe lub karne szkody wynikające z korzystania przez Ciebie z Aplikacji. Nasza całkowita odpowiedzialność wobec Ciebie nie przekroczy kwoty, którą zapłaciłeś za subskrypcję w ciągu 12 miesięcy poprzedzających roszczenie.",
+      "section9Title": "9. Zmiany w Regulaminie",
+      "section9Body": "Zastrzegamy sobie prawo do modyfikacji niniejszego Regulaminu w dowolnym momencie. Powiadomimy Cię o istotnych zmianach za pośrednictwem Aplikacji lub e-mailem. Dalsze korzystanie z Aplikacji po wprowadzeniu zmian oznacza akceptację zmienionego Regulaminu.",
+      "section10Title": "10. Prawo właściwe",
+      "section10Body": "Niniejszy Regulamin podlega prawu Anglii i Walii. Wszelkie spory podlegają wyłącznej jurysdykcji sądów Anglii i Walii.",
+      "section11Title": "11. Kontakt",
+      "section11Body": "Jeśli masz pytania dotyczące niniejszego Regulaminu, skontaktuj się z nami pod adresem <strong>support@mommanager.co.uk</strong>.",
+      "appleAppStore": "Apple App Store",
+      "yourAppStoreAccount": "Twoje konto w sklepie z aplikacjami"
+    },
+    "privacy": {
+      "pageTitle": "Polityka prywatności",
+      "section1Title": "1. Kim jesteśmy",
+      "section1Body": "<strong>SoldOut Digital LTD</strong> (\"my\") jest administratorem danych osobowych zbieranych za pośrednictwem MomManager. Zarejestrowany adres: Wielka Brytania. Numer spółki: 16208774. Kontakt: <strong>support@mommanager.co.uk</strong>.",
+      "section2Title": "2. Dane, które zbieramy",
+      "section2Intro": "Zbieramy następujące rodzaje danych osobowych podczas korzystania z MomManager:",
+      "section2Items": [
+        "<strong>Dane konta:</strong> adres e-mail, imię, zdjęcie profilowe (jeśli podane)",
+        "<strong>Dane aplikacji:</strong> zadania, informacje o dzieciach, plany posiłków, wpisy budżetowe i inne treści tworzone w Aplikacji — przechowywane lokalnie na urządzeniu lub w osobistej przestrzeni chmurowej",
+        "<strong>Dane użytkowania:</strong> interakcje z aplikacją, korzystanie z funkcji i raporty o awariach w celu ulepszenia Aplikacji",
+        "<strong>Dane płatności:</strong> status subskrypcji (przetwarzany przez Apple/Google — nie przechowujemy danych karty płatniczej)"
+      ],
+      "section3Title": "3. Jak wykorzystujemy Twoje dane",
+      "section3Intro": "Wykorzystujemy Twoje dane osobowe do:",
+      "section3Items": [
+        "Świadczenia i utrzymywania usługi MomManager",
+        "Zarządzania Twoim kontem i subskrypcją",
+        "Ulepszania Aplikacji poprzez zanonimizowaną analitykę",
+        "Wysyłania Ci ważnych komunikatów usługowych",
+        "Przestrzegania obowiązków prawnych"
+      ],
+      "section4Title": "4. Funkcje AI i przetwarzanie danych",
+      "section4Body": "Gdy korzystasz z funkcji opartych na AI (czat, propozycje posiłków, historie itp.), wprowadzony przez Ciebie tekst jest wysyłany do naszego dostawcy AI (Anthropic, Inc.) w celu wygenerowania odpowiedzi. Nie przechowujemy rozmów AI na naszych serwerach. Prosimy nie udostępniać wrażliwych danych osobowych, takich jak hasła, numery kont finansowych czy dokumentacja medyczna, w czacie AI.",
+      "section5Title": "5. Udostępnianie danych",
+      "section5Intro": "Nie sprzedajemy Twoich danych osobowych. Możemy udostępniać dane:",
+      "section5Items": [
+        "<strong>Dostawcom usług</strong>, którzy pomagają w obsłudze Aplikacji (np. uwierzytelnianie, analityka), na podstawie ścisłych umów o poufności",
+        "<strong>Organom prawnym</strong>, gdy wymaga tego prawo"
+      ],
+      "section6Title": "6. Przechowywanie danych",
+      "section6Body": "Przechowujemy dane Twojego konta tak długo, jak długo Twoje konto jest aktywne. Jeśli usuniesz swoje konto, usuniemy Twoje dane osobowe w ciągu 30 dni, chyba że jesteśmy zobowiązani do ich przechowywania na mocy prawa.",
+      "section7Title": "7. Twoje prawa",
+      "section7Intro": "Zgodnie z brytyjskim RODO i obowiązującym prawem o ochronie danych, masz prawo do:",
+      "section7Items": [
+        "Dostępu do danych osobowych, które przechowujemy na Twój temat",
+        "Poprawiania niedokładnych danych",
+        "Żądania usunięcia Twoich danych (\"prawo do bycia zapomnianym\")",
+        "Sprzeciwu wobec przetwarzania Twoich danych lub jego ograniczenia",
+        "Przenoszalności danych",
+        "Złożenia skargi do Information Commissioner's Office (ICO) na ico.org.uk"
+      ],
+      "section7Contact": "Aby skorzystać z któregokolwiek z tych praw, skontaktuj się z nami pod adresem <strong>support@mommanager.co.uk</strong>.",
+      "section8Title": "8. Bezpieczeństwo",
+      "section8Body": "Wdrażamy odpowiednie środki techniczne i organizacyjne w celu ochrony Twoich danych osobowych przed nieautoryzowanym dostępem, zmianą, ujawnieniem lub zniszczeniem. Jednak żadna transmisja internetowa nie jest całkowicie bezpieczna i nie możemy zagwarantować absolutnego bezpieczeństwa.",
+      "section9Title": "9. Prywatność dzieci",
+      "section9Body": "MomManager jest przeznaczony do użytku przez dorosłych (18+). Świadomie nie zbieramy danych osobowych od dzieci poniżej 13 roku życia. Jeśli uważasz, że dziecko przekazało nam dane osobowe, skontaktuj się z nami, abyśmy mogli je usunąć.",
+      "section10Title": "10. Zmiany w niniejszej polityce",
+      "section10Body": "Możemy od czasu do czasu aktualizować niniejszą Politykę prywatności. Powiadomimy Cię o istotnych zmianach za pośrednictwem Aplikacji lub e-mailem. Najnowsza wersja będzie zawsze dostępna w Aplikacji.",
+      "section11Title": "11. Skontaktuj się z nami",
+      "section11Body": "W przypadku jakichkolwiek pytań lub żądań związanych z prywatnością, skontaktuj się z nami pod adresem <strong>support@mommanager.co.uk</strong> lub napisz do SoldOut Digital LTD, Wielka Brytania."
+    }
   }
 }

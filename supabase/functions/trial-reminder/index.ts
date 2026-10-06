@@ -56,15 +56,15 @@ Deno.serve(async (_req) => {
     sentCount++;
   }
 
-  // ── Trial expired today ────────────────────────────────────────────────────
-  const today = new Date().toISOString().split('T')[0];
-
+  // ── Expired trials ──────────────────────────────────────────────────────────
+  // Catches anything overdue, not just trials that expired exactly today —
+  // self-heals if a run was ever missed, instead of leaving free_trial
+  // profiles permanently active.
   const { data: expired } = await supabase
     .from('profiles')
     .select('id, name, email, subscription_expires_at')
     .eq('subscription_status', 'free_trial')
-    .gte('subscription_expires_at', `${today}T00:00:00`)
-    .lte('subscription_expires_at', `${today}T23:59:59`);
+    .lte('subscription_expires_at', new Date().toISOString());
 
   for (const profile of expired || []) {
     if (!profile.email) continue;

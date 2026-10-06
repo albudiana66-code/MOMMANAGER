@@ -8,6 +8,9 @@ import { Modal } from '../components/ui/Modal';
 import { useAuth } from '../context/AuthContext';
 import { useAIConsent } from '../context/AIConsentContext';
 import { askAI } from '../lib/anthropic';
+import { useDateFnsLocale } from '../hooks/useDateFnsLocale';
+import { useNotificationSettings } from '../hooks/useNotificationSettings';
+import i18n from '../i18n';
 import type { ShoppingItem } from '../types';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -55,6 +58,11 @@ type Category = typeof CATEGORIES[number];
 const CAT_EMOJI: Record<Category, string> = {
   'Produce': '🥬', 'Meat & Fish': '🥩', 'Dairy': '🧀',
   'Pantry': '🫙', 'Bakery': '🍞', 'Other': '🛒',
+};
+
+const CAT_LABEL_KEYS: Record<Category, string> = {
+  'Produce': 'kitchen.categories.produce', 'Meat & Fish': 'kitchen.categories.meatFish', 'Dairy': 'kitchen.categories.dairy',
+  'Pantry': 'kitchen.categories.pantry', 'Bakery': 'kitchen.categories.bakery', 'Other': 'kitchen.categories.other',
 };
 
 function guessCategory(name: string): Category {
@@ -184,9 +192,9 @@ function CookTimer({ total, onDone }: { total: number; onDone: () => void }) {
         <div style={{ width: 120, height: 120, borderRadius: '50%', background: '#EDF5ED', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <span style={{ fontSize: 48 }}>✅</span>
         </div>
-        <p style={{ fontSize: 16, fontWeight: 600, color: '#4A7A58' }}>Done! ✓</p>
+        <p style={{ fontSize: 16, fontWeight: 600, color: '#4A7A58' }}>{i18n.t('kitchen.timerDone')}</p>
         <button onClick={() => { setRemaining(total); setDone(false); }}
-          style={{ fontSize: 13, color: 'var(--text-secondary)', textDecoration: 'underline' }}>Reset</button>
+          style={{ fontSize: 13, color: 'var(--text-secondary)', textDecoration: 'underline' }}>{i18n.t('kitchen.reset')}</button>
       </div>
     );
   }
@@ -210,7 +218,7 @@ function CookTimer({ total, onDone }: { total: number; onDone: () => void }) {
           color: running ? '#dc2626' : '#fff', fontWeight: 600, fontSize: 14, cursor: 'pointer', marginTop: 4,
         }}
       >
-        {running ? '⏸ Pause' : '▶ Start'}
+        {running ? i18n.t('kitchen.pause') : i18n.t('kitchen.start')}
       </button>
     </div>
   );
@@ -267,11 +275,11 @@ function CookMode({ recipe, onClose }: { recipe: GeneratedRecipe | SavedRecipe; 
       <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, padding: '32px 32px max(calc(env(safe-area-inset-bottom, 0px) + 20px), 60px)', gap: 16 }}>
         <Confetti />
         <span style={{ fontSize: 72 }}>🎉</span>
-        <p style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-primary)', textAlign: 'center' }}>Recipe Complete!</p>
+        <p style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-primary)', textAlign: 'center' }}>{i18n.t('kitchen.recipeComplete')}</p>
         <p style={{ fontSize: 15, color: 'var(--text-secondary)', textAlign: 'center' }}>{recipe.title}</p>
 
         <div style={{ marginTop: 8 }}>
-          <p style={{ fontSize: 14, color: 'var(--text-secondary)', textAlign: 'center', marginBottom: 12 }}>How did it go?</p>
+          <p style={{ fontSize: 14, color: 'var(--text-secondary)', textAlign: 'center', marginBottom: 12 }}>{i18n.t('kitchen.howDidItGo')}</p>
           <div className="flex gap-5 justify-center">
             {(['😍', '👍', '😐'] as const).map((r) => (
               <button key={r} onClick={() => setRating(r)}
@@ -287,7 +295,7 @@ function CookMode({ recipe, onClose }: { recipe: GeneratedRecipe | SavedRecipe; 
           background: 'linear-gradient(135deg, var(--accent), var(--accent-hover))',
           color: '#fff', fontWeight: 600, fontSize: 16, cursor: 'pointer',
         }}>
-          Close
+          {i18n.t('common.close')}
         </button>
       </div>
     );
@@ -298,10 +306,10 @@ function CookMode({ recipe, onClose }: { recipe: GeneratedRecipe | SavedRecipe; 
       {/* Step counter + progress */}
       <div style={{ padding: '0 24px 12px' }}>
         <div className="flex items-center justify-between mb-2">
-          <p style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 500 }}>Step {current + 1} of {steps.length}</p>
+          <p style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 500 }}>{i18n.t('kitchen.stepXofY', { current: current + 1, total: steps.length })}</p>
           <button onClick={() => markDone(current)}
             style={{ fontSize: 12, color: done.has(current) ? '#4A7A58' : 'var(--text-muted)', fontWeight: 500 }}>
-            {done.has(current) ? '✓ Done' : 'Mark done'}
+            {done.has(current) ? i18n.t('kitchen.doneCheck') : i18n.t('kitchen.markDone')}
           </button>
         </div>
         <div style={{ height: 4, borderRadius: 2, background: 'var(--border)', overflow: 'hidden' }}>
@@ -352,7 +360,7 @@ function CookMode({ recipe, onClose }: { recipe: GeneratedRecipe | SavedRecipe; 
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
           }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M15 18l-6-6 6-6"/></svg>
-          Previous
+          {i18n.t('common.back')}
         </button>
         <button onClick={next}
           style={{
@@ -361,7 +369,7 @@ function CookMode({ recipe, onClose }: { recipe: GeneratedRecipe | SavedRecipe; 
             color: '#fff', fontWeight: 600, fontSize: 16, cursor: 'pointer',
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
           }}>
-          {isLast ? '🎉 Finish' : 'Next'}
+          {isLast ? i18n.t('kitchen.finish') : i18n.t('common.next')}
           {!isLast && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M9 18l6-6-6-6"/></svg>}
         </button>
       </div>
@@ -450,9 +458,9 @@ function RecipeDetailModal({ recipe, initialTab = 'ingredients', onClose, onSave
           {/* Tab switcher */}
           <div className="flex rounded-2xl p-1 gap-1" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
             {([
-              { id: 'ingredients', label: '🛒 Ingredients' },
-              { id: 'steps', label: `📋 Steps${stepsComplete > 0 ? ` (${stepsComplete}/${steps.length})` : ''}` },
-              { id: 'cook', label: '👨‍🍳 Cook' },
+              { id: 'ingredients', label: i18n.t('kitchen.ingredientsTab') },
+              { id: 'steps', label: stepsComplete > 0 ? i18n.t('kitchen.stepsTabWithProgress', { done: stepsComplete, total: steps.length }) : i18n.t('kitchen.stepsTab') },
+              { id: 'cook', label: i18n.t('kitchen.cookTab') },
             ] as { id: RecipeDetailTab; label: string }[]).map((t) => (
               <button key={t.id} onClick={() => setTab(t.id)}
                 className="flex-1 py-2 rounded-xl text-xs font-semibold transition-colors"
@@ -482,7 +490,7 @@ function RecipeDetailModal({ recipe, initialTab = 'ingredients', onClose, onSave
               ))}
               {recipe.tip && (
                 <div style={{ background: '#FFF8E6', borderRadius: 16, padding: '12px 14px', marginTop: 8 }}>
-                  <p style={{ fontSize: 13, color: '#B8860B' }}>💡 <strong>Chef's tip:</strong> {recipe.tip}</p>
+                  <p style={{ fontSize: 13, color: '#B8860B' }}>💡 <strong>{i18n.t('kitchen.chefsTip')}</strong> {recipe.tip}</p>
                 </div>
               )}
             </div>
@@ -493,7 +501,7 @@ function RecipeDetailModal({ recipe, initialTab = 'ingredients', onClose, onSave
               {/* Progress bar */}
               <div style={{ marginBottom: 16 }}>
                 <div className="flex justify-between mb-1">
-                  <p style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Step {Math.min(stepsComplete + 1, steps.length)} of {steps.length}</p>
+                  <p style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{i18n.t('kitchen.stepXofY', { current: Math.min(stepsComplete + 1, steps.length), total: steps.length })}</p>
                   <p style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{Math.round((stepsComplete / steps.length) * 100)}%</p>
                 </div>
                 <div style={{ height: 6, borderRadius: 3, background: 'var(--border)', overflow: 'hidden' }}>
@@ -534,21 +542,21 @@ function RecipeDetailModal({ recipe, initialTab = 'ingredients', onClose, onSave
             {tab === 'ingredients' && (
               <div className="flex gap-3">
                 <button onClick={addAllToShop} style={{ flex: 1, height: 48, borderRadius: 14, border: 'none', background: '#EDF5ED', color: '#4A7A58', fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>
-                  🛒 Add all to shopping list
+                  {i18n.t('kitchen.addAllToShoppingList')}
                 </button>
                 <button onClick={() => setTab('cook')} style={{ flex: 1, height: 48, borderRadius: 14, border: 'none', background: 'linear-gradient(135deg, #C4784A, #E8A87C)', color: '#fff', fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>
-                  👨‍🍳 Start Cooking
+                  {i18n.t('kitchen.startCooking')}
                 </button>
               </div>
             )}
             {tab === 'steps' && (
               <button onClick={() => setTab('cook')} style={{ width: '100%', height: 48, borderRadius: 14, border: 'none', background: 'linear-gradient(135deg, #C4784A, #E8A87C)', color: '#fff', fontWeight: 600, fontSize: 15, cursor: 'pointer' }}>
-                👨‍🍳 Enter Cook Mode
+                {i18n.t('kitchen.enterCookMode')}
               </button>
             )}
             {onSave && (
               <button onClick={onSave} style={{ width: '100%', marginTop: 10, height: 44, borderRadius: 14, border: 'none', background: 'linear-gradient(135deg, #C4B8D8, #9B8CBD)', color: '#fff', fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>
-                Save Recipe ♡
+                {i18n.t('kitchen.saveRecipeBtn')}
               </button>
             )}
           </div>
@@ -564,8 +572,10 @@ function RecipeDetailModal({ recipe, initialTab = 'ingredients', onClose, onSave
 
 function MealsTab() {
   const { i18n } = useTranslation();
+  const dateLocale = useDateFnsLocale();
   const { user } = useAuth();
   const { requestAiConsent } = useAIConsent();
+  const { resync } = useNotificationSettings();
 
   const [weekOffset, setWeekOffset] = useState(0);
   const [plan, setPlan] = useState<DayPlan[]>([]);
@@ -592,6 +602,7 @@ function MealsTab() {
     if (!user) return;
     setPlan(updated);
     save(MEALS_KEY(user.id), updated);
+    resync();
   }
 
   async function generateMenu() {
@@ -614,7 +625,7 @@ Use dates for the week starting ${format(weekStart, 'yyyy-MM-dd')}.`;
         return parsed[i] ? { ...parsed[i], date: ds } : { date: ds };
       });
       savePlan(mapped);
-    } catch { setError('Could not generate meal plan. Please try again.'); }
+    } catch { setError(i18n.t('kitchen.couldNotGenerateMealPlan')); }
     finally { setGenerating(false); }
   }
 
@@ -680,16 +691,24 @@ Return ONLY valid JSON, no markdown:
 
   const DIETS = ['Any', 'Vegetarian', 'Vegan', 'Gluten-free', 'Dairy-free'];
   const CUISINES = ['Any', 'British', 'Italian', 'Mediterranean', 'Asian', 'Mexican'];
+  const DIET_LABEL_KEYS: Record<string, string> = {
+    'Any': 'kitchen.dietAny', 'Vegetarian': 'kitchen.dietVegetarian', 'Vegan': 'kitchen.dietVegan',
+    'Gluten-free': 'kitchen.dietGlutenFree', 'Dairy-free': 'kitchen.dietDairyFree',
+  };
+  const CUISINE_LABEL_KEYS: Record<string, string> = {
+    'Any': 'kitchen.cuisineAny', 'British': 'kitchen.cuisineBritish', 'Italian': 'kitchen.cuisineItalian',
+    'Mediterranean': 'kitchen.cuisineMediterranean', 'Asian': 'kitchen.cuisineAsian', 'Mexican': 'kitchen.cuisineMexican',
+  };
 
   return (
     <div className="mt-3 pb-28">
       {/* AI Generator card */}
       <div className="mx-4 mb-4 rounded-3xl p-4" style={{ background: 'linear-gradient(135deg, #FFD4B0 0%, #FFAB7A 100%)' }}>
-        <p style={{ fontSize: 16, fontWeight: 600, color: '#7A3A10', marginBottom: 4 }}>Generate Weekly Menu ✨</p>
-        <p style={{ fontSize: 13, color: '#9A5A30', marginBottom: 12 }}>AI-powered meal plan for your family</p>
+        <p style={{ fontSize: 16, fontWeight: 600, color: '#7A3A10', marginBottom: 4 }}>{i18n.t('kitchen.generateWeeklyMenuTitle')}</p>
+        <p style={{ fontSize: 13, color: '#9A5A30', marginBottom: 12 }}>{i18n.t('kitchen.aiPoweredMealPlanDesc')}</p>
         <button onClick={() => setShowPrefs(true)} disabled={generating}
           style={{ width: '100%', height: 44, borderRadius: 14, border: 'none', background: generating ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.6)', color: '#7A3A10', fontWeight: 600, fontSize: 14, cursor: generating ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-          {generating ? <><Spinner /> Generating...</> : 'Set preferences & generate'}
+          {generating ? <><Spinner /> {i18n.t('kitchen.generating')}</> : i18n.t('kitchen.setPreferencesGenerate')}
         </button>
       </div>
 
@@ -700,7 +719,7 @@ Return ONLY valid JSON, no markdown:
         <button onClick={() => setWeekOffset((w) => w - 1)} style={{ width: 32, height: 32, borderRadius: 10, background: 'var(--bg-card)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M15 18l-6-6 6-6"/></svg>
         </button>
-        <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{format(weekStart, 'MMM d')} – {format(addDays(weekStart, 6), 'MMM d, yyyy')}</p>
+        <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{format(weekStart, 'MMM d', { locale: dateLocale })} – {format(addDays(weekStart, 6), 'MMM d, yyyy', { locale: dateLocale })}</p>
         <button onClick={() => setWeekOffset((w) => w + 1)} style={{ width: 32, height: 32, borderRadius: 10, background: 'var(--bg-card)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M9 18l6-6-6-6"/></svg>
         </button>
@@ -715,7 +734,7 @@ Return ONLY valid JSON, no markdown:
           return (
             <div key={ds} style={{ flexShrink: 0, width: 160, background: 'var(--bg-card)', border: `2px solid ${today ? 'var(--accent)' : 'var(--border)'}`, borderRadius: 20, padding: 12, boxShadow: today ? '0 2px 12px rgba(196,120,138,0.15)' : undefined }}>
               <div className="flex items-center justify-between mb-2">
-                <p style={{ fontSize: 12, fontWeight: 700, color: today ? 'var(--accent)' : 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{format(day, 'EEE')}</p>
+                <p style={{ fontSize: 12, fontWeight: 700, color: today ? 'var(--accent)' : 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{format(day, 'EEE', { locale: dateLocale })}</p>
                 <p style={{ fontSize: 11, color: 'var(--text-muted)' }}>{format(day, 'd')}</p>
               </div>
               {(['breakfast', 'lunch', 'dinner'] as const).map((slot) => {
@@ -728,12 +747,12 @@ Return ONLY valid JSON, no markdown:
                       <div className="flex items-center gap-1.5">
                         <span style={{ fontSize: 14 }}>{meal.emoji}</span>
                         <div style={{ minWidth: 0 }}>
-                          <p style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{slot}</p>
+                          <p style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{i18n.t(`kitchen.${slot}`)}</p>
                           <p style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{meal.name}</p>
                         </div>
                       </div>
                     ) : (
-                      <p style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{slot[0].toUpperCase()}{slot.slice(1)}</p>
+                      <p style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{i18n.t(`kitchen.${slot}`)}</p>
                     )}
                   </button>
                 );
@@ -747,15 +766,15 @@ Return ONLY valid JSON, no markdown:
         <div className="px-4 mt-4">
           <button onClick={addToShoppingList} disabled={addingToShop}
             style={{ width: '100%', height: 44, borderRadius: 14, border: 'none', background: addingToShop ? 'var(--border)' : '#EDF5ED', color: '#4A7A58', fontWeight: 600, fontSize: 14, cursor: addingToShop ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-            {addingToShop ? <><Spinner />Adding…</> : '🛒 Add ingredients to shopping list'}
+            {addingToShop ? <><Spinner />{i18n.t('kitchen.addingEllipsis')}</> : i18n.t('kitchen.addIngredientsToShoppingList')}
           </button>
         </div>
       )}
 
-      <BottomSheet open={showPrefs} onClose={() => setShowPrefs(false)} title="Meal Plan Preferences">
+      <BottomSheet open={showPrefs} onClose={() => setShowPrefs(false)} title={i18n.t('kitchen.mealPlanPreferencesTitle')}>
         <div className="flex flex-col gap-5">
           <div>
-            <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 10 }}>Number of people</p>
+            <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 10 }}>{i18n.t('kitchen.numberOfPeople')}</p>
             <div className="flex items-center gap-4">
               <button onClick={() => setPeople((p) => Math.max(1, p - 1))} style={{ width: 36, height: 36, borderRadius: 10, background: 'var(--bg-primary)', border: '1px solid var(--border)', fontSize: 18, fontWeight: 600, color: 'var(--text-primary)', cursor: 'pointer' }}>−</button>
               <span style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', minWidth: 24, textAlign: 'center' }}>{people}</span>
@@ -763,15 +782,15 @@ Return ONLY valid JSON, no markdown:
             </div>
           </div>
           <div>
-            <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 10 }}>Diet preference</p>
-            <div className="flex flex-wrap gap-2">{DIETS.map((d) => <Pill key={d} label={d} active={diet === d} onClick={() => setDiet(d)} activeColor="#FFAB7A" />)}</div>
+            <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 10 }}>{i18n.t('kitchen.dietPreference')}</p>
+            <div className="flex flex-wrap gap-2">{DIETS.map((d) => <Pill key={d} label={i18n.t(DIET_LABEL_KEYS[d])} active={diet === d} onClick={() => setDiet(d)} activeColor="#FFAB7A" />)}</div>
           </div>
           <div>
-            <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 10 }}>Cuisine</p>
-            <div className="flex flex-wrap gap-2">{CUISINES.map((c) => <Pill key={c} label={c} active={cuisine === c} onClick={() => setCuisine(c)} activeColor="#FFAB7A" />)}</div>
+            <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 10 }}>{i18n.t('kitchen.cuisineLabel')}</p>
+            <div className="flex flex-wrap gap-2">{CUISINES.map((c) => <Pill key={c} label={i18n.t(CUISINE_LABEL_KEYS[c])} active={cuisine === c} onClick={() => setCuisine(c)} activeColor="#FFAB7A" />)}</div>
           </div>
           <button onClick={generateMenu} style={{ width: '100%', height: 52, borderRadius: 16, border: 'none', background: 'linear-gradient(135deg, #FFD4B0 0%, #FFAB7A 100%)', color: '#7A3A10', fontWeight: 600, fontSize: 15, cursor: 'pointer' }}>
-            Generate Menu ✨
+            {i18n.t('kitchen.generateMenuBtn')}
           </button>
         </div>
       </BottomSheet>
@@ -783,7 +802,7 @@ Return ONLY valid JSON, no markdown:
             style={{ position: 'fixed', inset: 0, zIndex: 90, background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 16 }}>
             <div style={{ background: 'var(--bg-card)', borderRadius: 24, padding: '32px 40px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14, boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}>
               <span style={{ fontSize: 48 }}>🍳</span>
-              <p style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>Finding recipe…</p>
+              <p style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>{i18n.t('kitchen.findingRecipeEllipsis')}</p>
               <p style={{ fontSize: 13, color: 'var(--text-secondary)', textAlign: 'center', maxWidth: 200 }}>{mealLoadingName}</p>
               <Spinner />
             </div>
@@ -812,6 +831,7 @@ function ShoppingTab() {
   const { i18n } = useTranslation();
   const { user } = useAuth();
   const { requestAiConsent } = useAIConsent();
+  const { resync } = useNotificationSettings();
   const [items, setItems] = useState<ShoppingItem[]>([]);
   const [lists, setLists] = useState<string[]>(['Shopping']);
   const [activeList, setActiveList] = useState('Shopping');
@@ -833,6 +853,7 @@ function ShoppingTab() {
     if (!user) return;
     setItems(updated);
     save(SHOP_KEY(user.id), updated);
+    resync();
   }
 
   function addItem() {
@@ -884,7 +905,7 @@ function ShoppingTab() {
     <div className="mt-3 pb-28">
       <div className="px-4 mb-3">
         <div className="flex items-center justify-between mb-1">
-          <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{bought} of {listItems.length} items</p>
+          <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{i18n.t('kitchen.itemsOfTotal', { bought, total: listItems.length })}</p>
           <p style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{pct}%</p>
         </div>
         <div style={{ height: 7, borderRadius: 4, background: 'var(--border)', overflow: 'hidden' }}>
@@ -896,12 +917,12 @@ function ShoppingTab() {
       <div className="px-4 mb-3">
         <button onClick={generateFromMeals} disabled={generating}
           style={{ width: '100%', height: 44, borderRadius: 14, border: 'none', background: generating ? 'var(--border)' : '#EDF5ED', color: '#4A7A58', fontWeight: 600, fontSize: 14, cursor: generating ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-          {generating ? <><Spinner />Generating…</> : "Generate from this week's meals ✨"}
+          {generating ? <><Spinner />{i18n.t('kitchen.generating')}</> : i18n.t('kitchen.generateFromMealsBtn')}
         </button>
       </div>
 
       <div className="px-4 mb-3 flex gap-2">
-        <input value={newItem} onChange={(e) => setNewItem(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && addItem()} placeholder="Add item..."
+        <input value={newItem} onChange={(e) => setNewItem(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && addItem()} placeholder={i18n.t('kitchen.addItemPlaceholder')}
           style={{ flex: 1, height: 44, borderRadius: 14, padding: '0 14px', fontSize: 14, background: 'var(--bg-card)', border: '1px solid var(--border)', color: 'var(--text-primary)', outline: 'none' }} />
         <button onClick={addItem} style={{ width: 44, height: 44, borderRadius: 14, border: 'none', background: 'linear-gradient(135deg, #6BAF78, #4A7A58)', color: '#fff', fontSize: 22, fontWeight: 600, cursor: 'pointer', flexShrink: 0 }}>+</button>
       </div>
@@ -916,7 +937,7 @@ function ShoppingTab() {
       </div>
 
       {listItems.length === 0 ? (
-        <p style={{ textAlign: 'center', color: 'var(--text-secondary)', fontSize: 14, padding: '32px 16px' }}>No items yet — add one above or generate from meals</p>
+        <p style={{ textAlign: 'center', color: 'var(--text-secondary)', fontSize: 14, padding: '32px 16px' }}>{i18n.t('kitchen.noItemsYet')}</p>
       ) : (
         <div className="px-4">
           {CATEGORIES.map((cat) => {
@@ -928,7 +949,7 @@ function ShoppingTab() {
                 <button onClick={() => toggleCollapse(cat)} className="flex items-center justify-between w-full" style={{ marginBottom: 6 }}>
                   <div className="flex items-center gap-2">
                     <span style={{ fontSize: 16 }}>{CAT_EMOJI[cat]}</span>
-                    <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{cat}</span>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{i18n.t(CAT_LABEL_KEYS[cat])}</span>
                     <span style={{ fontSize: 11, fontWeight: 700, borderRadius: 9999, padding: '1px 7px', background: '#EDF5ED', color: '#4A7A58' }}>{catItems.length}</span>
                   </div>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{ transform: open ? 'rotate(0)' : 'rotate(-90deg)', transition: 'transform 0.2s', color: 'var(--text-muted)' }}><path d="M6 9l6 6 6-6"/></svg>
@@ -946,8 +967,8 @@ function ShoppingTab() {
           {checkedItems.length > 0 && (
             <div style={{ marginTop: 8 }}>
               <div className="flex items-center justify-between mb-2">
-                <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-muted)' }}>Bought ({checkedItems.length})</p>
-                <button onClick={clearBought} style={{ fontSize: 12, color: 'var(--accent)', fontWeight: 500 }}>Clear bought</button>
+                <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-muted)' }}>{i18n.t('kitchen.boughtCount', { count: checkedItems.length })}</p>
+                <button onClick={clearBought} style={{ fontSize: 12, color: 'var(--accent)', fontWeight: 500 }}>{i18n.t('kitchen.clearBoughtBtn')}</button>
               </div>
               {checkedItems.map((item) => <ShopItemRow key={item.id} item={item} onToggle={toggleItem} onDelete={deleteItem} />)}
             </div>
@@ -1030,7 +1051,7 @@ Return ONLY valid JSON, no markdown:
       parsed.steps = normaliseSteps(parsed.steps);
       setGenerated(parsed);
       setTimeout(() => resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
-    } catch { setError('Could not generate recipe. Please try again.'); }
+    } catch { setError(i18n.t('kitchen.couldNotGenerateRecipe')); }
     finally { setLoading(false); }
   }
 
@@ -1061,19 +1082,19 @@ Return ONLY valid JSON, no markdown:
     <div className="mt-3 pb-28">
       {/* Generator card */}
       <div className="mx-4 mb-4 rounded-3xl p-4" style={{ background: 'linear-gradient(135deg, #E8E0F5 0%, #C4B8D8 100%)' }}>
-        <p style={{ fontSize: 16, fontWeight: 600, color: '#4A3A6A', marginBottom: 4 }}>Find a Recipe ✨</p>
-        <p style={{ fontSize: 13, color: '#6B5A8A', marginBottom: 12 }}>What do you have in the fridge?</p>
-        <input value={ingredients} onChange={(e) => setIngredients(e.target.value)} placeholder="e.g. chicken, rice, tomatoes..."
+        <p style={{ fontSize: 16, fontWeight: 600, color: '#4A3A6A', marginBottom: 4 }}>{i18n.t('kitchen.findRecipeTitle')}</p>
+        <p style={{ fontSize: 13, color: '#6B5A8A', marginBottom: 12 }}>{i18n.t('kitchen.whatsInFridge')}</p>
+        <input value={ingredients} onChange={(e) => setIngredients(e.target.value)} placeholder={i18n.t('kitchen.ingredientsPlaceholder')}
           style={{ width: '100%', height: 44, borderRadius: 12, padding: '0 14px', fontSize: 14, background: 'rgba(255,255,255,0.6)', border: 'none', color: '#4A3A6A', outline: 'none', marginBottom: 10, boxSizing: 'border-box' }} />
         <div className="flex items-center gap-3 mb-3">
-          <span style={{ fontSize: 13, color: '#6B5A8A', fontWeight: 500 }}>Serves:</span>
+          <span style={{ fontSize: 13, color: '#6B5A8A', fontWeight: 500 }}>{i18n.t('kitchen.servesLabel')}</span>
           <button onClick={() => setPeople((p) => Math.max(1, p - 1))} style={{ width: 30, height: 30, borderRadius: 8, background: 'rgba(255,255,255,0.5)', border: 'none', fontSize: 16, color: '#4A3A6A', cursor: 'pointer' }}>−</button>
           <span style={{ fontWeight: 700, color: '#4A3A6A', minWidth: 20, textAlign: 'center' }}>{people}</span>
           <button onClick={() => setPeople((p) => Math.min(10, p + 1))} style={{ width: 30, height: 30, borderRadius: 8, background: 'rgba(255,255,255,0.5)', border: 'none', fontSize: 16, color: '#4A3A6A', cursor: 'pointer' }}>+</button>
         </div>
         <button onClick={generateRecipe} disabled={loading || !ingredients.trim()}
           style={{ width: '100%', height: 44, borderRadius: 12, border: 'none', background: loading || !ingredients.trim() ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.6)', color: '#4A3A6A', fontWeight: 600, fontSize: 14, cursor: loading || !ingredients.trim() ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-          {loading ? <><Spinner />Finding recipe…</> : 'Generate Recipe'}
+          {loading ? <><Spinner />{i18n.t('kitchen.findingRecipeEllipsis')}</> : i18n.t('kitchen.generateRecipeBtn')}
         </button>
       </div>
 
@@ -1096,26 +1117,26 @@ Return ONLY valid JSON, no markdown:
           <div className="flex gap-2">
             <button onClick={() => { setDetailRecipe(generated); setDetailTab('ingredients'); }}
               style={{ flex: 1, height: 44, borderRadius: 12, border: 'none', background: 'linear-gradient(135deg, #C4B8D8, #9B8CBD)', color: '#fff', fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>
-              View Full Recipe
+              {i18n.t('kitchen.viewFullRecipe')}
             </button>
             <button onClick={() => { setDetailRecipe(generated); setDetailTab('cook'); }}
               style={{ flex: 1, height: 44, borderRadius: 12, border: 'none', background: 'linear-gradient(135deg, #C4784A, #E8A87C)', color: '#fff', fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>
-              👨‍🍳 Cook Now
+              {i18n.t('kitchen.cookNowBtn')}
             </button>
           </div>
           {!savedId && (
             <button onClick={saveRecipe} style={{ width: '100%', marginTop: 8, height: 40, borderRadius: 12, border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-secondary)', fontWeight: 500, fontSize: 13, cursor: 'pointer' }}>
-              Save Recipe ♡
+              {i18n.t('kitchen.saveRecipeBtn')}
             </button>
           )}
-          {savedId && <p style={{ textAlign: 'center', fontSize: 13, color: '#4A7A58', marginTop: 8 }}>Saved ✓</p>}
+          {savedId && <p style={{ textAlign: 'center', fontSize: 13, color: '#4A7A58', marginTop: 8 }}>{i18n.t('kitchen.savedCheckmark')}</p>}
         </div>
       )}
 
       {/* Saved recipes grid */}
       {savedRecipes.length > 0 && (
         <div className="px-4">
-          <p style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: 12 }}>Saved Recipes ({savedRecipes.length})</p>
+          <p style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: 12 }}>{i18n.t('kitchen.savedRecipesCount', { count: savedRecipes.length })}</p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             {savedRecipes.map((recipe) => (
               <div key={recipe.id} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 20, padding: 12, position: 'relative' }}>
@@ -1125,9 +1146,9 @@ Return ONLY valid JSON, no markdown:
                 <span style={{ fontSize: 10, borderRadius: 9999, padding: '2px 7px', ...diffBadge(recipe.difficulty), fontWeight: 500, display: 'inline-block', textTransform: 'capitalize' }}>{recipe.difficulty}</span>
                 <div className="flex gap-1 mt-3">
                   <button onClick={() => { setDetailRecipe(recipe); setDetailTab('ingredients'); }}
-                    style={{ flex: 1, height: 30, borderRadius: 8, border: 'none', background: 'var(--accent-soft)', color: 'var(--accent)', fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>View</button>
+                    style={{ flex: 1, height: 30, borderRadius: 8, border: 'none', background: 'var(--accent-soft)', color: 'var(--accent)', fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>{i18n.t('kitchen.viewBtn')}</button>
                   <button onClick={() => { setDetailRecipe(recipe); setDetailTab('cook'); }}
-                    style={{ flex: 1, height: 30, borderRadius: 8, border: 'none', background: '#FFF0E0', color: '#C4784A', fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>Cook</button>
+                    style={{ flex: 1, height: 30, borderRadius: 8, border: 'none', background: '#FFF0E0', color: '#C4784A', fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>{i18n.t('kitchen.cookBtn')}</button>
                   <button onClick={() => deleteRecipe(recipe.id)}
                     style={{ width: 30, height: 30, borderRadius: 8, border: 'none', background: 'var(--bg-primary)', color: 'var(--text-muted)', fontSize: 14, cursor: 'pointer' }}>×</button>
                 </div>

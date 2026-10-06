@@ -6,14 +6,16 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '../components/ui/Button';
 import { verifySession, type VerifiedSession } from '../lib/stripe';
+import { useDateFnsLocale } from '../hooks/useDateFnsLocale';
 
-type State = 'verifying' | 'success' | 'error' | 'instant';
+type State = 'verifying' | 'success' | 'error';
 
 export function SuccessScreen() {
   const { t } = useTranslation();
+  const dateLocale = useDateFnsLocale();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { updateProfile, refreshProfile } = useAuth();
+  const { refreshProfile } = useAuth();
 
   const [state, setState] = useState<State>('verifying');
   const [session, setSession] = useState<VerifiedSession | null>(null);
@@ -22,11 +24,9 @@ export function SuccessScreen() {
     const sessionId = searchParams.get('session_id');
 
     if (!sessionId) {
-      // Arrived without a session_id — instant activation (dev / trial flow)
-      updateProfile({ subscription_status: 'standard_monthly' }).then(() => {
-        refreshProfile();
-        setState('instant');
-      });
+      // No session_id means no Stripe checkout actually happened here —
+      // never grant access for arriving at this URL alone.
+      setState('error');
       return;
     }
 
@@ -36,22 +36,17 @@ export function SuccessScreen() {
           setState('error');
           return;
         }
-        await updateProfile({
-          subscription_status: 'standard_monthly',
-          stripe_customer_id: data.customerId ?? undefined,
-          stripe_subscription_id: data.subscriptionId ?? undefined,
-          subscription_end_date: data.nextBillingDate ?? undefined,
-        });
+        // The stripe-verify function already updated the profile server-side —
+        // just pull the authoritative row so the rest of the app sees it.
         await refreshProfile();
         setSession(data);
         setState('success');
       })
       .catch(() => {
-        // Verification failed — still activate locally so the user isn't locked out
-        updateProfile({ subscription_status: 'standard_monthly' }).then(() => {
-          refreshProfile();
-          setState('success');
-        });
+        // Verification failed — do NOT grant access on trust. The Stripe
+        // webhook will still activate the account once it fires if the
+        // payment actually went through.
+        setState('error');
       });
   }, []);
 
@@ -60,7 +55,7 @@ export function SuccessScreen() {
       <div className="min-h-screen flex items-center justify-center bg-[var(--bg-primary)]">
         <div className="flex flex-col items-center gap-4">
           <div className="w-10 h-10 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'var(--accent)', borderTopColor: 'transparent' }} />
-          <p className="text-[var(--text-secondary)] text-sm">Confirming your payment…</p>
+          <p className="text-[var(--text-secondary)] text-sm">{t('success.confirmingPayment')}</p>
         </div>
       </div>
     );
@@ -71,17 +66,22 @@ export function SuccessScreen() {
       <div className="min-h-screen flex items-center justify-center bg-[var(--bg-primary)] px-6">
         <div className="text-center flex flex-col items-center gap-4">
           <div className="text-5xl">⚠️</div>
-          <h1 className="text-xl font-bold text-[var(--text-primary)]">Payment not completed</h1>
-          <p className="text-[var(--text-secondary)] text-sm">Your card was not charged.</p>
-          <Button variant="primary" onClick={() => navigate('/paywall')}>Try Again</Button>
+          <h1 className="text-xl font-bold text-[var(--text-primary)]">{t('success.paymentNotCompleted')}</h1>
+          <p className="text-[var(--text-secondary)] text-sm">{t('success.cardNotCharged')}</p>
+          <Button variant="primary" onClick={() => navigate('/paywall')}>{t('success.tryAgain')}</Button>
         </div>
       </div>
     );
   }
 
-  const planLabel = session?.plan === 'annual' ? 'Annual Plan' : 'Monthly Plan';
+  const isPro = session?.plan?.startsWith('pro_') ?? false;
+  const isYearly = session?.plan?.endsWith('_yearly') ?? false;
+  const planLabel = t('success.planName', {
+    plan: isPro ? t('paywall.proName') : t('paywall.standardName'),
+    period: isYearly ? t('paywall.yearly') : t('paywall.monthly'),
+  });
   const nextBilling = session?.nextBillingDate
-    ? format(parseISO(session.nextBillingDate), 'MMMM d, yyyy')
+    ? format(parseISO(session.nextBillingDate), 'MMMM d, yyyy', { locale: dateLocale })
     : null;
 
   return (
@@ -108,27 +108,27 @@ export function SuccessScreen() {
             {t('success.title')}
           </h1>
           <p className="text-[var(--text-secondary)] mt-1 text-sm">
-            Welcome to MomManager Premium!
+            {t('success.message')}
           </p>
         </div>
 
         {/* Plan details */}
         <div className="rounded-2xl p-4 w-full space-y-3" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
           <div className="flex items-center justify-between">
-            <span className="text-sm text-[var(--text-secondary)]">Plan</span>
+            <span className="text-sm text-[var(--text-secondary)]">{t('success.planLabel')}</span>
             <span className="flex items-center gap-1.5 text-sm font-medium" style={{ color: 'var(--accent-gold)' }}>
               👑 {planLabel}
             </span>
           </div>
           {nextBilling && (
             <div className="flex items-center justify-between">
-              <span className="text-sm text-[var(--text-secondary)]">Next billing date</span>
+              <span className="text-sm text-[var(--text-secondary)]">{t('success.nextBillingDate')}</span>
               <span className="text-sm font-medium text-[var(--text-primary)]">{nextBilling}</span>
             </div>
           )}
           <div className="flex items-center justify-between">
-            <span className="text-sm text-[var(--text-secondary)]">Status</span>
-            <span className="text-sm font-semibold text-green-400">✓ Active</span>
+            <span className="text-sm text-[var(--text-secondary)]">{t('success.statusLabel')}</span>
+            <span className="text-sm font-semibold text-green-400">{t('success.statusActive')}</span>
           </div>
         </div>
 
@@ -142,7 +142,7 @@ export function SuccessScreen() {
         </Button>
 
         <p className="text-xs text-[var(--text-secondary)] opacity-50">
-          A receipt has been sent to your email by Stripe.
+          {t('success.receiptSentNote')}
         </p>
       </motion.div>
     </div>

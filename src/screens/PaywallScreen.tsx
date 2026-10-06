@@ -1,34 +1,22 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { addDays } from 'date-fns';
+import { useTranslation } from 'react-i18next';
+import { Capacitor } from '@capacitor/core';
+import { Browser } from '@capacitor/browser';
 import { useAuth } from '../context/AuthContext';
 import { useSubscription } from '../hooks/useSubscription';
+import { useOfferingPricing } from '../hooks/useOfferingPricing';
 import { AppLogo } from '../components/ui/AppLogo';
+import { TrialDisclosure } from '../components/paywall/TrialDisclosure';
 import { createCheckoutSession } from '../lib/stripe';
-import { isNativeIOS, purchaseAppleSubscription, restoreApplePurchases } from '../lib/iap';
+import { supabase } from '../context/supabaseAuth';
+import { classifyPurchaseError, isNativeIOS, isNativeMobile, purchaseNativeSubscription, restoreNativePurchases } from '../lib/iap';
+import { PRICES, detectCurrency, formatAmount } from '../lib/stripe';
+import { formatMonthlyEquivalent } from '../lib/pricing';
+import { getErrorMessage } from '../lib/errors';
+import type { IAPPlan } from '../lib/iap';
 import type { BillingPeriod, SubscriptionPlan } from '../types';
-
-// ── Feature lists ────────────────────────────────────────────────────────────
-
-const STANDARD_FEATURES = [
-  'Calendar & tasks with reminders & notifications',
-  'Mom & Kids separate plans',
-  'AI activity generator for kids',
-  'Kitchen & meal planning',
-  'Basic self-care routines',
-  'Basic budget tracker',
-  '9 languages supported',
-];
-
-const PRO_EXTRAS: { text: string; soon?: boolean }[] = [
-  { text: 'Advanced skincare with AI product recommendations' },
-  { text: 'Workout tracker with progress & streaks' },
-  { text: 'Cross-family AI nutrition plans' },
-  { text: 'Import bank statements (CSV & PDF)' },
-  { text: 'AI weekly recap & predictions' },
-  { text: 'Priority support' },
-];
 
 // ── Small helpers ────────────────────────────────────────────────────────────
 
@@ -45,41 +33,11 @@ function CheckIcon({ color }: { color: string }) {
   );
 }
 
-function ClockIcon() {
-  return (
-    <div className="shrink-0 flex items-center justify-center rounded-full" style={{ width: 18, height: 18, background: 'var(--border)' }}>
-      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round">
-        <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>
-      </svg>
-    </div>
-  );
-}
-
 function FeatureRow({ text, color }: { text: string; color: string }) {
   return (
     <div className="flex items-start gap-2">
       <CheckIcon color={color} />
       <span className="text-sm leading-snug" style={{ color: 'var(--text-primary)' }}>{text}</span>
-    </div>
-  );
-}
-
-function ProFeatureRow({ text, soon, color }: { text: string; soon?: boolean; color: string }) {
-  if (!soon) return <FeatureRow text={text} color={color} />;
-  return (
-    <div className="flex items-start gap-2">
-      <ClockIcon />
-      <span className="text-sm leading-snug flex items-center gap-1.5 flex-wrap" style={{ color: 'var(--text-muted)' }}>
-        {text}
-        <span style={{
-          fontSize: 10, fontWeight: 600, borderRadius: 9999,
-          padding: '2px 7px', lineHeight: 1.4,
-          background: 'var(--accent-gold-soft, #FFF8E6)',
-          color: 'var(--accent-gold, #B8860B)',
-        }}>
-          Soon
-        </span>
-      </span>
     </div>
   );
 }
@@ -93,15 +51,101 @@ function PriceDisplay({ amount, period, color }: { amount: string; period: strin
   );
 }
 
+// Shown in place of the headline price on native while the real RevenueCat
+// offering is still loading — never a hardcoded number, per store policy.
+function PriceSkeleton() {
+  return (
+    <div
+      aria-hidden
+      style={{ width: 86, height: 32, borderRadius: 8, background: 'var(--border)', opacity: 0.6 }}
+      className="animate-pulse"
+    />
+  );
+}
+
+// Shown in place of the "billed yearly, Just X/month" subtitle while loading.
+function SubtitleSkeleton() {
+  return (
+    <div
+      aria-hidden
+      style={{ width: 120, height: 12, borderRadius: 6, background: 'var(--border)', opacity: 0.5, marginTop: 2 }}
+      className="animate-pulse"
+    />
+  );
+}
+
 // ── Main screen ──────────────────────────────────────────────────────────────
 
 export function PaywallScreen() {
-  const { updateProfile } = useAuth();
-  const { trialDaysLeft, isFreeTrial } = useSubscription();
+  const { t } = useTranslation();
+  const { user, refreshProfile } = useAuth();
+  const { trialDaysLeft, trialEndDate, isFreeTrial, hasAccess } = useSubscription();
   const navigate = useNavigate();
   const [billing, setBilling] = useState<BillingPeriod>('yearly');
   const [loadingPlan, setLoadingPlan] = useState<SubscriptionPlan | 'trial' | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  const [currency] = useState(() => detectCurrency());
+  // Set when the native store's offerings can't be loaded (RevenueCat not
+  // configured, network issue, product not found) — shown as a persistent
+  // banner with a retry action instead of a toast that just disappears, so
+  // the subscribe button never just silently does nothing.
+  const [offeringsError, setOfferingsError] = useState<SubscriptionPlan | null>(null);
+  // Real, store-localised prices for the trial disclosure — never a
+  // hardcoded currency. Falls back to the Stripe-derived price on web.
+  // `nativePricingLoading` stays true on native until RevenueCat's
+  // offering has actually loaded, so the headline price can show a
+  // skeleton instead of ever rendering a number before it's real.
+  const { pricing: nativePricing, loading: nativePricingLoading } = useOfferingPricing();
+
+  function priceFor(plan: keyof typeof PRICES): string {
+    return formatAmount(currency, PRICES[plan].amounts[currency]);
+  }
+
+  // Single source of truth for everything the paywall displays about a
+  // plan's price — the big headline number, the "billed yearly, Just
+  // X/month" subtitle, and the trial disclosure line all read from this.
+  // Real RevenueCat/StoreKit pricing wins whenever it's loaded; the Stripe
+  // table is only a fallback for the web build (native shows a skeleton
+  // instead of this fallback while its own offering is still loading —
+  // see `nativePricingLoading`).
+  //
+  // periodAbbrev is "year"/"month" (full word) for native — required so the
+  // headline never reads "/mo" next to a yearly price — and stays the
+  // existing "yr"/"mo" abbreviation for the web/Stripe fallback, which is
+  // out of scope for this fix. Both are derived from isYearly (the plan key
+  // itself), never from the store's own ISO-8601 subscriptionPeriod string:
+  // a yearly Google Play base plan can report its period as "P12M" rather
+  // than "P1Y", which a naive parse would misread as monthly even though
+  // the price and headline (already isYearly-based) were correct.
+  function planPricing(plan: keyof typeof PRICES): { amount: string; perMonthAmount: string; periodAbbrev: string; periodWord: string } {
+    const isYearly = plan.endsWith('_yearly');
+    const periodWord = isYearly ? t('trialDisclosure.periodYear') : t('trialDisclosure.periodMonth');
+    const native = isNativeMobile() ? nativePricing[plan as IAPPlan] : undefined;
+    if (native) {
+      return {
+        amount: native.priceString,
+        perMonthAmount: isYearly ? formatMonthlyEquivalent(native) : native.priceString,
+        periodAbbrev: isYearly ? 'year' : 'month',
+        periodWord,
+      };
+    }
+    const amount = priceFor(plan);
+    return {
+      amount,
+      perMonthAmount: isYearly ? formatAmount(currency, PRICES[plan].amounts[currency] / 12) : amount,
+      periodAbbrev: isYearly ? 'yr' : 'mo',
+      periodWord,
+    };
+  }
+
+  // True only on native while RevenueCat's own offering hasn't loaded yet —
+  // the window where `planPricing` would otherwise silently fall back to
+  // the Stripe table. Gates the headline price and billed-yearly subtitle
+  // so they show a skeleton instead of a number that isn't the real one.
+  const pricesLoading = isNativeMobile() && nativePricingLoading;
+
+  const STANDARD_FEATURES = t('paywall.standardFeatures', { returnObjects: true }) as string[];
+  const PRO_EXTRAS = t('paywall.proExtras', { returnObjects: true }) as string[];
 
   function showToast(msg: string) {
     setToast(msg);
@@ -110,42 +154,110 @@ export function PaywallScreen() {
 
   async function handleFreeTrial() {
     setLoadingPlan('trial');
-    const now = new Date();
-    await updateProfile({
-      subscription_status: 'free_trial',
-      subscription_expires_at: addDays(now, 7).toISOString(),
-      trial_start: now.toISOString(),
-      trial_end: addDays(now, 7).toISOString(),
-    });
-    setLoadingPlan(null);
-    navigate('/');
+    try {
+      const { error } = await supabase.rpc('start_free_trial');
+      if (error) throw error;
+      await refreshProfile();
+      navigate('/');
+    } catch (err: unknown) {
+      showToast(getErrorMessage(err) || t('paywall.unknownError'));
+    } finally {
+      setLoadingPlan(null);
+    }
+  }
+
+  // Central place to turn a purchase/restore failure into the right reaction:
+  // silent for a deliberate cancel, a persistent retryable banner for a
+  // broken store catalog, a toast for everything else. Whatever happens
+  // here, the caller is responsible for clearing loadingPlan in its own
+  // `finally` — this function never touches it, so it can't accidentally
+  // skip the reset on some path and leave the button stuck.
+  function handlePurchaseError(err: unknown, plan: SubscriptionPlan) {
+    console.error('[Paywall] purchase error:', err);
+    const msg = getErrorMessage(err);
+
+    if (isNativeMobile() && /offering|product not found|package not found/i.test(msg)) {
+      // The store catalog itself couldn't be loaded — a toast that
+      // disappears isn't enough here, since retrying is the whole point.
+      setOfferingsError(plan);
+      return;
+    }
+
+    if (!isNativeMobile()) {
+      // Stripe path — keep the existing generic handling.
+      if (!msg.toLowerCase().includes('cancel')) {
+        showToast(t('paywall.purchaseFailed', { msg: msg || t('paywall.unknownError') }));
+      }
+      return;
+    }
+
+    switch (classifyPurchaseError(err)) {
+      case 'cancelled':
+        // User deliberately backed out — no error message, just recover silently.
+        break;
+      case 'noPaymentMethod':
+        showToast(t('paywall.purchaseNoPaymentMethod', { store: isNativeIOS() ? 'Apple' : 'Google Play' }));
+        break;
+      case 'notAllowed':
+        showToast(t('paywall.purchaseNotAllowed'));
+        break;
+      case 'network':
+        showToast(t('paywall.purchaseNetworkError'));
+        break;
+      case 'timeout':
+        showToast(t('paywall.purchaseTimedOut'));
+        break;
+      case 'pending':
+        showToast(t('paywall.purchasePending'));
+        break;
+      default:
+        showToast(t('paywall.purchaseFailed', { msg: msg || t('paywall.unknownError') }));
+    }
   }
 
   async function handleSubscribe(plan: SubscriptionPlan) {
     if (!plan || plan === 'free_trial') return;
+    setOfferingsError(null);
     setLoadingPlan(plan);
     try {
-      if (isNativeIOS()) {
-        // Use Apple StoreKit on iOS
+      if (isNativeMobile()) {
+        // Use RevenueCat — Apple StoreKit on iOS, Google Play Billing on Android
         const iapPlan = plan as import('../lib/iap').IAPPlan;
-        const success = await purchaseAppleSubscription(iapPlan);
-        if (success) {
-          await updateProfile({ subscription_status: plan });
-          navigate('/');
-        } else {
-          showToast('Purchase could not be completed. Please try again.');
+        const success = await purchaseNativeSubscription(iapPlan);
+        if (!success) {
+          // Resolved without throwing but no entitlement is active yet —
+          // e.g. a deferred/pending purchase (parental approval). Not an
+          // error, so no error toast; the button still must unblock.
+          showToast(t('paywall.purchasePending'));
+          return;
         }
+        const { error } = await supabase.rpc('confirm_native_purchase', { p_plan: plan });
+        if (error) throw error;
+        await refreshProfile();
+        navigate('/');
       } else {
-        // Use Stripe on web/Android
+        // Use Stripe on web
+        if (!user?.id) {
+          throw new Error(t('paywall.mustBeSignedIn'));
+        }
         const url = await createCheckoutSession(plan);
-        showToast('Redirecting to secure checkout…');
-        window.location.href = url;
+        if (Capacitor.isNativePlatform()) {
+          // The app's own WebView (https://localhost) can't reach Stripe's
+          // return redirect, so checkout opens in an in-app browser tab —
+          // the return trip comes back via the payment-callback URL scheme,
+          // handled in AuthContext's appUrlOpen listener.
+          showToast(t('paywall.openingCheckout'));
+          await Browser.open({ url });
+        } else {
+          showToast(t('paywall.redirectingCheckout'));
+          window.location.href = url;
+        }
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : '';
-      if (!msg.toLowerCase().includes('cancel')) {
-        showToast('Could not complete purchase. Please try again.');
-      }
+      handlePurchaseError(err, plan);
+    } finally {
+      // Runs on every path — success, thrown error, or the early `return`
+      // above — so the button can never stay stuck on "Se redirecționează…".
       setLoadingPlan(null);
     }
   }
@@ -153,15 +265,20 @@ export function PaywallScreen() {
   async function handleRestorePurchase() {
     setLoadingPlan('trial');
     try {
-      const restored = await restoreApplePurchases();
-      if (restored) {
-        await updateProfile({ subscription_status: 'pro_yearly' }); // will be overridden by webhook
+      const restoredPlan = await restoreNativePurchases();
+      if (restoredPlan) {
+        const { error } = await supabase.rpc('confirm_native_purchase', { p_plan: restoredPlan });
+        if (error) throw error;
+        await refreshProfile();
         navigate('/');
       } else {
-        showToast('No previous purchases found.');
+        showToast(t('paywall.noPreviousPurchases'));
       }
-    } catch {
-      showToast('Could not restore purchases.');
+    } catch (err: unknown) {
+      const kind = classifyPurchaseError(err);
+      showToast(kind === 'timeout' ? t('paywall.restoreTimedOut')
+        : kind === 'network' ? t('paywall.purchaseNetworkError')
+        : t('paywall.couldNotRestore'));
     } finally {
       setLoadingPlan(null);
     }
@@ -170,13 +287,59 @@ export function PaywallScreen() {
   const stdPlan: SubscriptionPlan = billing === 'yearly' ? 'standard_yearly' : 'standard_monthly';
   const proPlan: SubscriptionPlan = billing === 'yearly' ? 'pro_yearly' : 'pro_monthly';
 
-  const PRICES = {
-    standard_monthly: '£9.99', standard_yearly: '£79.99',
-    pro_monthly: '£14.99', pro_yearly: '£129.99',
-  };
+  // Google Play requires a clearly visible, always-reachable way to leave a
+  // paywall. Prefers going back to wherever the user came from; falls back
+  // to the app's root when the paywall is the first entry in history (e.g.
+  // opened directly after auth) rather than doing nothing.
+  //
+  // Without an active subscription/trial, App.tsx's routing redirects every
+  // other route straight back to /paywall (there's no free content to show
+  // instead) — so navigating here would be a silent no-op. Explaining that
+  // via a toast, instead of just bouncing back with no feedback, is what
+  // Google Play's policy actually requires: a clear indication that a
+  // subscription is required to use the app.
+  function handleClose() {
+    if (!hasAccess) {
+      showToast(t('paywall.subscriptionRequired'));
+      return;
+    }
+    const idx = (window.history.state as { idx?: number } | null)?.idx;
+    if (typeof idx === 'number' && idx > 0) {
+      navigate(-1);
+    } else {
+      navigate('/');
+    }
+  }
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg-primary)' }}>
+      {/* Dismiss button — fixed to the viewport so it stays visible without
+          scrolling, and never overlaps the (centered) header content below. */}
+      <button
+        onClick={handleClose}
+        aria-label={t('common.close')}
+        style={{
+          position: 'fixed',
+          top: 'calc(env(safe-area-inset-top, 0px) + 16px)',
+          left: 16,
+          zIndex: 60,
+          width: 44,
+          height: 44,
+          borderRadius: 22,
+          background: '#FFFFFF',
+          border: '1px solid rgba(0,0,0,0.08)',
+          boxShadow: '0 2px 10px rgba(0,0,0,0.18)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+        }}
+      >
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M4 4L16 16M16 4L4 16" stroke="#1A1A1A" strokeWidth="2.2" strokeLinecap="round" />
+        </svg>
+      </button>
+
       {/* Toast */}
       {toast && (
         <motion.div
@@ -196,20 +359,41 @@ export function PaywallScreen() {
           <AppLogo size={64} />
           <div>
             <h1 className="text-2xl text-[var(--text-primary)]" style={{ fontWeight: 700, letterSpacing: '-0.03em' }}>
-              Choose your plan
+              {t('paywall.chooseYourPlan')}
             </h1>
-            <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>7-day free trial • Cancel anytime</p>
+            <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>{t('paywall.sevenDayTrialCancelAnytime')}</p>
+            <p className="text-sm mt-2" style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{t('paywall.subscriptionRequired')}</p>
           </div>
         </motion.div>
 
         {/* Free trial remaining */}
         {isFreeTrial && trialDaysLeft > 0 && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col gap-2">
+            <div
+              className="rounded-2xl px-4 py-3 text-center text-sm"
+              style={{ background: 'var(--accent-soft)', border: '1px solid var(--border-strong)', color: 'var(--accent)' }}
+            >
+              {t('paywall.remainingInTrial', { count: trialDaysLeft })}
+            </div>
+            <TrialDisclosure variant="free" trialEndDate={trialEndDate} />
+          </motion.div>
+        )}
+
+        {/* Offerings error — persistent banner with retry, never a dead-end toast */}
+        {offeringsError && (
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-            className="rounded-2xl px-4 py-3 text-center text-sm"
-            style={{ background: 'var(--accent-soft)', border: '1px solid var(--border-strong)', color: 'var(--accent)' }}
+            className="rounded-2xl px-4 py-3 flex items-center justify-between gap-3 text-sm"
+            style={{ background: 'rgba(220,80,80,0.08)', border: '1px solid rgba(220,80,80,0.3)', color: '#B23B3B' }}
           >
-            🌸 {trialDaysLeft} day{trialDaysLeft !== 1 ? 's' : ''} remaining in your free trial
+            <span>{t('paywall.offeringsUnavailable')}</span>
+            <button
+              onClick={() => handleSubscribe(offeringsError)}
+              className="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full"
+              style={{ background: '#B23B3B', color: '#fff' }}
+            >
+              {t('paywall.retry')}
+            </button>
           </motion.div>
         )}
 
@@ -228,7 +412,7 @@ export function PaywallScreen() {
                   : { color: 'var(--text-secondary)' }
                 }
               >
-                {p.charAt(0).toUpperCase() + p.slice(1)}
+                {p === 'monthly' ? t('paywall.monthly') : t('paywall.yearly')}
                 {p === 'yearly' && (
                   <span
                     className="text-xs font-semibold px-2 py-0.5 rounded-full"
@@ -253,16 +437,22 @@ export function PaywallScreen() {
           >
             <div className="flex items-start justify-between">
               <div>
-                <p className="font-semibold text-base" style={{ color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>Standard</p>
-                <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>
-                  {billing === 'yearly' ? '£6.67/mo, billed yearly' : 'billed monthly'}
-                </p>
+                <p className="font-semibold text-base" style={{ color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>{t('paywall.standardName')}</p>
+                {pricesLoading ? <SubtitleSkeleton /> : (
+                  <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>
+                    {billing === 'yearly'
+                      ? t('paywall.billedYearly', { amount: planPricing('standard_yearly').perMonthAmount })
+                      : t('paywall.billedMonthly')}
+                  </p>
+                )}
               </div>
-              <PriceDisplay
-                amount={billing === 'yearly' ? PRICES.standard_yearly : PRICES.standard_monthly}
-                period={billing === 'yearly' ? 'yr' : 'mo'}
-                color="var(--text-primary)"
-              />
+              {pricesLoading ? <PriceSkeleton /> : (
+                <PriceDisplay
+                  amount={planPricing(stdPlan as keyof typeof PRICES).amount}
+                  period={planPricing(stdPlan as keyof typeof PRICES).periodAbbrev}
+                  color="var(--text-primary)"
+                />
+              )}
             </div>
 
             <div className="flex flex-col gap-2">
@@ -278,13 +468,19 @@ export function PaywallScreen() {
               {loadingPlan === stdPlan ? (
                 <span className="flex items-center justify-center gap-2">
                   <svg className="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" strokeOpacity=".3" /><path d="M12 2a10 10 0 0 1 10 10" /></svg>
-                  Redirecting…
+                  {isNativeMobile() ? t('paywall.openingNativeSheet') : t('paywall.redirecting')}
                 </span>
-              ) : 'Start Standard – 7 Days Free'}
+              ) : t('paywall.startStandardTrial')}
             </button>
-            <p style={{ fontSize: 11, color: 'var(--text-muted)', textAlign: 'center', lineHeight: 1.5 }}>
-              Try free for 7 days, then {billing === 'yearly' ? '£79.99/year' : '£9.99/month'}. Cancel before trial ends to avoid being charged.
-            </p>
+            {!pricesLoading && (
+              <TrialDisclosure
+                variant="billed"
+                trialEndDate={null}
+                estimateIfStartedToday
+                price={planPricing(stdPlan as keyof typeof PRICES).amount}
+                period={planPricing(stdPlan as keyof typeof PRICES).periodWord}
+              />
+            )}
           </motion.div>
 
           {/* Pro — featured */}
@@ -303,26 +499,32 @@ export function PaywallScreen() {
               className="absolute -top-3.5 left-1/2 -translate-x-1/2 text-xs font-semibold px-4 py-1 rounded-full whitespace-nowrap"
               style={{ background: 'linear-gradient(135deg, var(--accent-gold) 0%, #B8935A 100%)', color: '#fff', boxShadow: '0 2px 8px rgba(201,169,110,0.4)' }}
             >
-              MOST POPULAR
+              {t('paywall.mostPopular')}
             </span>
 
             <div className="flex items-start justify-between mt-1">
               <div>
-                <p className="font-semibold text-base" style={{ color: '#5C4A2A', letterSpacing: '-0.02em' }}>Pro</p>
-                <p className="text-xs mt-0.5" style={{ color: '#8A7050' }}>
-                  {billing === 'yearly' ? '£10.83/mo, billed yearly' : 'billed monthly'}
-                </p>
+                <p className="font-semibold text-base" style={{ color: '#5C4A2A', letterSpacing: '-0.02em' }}>{t('paywall.proName')}</p>
+                {pricesLoading ? <SubtitleSkeleton /> : (
+                  <p className="text-xs mt-0.5" style={{ color: '#8A7050' }}>
+                    {billing === 'yearly'
+                      ? t('paywall.billedYearly', { amount: planPricing('pro_yearly').perMonthAmount })
+                      : t('paywall.billedMonthly')}
+                  </p>
+                )}
               </div>
-              <PriceDisplay
-                amount={billing === 'yearly' ? PRICES.pro_yearly : PRICES.pro_monthly}
-                period={billing === 'yearly' ? 'yr' : 'mo'}
-                color="var(--accent-gold)"
-              />
+              {pricesLoading ? <PriceSkeleton /> : (
+                <PriceDisplay
+                  amount={planPricing(proPlan as keyof typeof PRICES).amount}
+                  period={planPricing(proPlan as keyof typeof PRICES).periodAbbrev}
+                  color="var(--accent-gold)"
+                />
+              )}
             </div>
 
             <div className="flex flex-col gap-2">
-              <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--accent-gold)' }}>Everything in Standard, plus:</p>
-              {PRO_EXTRAS.map((f) => <ProFeatureRow key={f.text} text={f.text} soon={f.soon} color="var(--accent-gold)" />)}
+              <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--accent-gold)' }}>{t('paywall.everythingInStandardPlus')}</p>
+              {PRO_EXTRAS.map((f) => <FeatureRow key={f} text={f} color="var(--accent-gold)" />)}
             </div>
 
             <button
@@ -334,33 +536,53 @@ export function PaywallScreen() {
               {loadingPlan === proPlan ? (
                 <span className="flex items-center justify-center gap-2">
                   <svg className="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" strokeOpacity=".3" /><path d="M12 2a10 10 0 0 1 10 10" /></svg>
-                  Redirecting…
+                  {isNativeMobile() ? t('paywall.openingNativeSheet') : t('paywall.redirecting')}
                 </span>
-              ) : 'Start Pro – 7 Days Free'}
+              ) : t('paywall.startProTrial')}
             </button>
-            <p style={{ fontSize: 11, color: '#8A7050', textAlign: 'center', lineHeight: 1.5 }}>
-              Try free for 7 days, then {billing === 'yearly' ? '£129.99/year' : '£14.99/month'}. Cancel before trial ends to avoid being charged.
-            </p>
+            {!pricesLoading && (
+              <TrialDisclosure
+                variant="billed"
+                trialEndDate={null}
+                estimateIfStartedToday
+                price={planPricing(proPlan as keyof typeof PRICES).amount}
+                period={planPricing(proPlan as keyof typeof PRICES).periodWord}
+              />
+            )}
           </motion.div>
         </div>
 
-        {/* Free trial CTA */}
+        {/* No-payment trial — a genuinely different offer from the billed
+            Standard/Pro plans above (no card, no store subscription,
+            doesn't auto-renew). Kept in its own visually distinct section
+            (dashed border, muted background, explicit "no payment" label)
+            so it can't be mistaken for a third pricing tier or for the
+            billed trials on the cards above. */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
-          className="flex flex-col items-center gap-1"
+          className="flex flex-col gap-3"
         >
           <div className="flex items-center gap-3 w-full">
             <div className="flex-1 h-px" style={{ background: 'var(--border)' }} />
-            <span className="text-xs" style={{ color: 'var(--text-muted)' }}>or</span>
+            <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
+              {t('paywall.noPaymentOptionLabel')}
+            </span>
             <div className="flex-1 h-px" style={{ background: 'var(--border)' }} />
           </div>
-          <button
-            onClick={handleFreeTrial}
-            disabled={loadingPlan !== null}
-            className="text-sm font-medium py-3 disabled:opacity-60"
-            style={{ color: 'var(--accent)' }}
+          <div
+            className="rounded-3xl p-5 flex flex-col items-center gap-3 text-center"
+            style={{ background: 'var(--bg-secondary)', border: '1px dashed var(--border-strong)' }}
           >
-            {loadingPlan === 'trial' ? 'Starting trial…' : 'Start 7-Day Free Trial →'}
-          </button>
+            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{t('paywall.noPaymentSectionSubtitle')}</p>
+            <button
+              onClick={handleFreeTrial}
+              disabled={loadingPlan !== null}
+              className="text-sm font-semibold py-3 px-6 rounded-2xl disabled:opacity-60"
+              style={{ color: 'var(--accent)', background: 'var(--bg-card)', border: '1px solid var(--border)' }}
+            >
+              {loadingPlan === 'trial' ? t('paywall.startingTrial') : t('paywall.startFreeTrialCta')}
+            </button>
+            <TrialDisclosure variant="free" trialEndDate={null} className="w-full" />
+          </div>
         </motion.div>
 
         {/* Restore Purchases — prominent button required by Apple */}
@@ -371,7 +593,7 @@ export function PaywallScreen() {
             className="w-full py-3 rounded-2xl text-sm font-semibold disabled:opacity-50 transition-opacity"
             style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
           >
-            {loadingPlan === 'trial' ? 'Restoring…' : '🔄 Restore Purchases'}
+            {loadingPlan === 'trial' ? t('paywall.restoring') : t('paywall.restorePurchases')}
           </button>
         </motion.div>
 
@@ -381,12 +603,14 @@ export function PaywallScreen() {
         >
           <div />
           <div className="flex items-center gap-3 text-xs" style={{ color: 'var(--text-muted)' }}>
-            <button onClick={() => navigate('/privacy')}>Privacy Policy</button>
+            <button onClick={() => navigate('/privacy')}>{t('paywall.privacyPolicy')}</button>
             <span>·</span>
-            <button onClick={() => navigate('/terms')}>Terms of Use</button>
+            <button onClick={() => navigate('/terms')}>{t('paywall.termsOfUse')}</button>
           </div>
           <p style={{ fontSize: 10, color: 'var(--text-muted)', textAlign: 'center', lineHeight: 1.6, maxWidth: 320, padding: '0 16px' }}>
-            Subscription renews automatically at the plan price shown above. To avoid charges, cancel at least 24 hours before your 7-day trial ends. On Android: Google Play → Subscriptions. On iOS: iPhone Settings → Apple ID → Subscriptions. Payment will be charged to your store account at confirmation of purchase.
+            {t('paywall.footerRenewalNotice')}{' '}
+            {isNativeIOS() ? t('paywall.manageIOS') : t('paywall.manageOther')}{' '}
+            {t('paywall.footerPaymentCharge')}
           </p>
         </motion.div>
       </div>

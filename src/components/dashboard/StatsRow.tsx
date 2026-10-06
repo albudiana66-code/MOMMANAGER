@@ -1,10 +1,16 @@
 import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import { format } from 'date-fns';
+import type { Task, Kid } from '../../types';
 
+// Tasks and kids are stored locally on-device (see TasksScreen.tsx /
+// KidsScreen.tsx) — there is no `tasks` or `kids` table in Supabase, so this
+// must read the same localStorage keys those screens write to.
+function loadLocal<T>(key: string): T[] {
+  try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch { return []; }
+}
 
 export function StatsRow() {
   const { t } = useTranslation();
@@ -15,15 +21,10 @@ export function StatsRow() {
   useEffect(() => {
     if (!user) return;
     const today = format(new Date(), 'yyyy-MM-dd');
-    Promise.all([
-      supabase.from('tasks').select('id', { count: 'exact' })
-        .eq('user_id', user.id).eq('due_date', today).eq('completed', false),
-      supabase.from('kids').select('id', { count: 'exact' })
-        .eq('user_id', user.id),
-    ]).then(([tasks, kids]) => {
-      setTasksCount(tasks.count || 0);
-      setKidsCount(kids.count || 0);
-    });
+    const tasks = loadLocal<Task>(`mm_tasks_${user.id}`);
+    const kids = loadLocal<Kid>(`mm_kids_${user.id}`);
+    setTasksCount(tasks.filter(t => t.due_date === today && !t.completed).length);
+    setKidsCount(kids.length);
   }, [user]);
 
   const stats = [

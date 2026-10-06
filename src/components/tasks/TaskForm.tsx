@@ -3,7 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { Input, Textarea } from '../ui/Input';
 import { Select } from '../ui/Select';
 import { Button } from '../ui/Button';
-import type { Task } from '../../types';
+import { ReminderSelect } from '../ui/ReminderSelect';
+import { useNotificationPermissionGate } from '../../context/NotificationPermissionContext';
+import type { ReminderMinutes, Task } from '../../types';
 
 interface TaskFormProps {
   onSave: (task: Partial<Task>) => void;
@@ -11,14 +13,15 @@ interface TaskFormProps {
   initial?: Partial<Task>;
 }
 
-const PLANS = [
-  { id: 'mom' as const,    label: '🌸 Mom',    color: 'var(--accent)' },
-  { id: 'kids' as const,   label: '🧸 Kids',   color: 'var(--lavender)' },
-  { id: 'family' as const, label: '🏠 Family', color: 'var(--sage)' },
-];
-
 export function TaskForm({ onSave, onCancel, initial }: TaskFormProps) {
   const { t } = useTranslation();
+  const { requestIfNeeded } = useNotificationPermissionGate();
+
+  const PLANS = [
+    { id: 'mom' as const,    label: `🌸 ${t('tasks.planMom')}`,    color: 'var(--accent)' },
+    { id: 'kids' as const,   label: `🧸 ${t('tasks.planKids')}`,   color: 'var(--lavender)' },
+    { id: 'family' as const, label: `🏠 ${t('tasks.planFamily')}`, color: 'var(--sage)' },
+  ];
 
   const [title, setTitle] = useState(initial?.title ?? '');
   const [description, setDescription] = useState(initial?.description ?? '');
@@ -27,15 +30,10 @@ export function TaskForm({ onSave, onCancel, initial }: TaskFormProps) {
   const [priority, setPriority] = useState<Task['priority']>(initial?.priority ?? 'medium');
   const [category, setCategory] = useState<Task['category']>(initial?.category ?? 'personal');
   const [plan, setPlan] = useState<Task['plan']>(initial?.plan ?? 'mom');
-  const [reminder, setReminder] = useState(initial?.has_reminder ?? false);
+  const [reminder, setReminder] = useState<ReminderMinutes>(
+    initial?.reminder_minutes_before !== undefined ? initial.reminder_minutes_before : (initial?.has_reminder ? 0 : null)
+  );
   const [error, setError] = useState('');
-
-  function toggleReminder() {
-    if (!reminder && 'Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission();
-    }
-    setReminder((r) => !r);
-  }
 
   const priorityOptions = [
     { value: 'high', label: t('tasks.high') },
@@ -51,12 +49,15 @@ export function TaskForm({ onSave, onCancel, initial }: TaskFormProps) {
     { value: 'other', label: t('tasks.other') },
   ];
 
-  function handleSubmit() {
+  async function handleSubmit() {
     if (!title.trim()) {
       setError(t('common.required'));
       return;
     }
     setError('');
+    const hasDateTime = !!dueDate && !!time;
+    const hasReminder = hasDateTime && reminder !== null;
+    if (hasReminder) await requestIfNeeded();
     onSave({
       title: title.trim(),
       description: description.trim() || undefined,
@@ -65,7 +66,8 @@ export function TaskForm({ onSave, onCancel, initial }: TaskFormProps) {
       priority,
       category,
       plan,
-      has_reminder: reminder && !!dueDate && !!time,
+      reminder_minutes_before: hasDateTime ? reminder : null,
+      has_reminder: hasReminder,
     });
   }
 
@@ -73,7 +75,7 @@ export function TaskForm({ onSave, onCancel, initial }: TaskFormProps) {
     <div className="flex flex-col gap-4">
       {/* Plan selector */}
       <div>
-        <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-secondary)', marginBottom: 8 }}>Plan</p>
+        <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-secondary)', marginBottom: 8 }}>{t('settings.plan')}</p>
         <div className="flex gap-2">
           {PLANS.map((p) => (
             <button
@@ -114,42 +116,19 @@ export function TaskForm({ onSave, onCancel, initial }: TaskFormProps) {
           onChange={(e) => setDueDate(e.target.value)}
         />
         <Input
-          label="Time (optional)"
+          label={t('tasks.timeOptional')}
           type="time"
           value={time}
           onChange={(e) => setTime(e.target.value)}
         />
       </div>
 
-      {/* Reminder toggle */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', background: 'var(--bg-primary)', borderRadius: 14, border: '1px solid var(--border)' }}>
-        <div>
-          <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 2 }}>🔔 Set Reminder</p>
-          <p style={{ fontSize: 11, color: 'var(--text-secondary)' }}>
-            {reminder && dueDate && time
-              ? `Notify at ${time} on ${dueDate}`
-              : 'Requires date & time to be set'}
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={toggleReminder}
-          aria-label="Toggle reminder"
-          style={{
-            width: 48, height: 28, borderRadius: 14, flexShrink: 0, border: 'none',
-            background: reminder ? 'var(--accent)' : 'var(--border)',
-            position: 'relative', transition: 'background 0.2s', cursor: 'pointer',
-          }}
-        >
-          <span style={{
-            position: 'absolute', top: 3,
-            left: reminder ? 23 : 3,
-            width: 22, height: 22, borderRadius: '50%', background: '#fff',
-            transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
-            display: 'block',
-          }} />
-        </button>
-      </div>
+      {/* Reminder */}
+      {dueDate && time ? (
+        <ReminderSelect value={reminder} onChange={setReminder} />
+      ) : (
+        <p style={{ fontSize: 11, color: 'var(--text-secondary)' }}>🔔 {t('tasks.reminderNeedsDateTime')}</p>
+      )}
 
       <Select
         label={t('tasks.priority')}

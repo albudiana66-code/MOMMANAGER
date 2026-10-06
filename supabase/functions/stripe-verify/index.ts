@@ -3,6 +3,7 @@
 // Deploy: npx supabase functions deploy stripe-verify --project-ref giprbmoteojghxzodpcw
 
 import Stripe from 'npm:stripe@14';
+import { createClient } from 'npm:@supabase/supabase-js@2';
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') ?? '', {
   apiVersion: '2024-06-20',
@@ -44,14 +45,36 @@ Deno.serve(async (req) => {
       planInterval = item?.price?.recurring?.interval as 'month' | 'year' | null ?? null;
     }
 
+    const paid = session.payment_status === 'paid';
+    const userId = session.metadata?.userId;
+    const plan = session.metadata?.plan || (planInterval === 'year' ? 'standard_yearly' : 'standard_monthly');
+
+    // Server-side source of truth: only a confirmed-paid Stripe session can
+    // grant access. The client never sets subscription_status directly.
+    if (paid && userId) {
+      const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      );
+      await supabase
+        .from('profiles')
+        .update({
+          subscription_status: plan,
+          stripe_customer_id: session.customer as string,
+          stripe_subscription_id: sub?.id ?? null,
+          subscription_end_date: nextBillingDate,
+        })
+        .eq('id', userId);
+    }
+
     return new Response(
       JSON.stringify({
-        paid: session.payment_status === 'paid',
+        paid,
         status: session.payment_status,
-        plan: session.metadata?.plan || (planInterval === 'year' ? 'annual' : 'monthly'),
+        plan,
         planInterval,
         email: session.customer_email,
-        userId: session.metadata?.userId,
+        userId,
         customerId: session.customer as string,
         subscriptionId: sub?.id ?? null,
         nextBillingDate,

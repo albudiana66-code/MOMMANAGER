@@ -9,6 +9,7 @@ import { useAuth } from '../context/AuthContext';
 import { useAIConsent } from '../context/AIConsentContext';
 import { askAI } from '../lib/anthropic';
 import { ProGate } from '../components/paywall/ProGate';
+import { useDateFnsLocale } from '../hooks/useDateFnsLocale';
 import i18n from '../i18n';
 
 // Maps default step IDs → translation keys so labels are always in the active language
@@ -31,64 +32,10 @@ function tRoutineTitle(id: string, fallback: string): string {
   if (id === 'evening') return i18n.t('selfcare.eveningRoutine');
   return fallback;
 }
-const TREATMENT_STEPS: Record<string, string[]> = {
-  bath: [
-    'Fill the tub with warm water (37–39°C — not too hot)',
-    'Add 2 cups Epsom salt + a few drops of lavender essential oil',
-    'Optional: add a tablespoon of coconut oil for extra skin softness',
-    'Soak for 15–20 min — let muscles fully relax',
-    'Pat dry gently, then apply body lotion while skin is still slightly damp',
-  ],
-  claywrap: [
-    'Mix kaolin or bentonite clay with warm water to a smooth paste',
-    'Apply a generous, even layer over body — avoid face and neck',
-    'Wrap loosely in cling film or a warm towel to lock in heat',
-    'Leave on for 20–25 min while you rest',
-    'Rinse off in the shower, then pat dry and moisturise well',
-  ],
-  scrub: [
-    'Wet your skin in the shower with warm water',
-    'Take a generous amount of coffee or sugar scrub in your hands',
-    'Massage in circular motions starting from feet, moving upward',
-    'Pay extra attention to knees, elbows, and heels',
-    'Rinse thoroughly, then apply body oil or moisturiser immediately',
-  ],
-  roseoil: [
-    'Warm a few drops of rose hip oil between your palms',
-    'Start at shoulders — use long, sweeping strokes down the arms',
-    'Work on the stomach in slow clockwise circles',
-    'Massage legs from ankle to thigh with firm upward pressure',
-    'Finish by gently pressing palms over your décolletage for 30s',
-  ],
-  facesteam: [
-    'Boil water and pour into a bowl — add chamomile or rosemary if you have it',
-    'Cleanse your face thoroughly before steaming',
-    'Drape a towel over your head and lean over the bowl',
-    'Keep face 20–30 cm from the water — steam for 8–10 min',
-    'Pat dry, apply a toner, then follow with your serum and moisturiser',
-  ],
-  coldplunge: [
-    'Start with a warm shower to open pores and relax muscles',
-    'Gradually turn the temperature to cold over 30–60 seconds',
-    'Focus on steady breathing — inhale deeply, exhale slowly',
-    'Stay under cold water for 2–3 min (build up to 5 min over time)',
-    'Finish, towel off quickly, and do light movement to rewarm',
-  ],
-  greenteamask: [
-    'Mix 1 tbsp matcha or green tea powder with plain yoghurt or honey',
-    'Cleanse skin, then apply mask evenly to face and neck',
-    'Optionally apply a thin layer to arms or chest as an antioxidant boost',
-    'Leave on for 15–20 min — relax and avoid talking',
-    'Rinse with lukewarm water, follow with toner and moisturiser',
-  ],
-  meditation: [
-    'Find a quiet spot — sit or lie down comfortably',
-    'Close your eyes and take 5 deep breaths: 4 sec in, 4 sec out',
-    'Body scan: mentally relax each body part from toes to crown',
-    'Focus on your breath — when thoughts come, gently return to breathing',
-    'End with 3 gratitude thoughts, then slowly open your eyes',
-  ],
-};
+function getTreatmentSteps(): Record<string, string[]> {
+  const steps = i18n.t('selfcare.treatmentSteps', { returnObjects: true });
+  return (steps && typeof steps === 'object') ? (steps as Record<string, string[]>) : {};
+}
 
 function getPresetTreatments() {
   return [
@@ -279,6 +226,10 @@ function loadBodyTreatments(uid: string): BodyTreatmentsData {
 function saveBodyTreatments(uid: string, data: BodyTreatmentsData) { localStorage.setItem(BT_KEY(uid), JSON.stringify(data)); }
 
 const WEEK_DAYS_BT = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const WEEK_DAY_LABEL_KEYS: Record<string, string> = {
+  Monday: 'selfcare.days.monday', Tuesday: 'selfcare.days.tuesday', Wednesday: 'selfcare.days.wednesday',
+  Thursday: 'selfcare.days.thursday', Friday: 'selfcare.days.friday', Saturday: 'selfcare.days.saturday', Sunday: 'selfcare.days.sunday',
+};
 
 function BodyTreatmentsSection({ uid }: { uid: string }) {
   const [data, setData] = useState<BodyTreatmentsData>(() => loadBodyTreatments(uid));
@@ -331,7 +282,7 @@ function BodyTreatmentsSection({ uid }: { uid: string }) {
         {presets.map(pt => {
           const isAdded = data.userTreatments.some(t => t.treatmentId === pt.id);
           const isExpanded = expandedId === pt.id;
-          const steps = TREATMENT_STEPS[pt.id] ?? [];
+          const steps = getTreatmentSteps()[pt.id] ?? [];
           return (
             <div key={pt.id} style={{
               background: isAdded ? 'var(--accent-soft)' : 'var(--bg-card)',
@@ -374,7 +325,7 @@ function BodyTreatmentsSection({ uid }: { uid: string }) {
                   >
                     <div style={{ padding: '0 16px 14px', display: 'flex', flexDirection: 'column', gap: 8 }}>
                       <div style={{ height: 1, background: 'var(--border)', marginBottom: 4 }} />
-                      <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>How to</p>
+                      <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{t('selfcare.howTo')}</p>
                       {steps.map((step, i) => (
                         <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
                           <span style={{
@@ -396,11 +347,11 @@ function BodyTreatmentsSection({ uid }: { uid: string }) {
                             color: '#fff', fontWeight: 600, fontSize: 13, cursor: 'pointer',
                           }}
                         >
-                          + Add to My Treatments
+                          {t('selfcare.addToMyTreatments')}
                         </button>
                       )}
                       {isAdded && (
-                        <p style={{ fontSize: 12, color: 'var(--accent)', fontWeight: 600, textAlign: 'center', marginTop: 4 }}>✓ Already in your list</p>
+                        <p style={{ fontSize: 12, color: 'var(--accent)', fontWeight: 600, textAlign: 'center', marginTop: 4 }}>{t('selfcare.alreadyInList')}</p>
                       )}
                     </div>
                   </motion.div>
@@ -414,7 +365,7 @@ function BodyTreatmentsSection({ uid }: { uid: string }) {
       {/* My Treatments list */}
       {myTreatments.length > 0 && (
         <div>
-          <h4 style={{ fontWeight: 700, fontSize: 14, color: 'var(--text-primary)', marginBottom: 12 }}>My Treatments</h4>
+          <h4 style={{ fontWeight: 700, fontSize: 14, color: 'var(--text-primary)', marginBottom: 12 }}>{t('selfcare.myTreatments')}</h4>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {myTreatments.map(({ id, preset, scheduledDay, completedDates }) => {
               const doneToday = completedDates.includes(TODAY);
@@ -441,14 +392,14 @@ function BodyTreatmentsSection({ uid }: { uid: string }) {
                       <p style={{ fontWeight: 600, fontSize: 13, color: 'var(--text-primary)', textDecoration: doneToday ? 'line-through' : 'none' }}>{preset.name}</p>
                       <p style={{ fontSize: 11, color: 'var(--text-secondary)' }}>
                         {preset.duration}
-                        {scheduledDay && ` · Every ${scheduledDay}`}
-                        {completedDates.length > 0 && ` · ${completedDates.length}× done`}
+                        {scheduledDay && ` · ${t('selfcare.everyDaySuffix', { day: t(WEEK_DAY_LABEL_KEYS[scheduledDay]) })}`}
+                        {completedDates.length > 0 && ` · ${t('selfcare.timesDoneSuffix', { count: completedDates.length })}`}
                       </p>
                     </div>
                     <div style={{ display: 'flex', gap: 4 }}>
                       <button
                         onClick={() => setSchedulingId(schedulingId === id ? null : id)}
-                        title="Schedule a day"
+                        title={t('selfcare.scheduleDay')}
                         style={{ fontSize: 16, padding: 4, color: scheduledDay ? 'var(--accent)' : 'var(--text-secondary)', background: 'none', border: 'none' }}
                       >
                         📅
@@ -480,7 +431,7 @@ function BodyTreatmentsSection({ uid }: { uid: string }) {
                                 border: '1px solid var(--border)',
                               }}
                             >
-                              {day.slice(0, 3)}
+                              {t(WEEK_DAY_LABEL_KEYS[day]).slice(0, 3)}
                             </button>
                           ))}
                         </div>
@@ -730,7 +681,7 @@ function RoutinesTab() {
               <input
                 value={newRoutineName}
                 onChange={e => setNewRoutineName(e.target.value)}
-                placeholder="Routine name (e.g. Lunchtime reset)"
+                placeholder={t('selfcare.routineNamePlaceholder')}
                 style={{
                   width: '100%', borderRadius: 14, padding: '12px 14px', fontSize: 14,
                   background: 'var(--bg-primary)', border: '1px solid var(--border)', color: 'var(--text-primary)',
@@ -756,7 +707,7 @@ function RoutinesTab() {
                   value={newStepText}
                   onChange={e => setNewStepText(e.target.value)}
                   onKeyDown={e => { if (e.key === 'Enter' && newStepText.trim()) { setNewSteps(p => [...p, newStepText.trim()]); setNewStepText(''); } }}
-                  placeholder="Add a step..."
+                  placeholder={t('selfcare.addStepPlaceholder')}
                   style={{
                     flex: 1, borderRadius: 14, padding: '10px 14px', fontSize: 14,
                     background: 'var(--bg-primary)', border: '1px solid var(--border)', color: 'var(--text-primary)', outline: 'none',
@@ -778,7 +729,7 @@ function RoutinesTab() {
                   color: '#fff', fontWeight: 600, fontSize: 15,
                   opacity: (!newRoutineName.trim() || newSteps.length === 0) ? 0.5 : 1,
                 }}>
-                Save Routine
+                {t('selfcare.saveRoutine')}
               </button>
             </motion.div>
           </>
@@ -798,6 +749,7 @@ function RoutinesTab() {
 // ─────────────────────────────────────────────
 
 function SkincareTab() {
+  const dateLocale = useDateFnsLocale();
   const { user } = useAuth();
   const { requestAiConsent } = useAIConsent();
   const [data, setData] = useState<SkincareData | null>(null);
@@ -901,21 +853,29 @@ Keep it practical and affordable. Write in plain text with no markdown, no aster
       const amDone = data.amSteps.filter(s => s.completed).length;
       const pmDone = data.pmSteps.filter(s => s.completed).length;
       const total = data.amSteps.length + data.pmSteps.length;
-      if (total === 0) return { label: format(d, 'EEE')[0], status: 'grey' as const };
-      if (amDone === data.amSteps.length && pmDone === data.pmSteps.length) return { label: format(d, 'EEE')[0], status: 'green' as const };
-      if (amDone > 0 || pmDone > 0) return { label: format(d, 'EEE')[0], status: 'yellow' as const };
-      return { label: format(d, 'EEE')[0], status: 'grey' as const };
+      if (total === 0) return { label: format(d, 'EEE', { locale: dateLocale })[0], status: 'grey' as const };
+      if (amDone === data.amSteps.length && pmDone === data.pmSteps.length) return { label: format(d, 'EEE', { locale: dateLocale })[0], status: 'green' as const };
+      if (amDone > 0 || pmDone > 0) return { label: format(d, 'EEE', { locale: dateLocale })[0], status: 'yellow' as const };
+      return { label: format(d, 'EEE', { locale: dateLocale })[0], status: 'grey' as const };
     }
-    if (!log) return { label: format(d, 'EEE')[0], status: 'grey' as const };
-    if (log.amDone === log.amTotal && log.pmDone === log.pmTotal) return { label: format(d, 'EEE')[0], status: 'green' as const };
-    if (log.amDone > 0 || log.pmDone > 0) return { label: format(d, 'EEE')[0], status: 'yellow' as const };
-    return { label: format(d, 'EEE')[0], status: 'grey' as const };
+    if (!log) return { label: format(d, 'EEE', { locale: dateLocale })[0], status: 'grey' as const };
+    if (log.amDone === log.amTotal && log.pmDone === log.pmTotal) return { label: format(d, 'EEE', { locale: dateLocale })[0], status: 'green' as const };
+    if (log.amDone > 0 || log.pmDone > 0) return { label: format(d, 'EEE', { locale: dateLocale })[0], status: 'yellow' as const };
+    return { label: format(d, 'EEE', { locale: dateLocale })[0], status: 'grey' as const };
   });
 
   const dotColor = { green: '#8FA888', yellow: '#E8B89A', grey: 'var(--border)' };
 
   const SKIN_TYPES = ['Normal', 'Dry', 'Oily', 'Combination', 'Sensitive'];
   const CONCERNS = ['Acne', 'Anti-aging', 'Hydration', 'Brightening', 'Sensitivity'];
+  const SKIN_TYPE_LABEL_KEYS: Record<string, string> = {
+    Normal: 'selfcare.normal', Dry: 'selfcare.dry', Oily: 'selfcare.oily',
+    Combination: 'selfcare.combination', Sensitive: 'selfcare.sensitive',
+  };
+  const CONCERN_LABEL_KEYS: Record<string, string> = {
+    'Acne': 'selfcare.acne', 'Anti-aging': 'selfcare.aging', 'Hydration': 'selfcare.concernHydration',
+    'Brightening': 'selfcare.concernBrightening', 'Sensitivity': 'selfcare.sensitivityConcern',
+  };
 
   const amDone = data.amSteps.filter(s => s.completed).length;
   const pmDone = data.pmSteps.filter(s => s.completed).length;
@@ -924,7 +884,7 @@ Keep it practical and affordable. Write in plain text with no markdown, no aster
     <div className="px-4 mt-3 flex flex-col gap-4 pb-24">
       {/* Weekly calendar */}
       <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 20, padding: '14px 16px' }}>
-        <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 12 }}>This week</p>
+        <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 12 }}>{i18n.t('selfcare.wellnessThisWeek')}</p>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           {weekDays.map((d, i) => (
             <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
@@ -934,7 +894,7 @@ Keep it practical and affordable. Write in plain text with no markdown, no aster
           ))}
         </div>
         <div style={{ display: 'flex', gap: 12, marginTop: 10 }}>
-          {[['green', '🟢 Full routine'], ['yellow', '🟡 Partial'], ['grey', '⚪ Missed']].map(([c, label]) => (
+          {[['green', i18n.t('selfcare.legendFullRoutine')], ['yellow', i18n.t('selfcare.legendPartial')], ['grey', i18n.t('selfcare.legendMissed')]].map(([c, label]) => (
             <span key={c} style={{ fontSize: 10, color: 'var(--text-secondary)' }}>{label}</span>
           ))}
         </div>
@@ -945,10 +905,10 @@ Keep it practical and affordable. Write in plain text with no markdown, no aster
         <div style={{ padding: '14px 16px 10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ fontSize: 16 }}>☀️</span>
-            <p style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-primary)' }}>Morning (AM)</p>
+            <p style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-primary)' }}>{i18n.t('selfcare.morningAM')}</p>
           </div>
           <span style={{ fontSize: 12, color: amDone === data.amSteps.length ? '#8FA888' : 'var(--text-secondary)' }}>
-            {amDone}/{data.amSteps.length} done
+            {i18n.t('selfcare.doneCountSuffix', { done: amDone, total: data.amSteps.length })}
           </span>
         </div>
         <div style={{ padding: '0 16px 4px' }}>
@@ -966,7 +926,7 @@ Keep it practical and affordable. Write in plain text with no markdown, no aster
               <input
                 value={step.product}
                 onChange={e => updateProduct(true, step.id, e.target.value)}
-                placeholder="e.g. CeraVe"
+                placeholder={i18n.t('selfcare.productPlaceholderCeraVe')}
                 style={{
                   flex: 1, borderRadius: 10, padding: '5px 10px', fontSize: 12,
                   background: 'var(--bg-primary)', border: '1px solid var(--border)',
@@ -983,10 +943,10 @@ Keep it practical and affordable. Write in plain text with no markdown, no aster
         <div style={{ padding: '14px 16px 10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ fontSize: 16 }}>🌙</span>
-            <p style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-primary)' }}>Evening (PM)</p>
+            <p style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-primary)' }}>{i18n.t('selfcare.eveningPM')}</p>
           </div>
           <span style={{ fontSize: 12, color: pmDone === data.pmSteps.length ? '#8FA888' : 'var(--text-secondary)' }}>
-            {pmDone}/{data.pmSteps.length} done
+            {i18n.t('selfcare.doneCountSuffix', { done: pmDone, total: data.pmSteps.length })}
           </span>
         </div>
         <div style={{ padding: '0 16px 4px' }}>
@@ -1004,7 +964,7 @@ Keep it practical and affordable. Write in plain text with no markdown, no aster
               <input
                 value={step.product}
                 onChange={e => updateProduct(false, step.id, e.target.value)}
-                placeholder="e.g. La Roche-Posay"
+                placeholder={i18n.t('selfcare.productPlaceholderLRP')}
                 style={{
                   flex: 1, borderRadius: 10, padding: '5px 10px', fontSize: 12,
                   background: 'var(--bg-primary)', border: '1px solid var(--border)',
@@ -1022,11 +982,11 @@ Keep it practical and affordable. Write in plain text with no markdown, no aster
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--lavender)" strokeWidth="2" strokeLinecap="round">
             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
           </svg>
-          <p style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-primary)' }}>Get personalised skincare advice ✨</p>
+          <p style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-primary)' }}>{i18n.t('selfcare.getPersonalisedAdvice')}</p>
         </div>
 
         {/* Skin type */}
-        <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>Skin type</p>
+        <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>{i18n.t('selfcare.skinTypeLabel')}</p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 12 }}>
           {SKIN_TYPES.map(t => (
             <button key={t} onClick={() => setSkinType(t === skinType ? '' : t)}
@@ -1034,12 +994,12 @@ Keep it practical and affordable. Write in plain text with no markdown, no aster
                 padding: '6px 14px', borderRadius: 20, fontSize: 12, fontWeight: 500, border: 'none',
                 background: skinType === t ? 'linear-gradient(135deg, var(--lavender) 0%, #9B8CBD 100%)' : 'var(--bg-primary)',
                 color: skinType === t ? '#fff' : 'var(--text-secondary)',
-              }}>{t}</button>
+              }}>{i18n.t(SKIN_TYPE_LABEL_KEYS[t])}</button>
           ))}
         </div>
 
         {/* Concerns */}
-        <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>Concerns</p>
+        <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>{i18n.t('selfcare.concernsLabel')}</p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 14 }}>
           {CONCERNS.map(c => (
             <button key={c} onClick={() => setConcerns(prev => prev.includes(c) ? prev.filter(x => x !== c) : [...prev, c])}
@@ -1047,7 +1007,7 @@ Keep it practical and affordable. Write in plain text with no markdown, no aster
                 padding: '6px 14px', borderRadius: 20, fontSize: 12, fontWeight: 500, border: 'none',
                 background: concerns.includes(c) ? 'linear-gradient(135deg, var(--lavender) 0%, #9B8CBD 100%)' : 'var(--bg-primary)',
                 color: concerns.includes(c) ? '#fff' : 'var(--text-secondary)',
-              }}>{c}</button>
+              }}>{i18n.t(CONCERN_LABEL_KEYS[c])}</button>
           ))}
         </div>
 
@@ -1059,8 +1019,8 @@ Keep it practical and affordable. Write in plain text with no markdown, no aster
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
           }}>
           {adviceLoading ? (
-            <><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" style={{ animation: 'spin 0.8s linear infinite' }}><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>Getting advice...</>
-          ) : 'Get Advice'}
+            <><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" style={{ animation: 'spin 0.8s linear infinite' }}><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>{i18n.t('selfcare.gettingAdvice')}</>
+          ) : i18n.t('selfcare.getAdviceBtn')}
         </button>
 
         {advice && (
@@ -1075,27 +1035,27 @@ Keep it practical and affordable. Write in plain text with no markdown, no aster
       {/* My Products */}
       <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 24, padding: '16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-          <p style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-primary)' }}>My Products</p>
+          <p style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-primary)' }}>{i18n.t('selfcare.myProducts')}</p>
           <button onClick={() => setShowProductForm(f => !f)}
             style={{ width: 30, height: 30, borderRadius: 10, border: 'none', background: 'var(--accent-soft)', color: 'var(--accent)', fontWeight: 700, fontSize: 18, lineHeight: 1 }}>+</button>
         </div>
 
         {showProductForm && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 12 }}>
-            <input value={newProductName} onChange={e => setNewProductName(e.target.value)} placeholder="Product name"
+            <input value={newProductName} onChange={e => setNewProductName(e.target.value)} placeholder={i18n.t('selfcare.productNamePlaceholder')}
               style={{ borderRadius: 12, padding: '9px 12px', fontSize: 13, background: 'var(--bg-primary)', border: '1px solid var(--border)', color: 'var(--text-primary)', outline: 'none' }} />
-            <input value={newProductStep} onChange={e => setNewProductStep(e.target.value)} placeholder="Step (e.g. Moisturiser)"
+            <input value={newProductStep} onChange={e => setNewProductStep(e.target.value)} placeholder={i18n.t('selfcare.productStepPlaceholder')}
               style={{ borderRadius: 12, padding: '9px 12px', fontSize: 13, background: 'var(--bg-primary)', border: '1px solid var(--border)', color: 'var(--text-primary)', outline: 'none' }} />
             <button onClick={addProduct}
               style={{ height: 40, borderRadius: 12, border: 'none', background: 'linear-gradient(135deg, var(--lavender) 0%, #9B8CBD 100%)', color: '#fff', fontWeight: 600, fontSize: 13 }}>
-              Add Product
+              {i18n.t('selfcare.addProductBtn')}
             </button>
           </div>
         )}
 
         {data.products.length === 0 && !showProductForm && (
           <p style={{ fontSize: 12, color: 'var(--text-secondary)', textAlign: 'center', padding: '8px 0' }}>
-            Tap + to add your products
+            {i18n.t('selfcare.tapToAddProducts')}
           </p>
         )}
 
@@ -1122,294 +1082,27 @@ Keep it practical and affordable. Write in plain text with no markdown, no aster
 // WORKOUT TRACKER
 // ─────────────────────────────────────────────
 
-const WORKOUT_TYPES: { type: WorkoutType; emoji: string; label: string }[] = [
-  { type: 'strength', emoji: '💪', label: 'Strength' },
-  { type: 'cardio',   emoji: '🏃', label: 'Cardio' },
-  { type: 'yoga',     emoji: '🧘', label: 'Yoga' },
-  { type: 'hiit',     emoji: '🔥', label: 'HIIT' },
-  { type: 'walking',  emoji: '🚶', label: 'Walking' },
-  { type: 'swimming', emoji: '🏊', label: 'Swimming' },
+const WORKOUT_TYPES: { type: WorkoutType; emoji: string; labelKey: string }[] = [
+  { type: 'strength', emoji: '💪', labelKey: 'selfcare.workoutStrength' },
+  { type: 'cardio',   emoji: '🏃', labelKey: 'selfcare.workoutCardio' },
+  { type: 'yoga',     emoji: '🧘', labelKey: 'selfcare.workoutYoga' },
+  { type: 'hiit',     emoji: '🔥', labelKey: 'selfcare.workoutHiit' },
+  { type: 'walking',  emoji: '🚶', labelKey: 'selfcare.workoutWalking' },
+  { type: 'swimming', emoji: '🏊', labelKey: 'selfcare.workoutSwimming' },
 ];
 
 type WorkoutLevel = 'beginner' | 'intermediate' | 'advanced';
 
-const WORKOUT_GUIDES: Record<WorkoutType, Record<WorkoutLevel, { title: string; location: string; duration: string; items: string[] }>> = {
-  strength: {
-    beginner: {
-      title: '💪 Full Body — Beginner',
-      location: '🏠 Home',
-      duration: '25 min',
-      items: [
-        'Warm-up: 5 min light marching in place',
-        '3×12 bodyweight squats',
-        '3×10 push-ups (knees ok)',
-        '3×12 reverse lunges each leg',
-        '3×15 glute bridges',
-        '3×10 superman holds (back extension)',
-        'Cool-down: stretch quads, chest & back 5 min',
-      ],
-    },
-    intermediate: {
-      title: '💪 Upper + Lower Split',
-      location: '🏠 Home / 🏋️ Gym',
-      duration: '40 min',
-      items: [
-        'Warm-up: 5 min jumping jacks + arm circles',
-        '4×12 dumbbell goblet squats',
-        '4×10 dumbbell Romanian deadlifts',
-        '3×12 dumbbell chest press (floor or bench)',
-        '3×12 bent-over dumbbell rows each side',
-        '3×15 lateral raises',
-        '3×20 bicycle crunches',
-        'Cool-down: hip flexor + shoulder stretch 5 min',
-      ],
-    },
-    advanced: {
-      title: '💪 Strength & Power Circuit',
-      location: '🏋️ Gym',
-      duration: '55 min',
-      items: [
-        'Warm-up: 8 min treadmill + dynamic stretches',
-        '4×8 barbell back squats (moderate weight)',
-        '4×8 barbell Romanian deadlifts',
-        '4×10 incline dumbbell press',
-        '4×10 cable seated rows',
-        '3×12 Bulgarian split squats each leg',
-        '3×15 cable lateral raises',
-        '3×12 tricep cable pushdowns',
-        '3×10 EZ-bar bicep curls',
-        'Cool-down: foam roll quads, hamstrings, lats',
-      ],
-    },
-  },
-  cardio: {
-    beginner: {
-      title: '🏃 Gentle Cardio Walk',
-      location: '🏠 Home / Outdoors',
-      duration: '30 min',
-      items: [
-        '5 min easy walk warm-up',
-        '20 min brisk walk (breathe but can talk)',
-        '5 min slow walk cool-down',
-        'Stretch calves, quads & hip flexors 5 min',
-        'Aim for 4×/week to build base fitness',
-      ],
-    },
-    intermediate: {
-      title: '🏃 Run-Walk Intervals',
-      location: '🏠 Outdoors / Treadmill',
-      duration: '35 min',
-      items: [
-        '5 min brisk walk warm-up',
-        'Repeat 6×: 3 min jog + 1 min walk',
-        '5 min cool-down walk',
-        'Stretch hip flexors, calves & hamstrings',
-        'Progress by adding 1 jog interval each week',
-      ],
-    },
-    advanced: {
-      title: '🏃 Tempo + Sprint Session',
-      location: '🏋️ Treadmill / Track',
-      duration: '45 min',
-      items: [
-        '10 min easy jog warm-up',
-        '15 min tempo run (comfortably hard pace)',
-        '5× 30s all-out sprints with 90s easy jog recovery',
-        '10 min easy jog cool-down',
-        'Stretch: piriformis, calves & hip flexors 5 min',
-      ],
-    },
-  },
-  yoga: {
-    beginner: {
-      title: '🧘 Morning Flow — Gentle',
-      location: '🏠 Home',
-      duration: '20 min',
-      items: [
-        'Mountain pose — 30s, breathe deep',
-        'Cat-Cow — 10 slow reps, loosen spine',
-        'Downward Dog — hold 30s, walk out heels',
-        'Low Lunge each side — 30s, open hip flexors',
-        "Child's pose — 1 min, rest & breathe",
-        'Seated forward fold — 45s, hamstrings',
-        'Supine twist each side — 30s, release back',
-        'Savasana — 3 min, full body relax',
-      ],
-    },
-    intermediate: {
-      title: '🧘 Vinyasa Flow',
-      location: '🏠 Home / Studio',
-      duration: '35 min',
-      items: [
-        '5 min breathing & seated warm-up',
-        '5× Sun Salutation A (flow breath to movement)',
-        'Warrior I + II + Reverse Warrior — 45s each side',
-        'Triangle pose each side — 45s',
-        'Chair pose — 1 min hold',
-        'Plank → Chaturanga → Upward Dog — 5 reps',
-        'Pigeon pose each side — 1 min deep stretch',
-        'Seated spinal twist + forward fold',
-        'Savasana — 5 min',
-      ],
-    },
-    advanced: {
-      title: '🧘 Power Yoga + Balance',
-      location: '🏠 Home / Studio',
-      duration: '50 min',
-      items: [
-        '10 min Surya Namaskar B series (8 rounds)',
-        'Crow pose (Bakasana) — hold attempts 3×',
-        'Handstand prep against wall — 3× 30s',
-        'Half moon pose each side — 1 min',
-        'Warrior III each side — 1 min balance hold',
-        'Wheel pose (Urdhva Dhanurasana) — 3× 20s',
-        'Forearm balance (Pincha) prep — 3× 30s',
-        'Yin finish: pigeon + dragon pose 2 min each',
-        'Yoga nidra / Savasana — 8 min',
-      ],
-    },
-  },
-  hiit: {
-    beginner: {
-      title: '🔥 Low Impact HIIT',
-      location: '🏠 Home',
-      duration: '20 min',
-      items: [
-        'Warm-up: 3 min arm swings + hip circles',
-        '3 rounds (40s work / 20s rest):',
-        '  • Step jacks (low impact jumping jacks)',
-        '  • Squat pulses',
-        '  • March in place with high knees',
-        '  • Modified push-ups',
-        '  • Standing oblique crunches',
-        'Cool-down: 5 min full body stretch',
-      ],
-    },
-    intermediate: {
-      title: '🔥 HIIT Circuit',
-      location: '🏠 Home',
-      duration: '30 min',
-      items: [
-        'Warm-up: 5 min dynamic stretches',
-        '4 rounds (40s work / 15s rest):',
-        '  • Burpees',
-        '  • Jump squats',
-        '  • Push-up to shoulder tap',
-        '  • Speed skaters',
-        '  • Plank hip dips',
-        '  • Jump lunges',
-        'Rest 90s between rounds',
-        'Cool-down: 5 min stretch',
-      ],
-    },
-    advanced: {
-      title: '🔥 Advanced HIIT + Core',
-      location: '🏠 Home / 🏋️ Gym',
-      duration: '40 min',
-      items: [
-        'Warm-up: 5 min jog + mobilisation',
-        '5 rounds (45s work / 10s rest):',
-        '  • Tuck jumps',
-        '  • Plyometric push-ups',
-        '  • Single-leg burpees (alt. legs)',
-        '  • Box jumps or jump squat variation',
-        '  • Dragon flag core holds',
-        '  • Lateral bound + stick',
-        'Rest 60s between rounds',
-        'Finisher: 3 min plank challenge',
-        'Cool-down: deep stretch 8 min',
-      ],
-    },
-  },
-  walking: {
-    beginner: {
-      title: '🚶 Daily Steps Target',
-      location: '🏠 Outdoors / Mall',
-      duration: '30 min',
-      items: [
-        'Aim for 7,000–8,000 steps/day',
-        '30 min easy walk, comfortable pace',
-        'Wear supportive shoes',
-        '🎧 Great for podcasts or music',
-        'Bonus: take stairs instead of lifts',
-        'Track with phone health app or watch',
-      ],
-    },
-    intermediate: {
-      title: '🚶 Power Walk + Hills',
-      location: '🏠 Outdoors',
-      duration: '45 min',
-      items: [
-        'Aim for 10,000 steps/day',
-        '10 min easy warm-up walk',
-        '25 min brisk power walk (push pace)',
-        'Include hills or incline if available',
-        '10 min cool-down easy walk',
-        'Arm swing actively for extra calorie burn',
-        'Stretch hips & calves after',
-      ],
-    },
-    advanced: {
-      title: '🚶 Weighted Rucking',
-      location: '🏠 Outdoors / Trails',
-      duration: '60 min',
-      items: [
-        'Load a backpack with 5–10 kg',
-        '10 min easy warm-up walk',
-        '40 min brisk walk with weight on back',
-        'Include hills — max calorie & strength benefit',
-        '10 min cool-down walk',
-        'Stretch hip flexors, glutes & upper back',
-        'Aim for 12,000–15,000 steps on ruck days',
-      ],
-    },
-  },
-  swimming: {
-    beginner: {
-      title: '🏊 Easy Pool Session',
-      location: '🏋️ Pool',
-      duration: '30 min',
-      items: [
-        '4 lengths easy warm-up (any stroke)',
-        '8 lengths main set — rest 30s every 2 lengths',
-        'Focus on breathing technique',
-        '2 lengths cool-down (backstroke)',
-        'Total ~30 min · great for joints',
-      ],
-    },
-    intermediate: {
-      title: '🏊 Endurance Swim',
-      location: '🏋️ Pool',
-      duration: '45 min',
-      items: [
-        '200m warm-up: easy freestyle',
-        '400m main set: freestyle with flip turns',
-        '4× 50m kick sets with kickboard, rest 20s each',
-        '4× 50m pull sets with pull buoy, rest 20s each',
-        '200m cool-down: backstroke',
-        'Total ~1600m · stretch shoulders & hips after',
-      ],
-    },
-    advanced: {
-      title: '🏊 Swim Intervals',
-      location: '🏋️ Pool',
-      duration: '60 min',
-      items: [
-        '400m warm-up: mixed strokes',
-        '8× 100m on 2:00 (aim negative splits)',
-        '4× 50m butterfly or breaststroke, rest 30s',
-        '8× 25m sprint on 1:00',
-        '200m cool-down: easy backstroke',
-        'Total ~2400m · foam roll shoulders & lats',
-      ],
-    },
-  },
-};
+type WorkoutGuide = { title: string; location: string; duration: string; items: string[] };
 
-const LEVELS: { id: WorkoutLevel; label: string; color: string }[] = [
-  { id: 'beginner',     label: 'Beginner',     color: '#8FA888' },
-  { id: 'intermediate', label: 'Intermediate', color: '#C9A96E' },
-  { id: 'advanced',     label: 'Advanced',     color: '#C4788A' },
+function getWorkoutGuides(): Record<WorkoutType, Record<WorkoutLevel, WorkoutGuide>> {
+  return i18n.t('selfcare.workoutGuides', { returnObjects: true }) as Record<WorkoutType, Record<WorkoutLevel, WorkoutGuide>>;
+}
+
+const LEVELS: { id: WorkoutLevel; labelKey: string; color: string }[] = [
+  { id: 'beginner',     labelKey: 'selfcare.levelBeginner',     color: '#8FA888' },
+  { id: 'intermediate', labelKey: 'selfcare.levelIntermediate', color: '#C9A96E' },
+  { id: 'advanced',     labelKey: 'selfcare.levelAdvanced',     color: '#C4788A' },
 ];
 
 function WorkoutTracker({ uid }: { uid: string }) {
@@ -1438,7 +1131,7 @@ function WorkoutTracker({ uid }: { uid: string }) {
   const weekMins = weekEntries.reduce((s, e) => s + e.duration, 0);
 
   const activeLevel = LEVELS.find(l => l.id === level)!;
-  const guide = logging ? WORKOUT_GUIDES[logging][level] : null;
+  const guide = logging ? getWorkoutGuides()[logging][level] : null;
 
   return (
     <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 24, padding: '16px' }}>
@@ -1446,9 +1139,9 @@ function WorkoutTracker({ uid }: { uid: string }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
         <div style={{ width: 38, height: 38, borderRadius: 14, background: 'var(--sage-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>💪</div>
         <div style={{ flex: 1 }}>
-          <p style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-primary)' }}>Workout Tracker</p>
+          <p style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-primary)' }}>{i18n.t('selfcare.workoutTrackerTitle')}</p>
           <p style={{ fontSize: 11, color: 'var(--text-secondary)' }}>
-            {weekEntries.length} workout{weekEntries.length !== 1 ? 's' : ''} this week · {weekMins} min total
+            {i18n.t('selfcare.workoutsThisWeek', { count: weekEntries.length, mins: weekMins })}
           </p>
         </div>
       </div>
@@ -1462,7 +1155,7 @@ function WorkoutTracker({ uid }: { uid: string }) {
               background: level === l.id ? `${l.color}22` : 'var(--bg-primary)',
               fontSize: 11, fontWeight: 700, color: level === l.id ? l.color : 'var(--text-muted)', cursor: 'pointer',
             }}>
-            {l.label}
+            {i18n.t(l.labelKey)}
           </button>
         ))}
       </div>
@@ -1478,7 +1171,7 @@ function WorkoutTracker({ uid }: { uid: string }) {
               display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, cursor: 'pointer',
             }}>
             <span style={{ fontSize: 22 }}>{w.emoji}</span>
-            <span style={{ fontSize: 10, fontWeight: 600, color: logging === w.type ? activeLevel.color : 'var(--text-secondary)' }}>{w.label}</span>
+            <span style={{ fontSize: 10, fontWeight: 600, color: logging === w.type ? activeLevel.color : 'var(--text-secondary)' }}>{i18n.t(w.labelKey)}</span>
           </button>
         ))}
       </div>
@@ -1524,18 +1217,18 @@ function WorkoutTracker({ uid }: { uid: string }) {
               <div style={{ height: 1, background: 'var(--border)', margin: '2px 0' }} />
 
               {/* Log form */}
-              <p style={{ fontSize: 11, fontWeight: 600, color: activeLevel.color }}>Log this workout</p>
+              <p style={{ fontSize: 11, fontWeight: 600, color: activeLevel.color }}>{i18n.t('selfcare.logThisWorkout')}</p>
               <div style={{ display: 'flex', gap: 8 }}>
                 <input value={duration} onChange={e => setDuration(e.target.value)}
-                  type="number" inputMode="numeric" placeholder="Duration (min)"
+                  type="number" inputMode="numeric" placeholder={i18n.t('selfcare.durationMinPlaceholder')}
                   style={{ flex: 1, borderRadius: 12, padding: '9px 12px', fontSize: 14, background: 'var(--bg-card)', border: '1px solid var(--border)', color: 'var(--text-primary)', outline: 'none' }} />
                 <button onClick={logWorkout} disabled={!duration || parseInt(duration) <= 0}
                   style={{ padding: '9px 16px', borderRadius: 12, border: 'none', background: `linear-gradient(135deg, ${activeLevel.color} 0%, ${activeLevel.color}cc 100%)`, color: '#fff', fontWeight: 600, fontSize: 13, opacity: duration && parseInt(duration) > 0 ? 1 : 0.5 }}>
-                  Log ✓
+                  {i18n.t('selfcare.logCheckBtn')}
                 </button>
               </div>
               <input value={notes} onChange={e => setNotes(e.target.value)}
-                placeholder="Notes (optional)" maxLength={80}
+                placeholder={i18n.t('selfcare.notesOptionalPlaceholder')} maxLength={80}
                 style={{ borderRadius: 12, padding: '8px 12px', fontSize: 13, background: 'var(--bg-card)', border: '1px solid var(--border)', color: 'var(--text-primary)', outline: 'none' }} />
             </div>
           </motion.div>
@@ -1545,7 +1238,7 @@ function WorkoutTracker({ uid }: { uid: string }) {
       {/* Today's log */}
       {todayEntries.length > 0 && (
         <div>
-          <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>Today</p>
+          <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>{i18n.t('selfcare.todayLabel')}</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             {todayEntries.map(e => {
               const wt = WORKOUT_TYPES.find(w => w.type === e.type)!;
@@ -1553,7 +1246,7 @@ function WorkoutTracker({ uid }: { uid: string }) {
                 <div key={e.id} style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--bg-primary)', borderRadius: 14, padding: '9px 12px' }}>
                   <span style={{ fontSize: 18 }}>{wt.emoji}</span>
                   <div style={{ flex: 1 }}>
-                    <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{wt.label} · {e.duration} min</p>
+                    <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{i18n.t(wt.labelKey)} · {e.duration} min</p>
                     {e.notes && <p style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{e.notes}</p>}
                   </div>
                   <button onClick={() => {
@@ -1574,18 +1267,18 @@ function WorkoutTracker({ uid }: { uid: string }) {
 // CALORIE & MEAL TRACKER
 // ─────────────────────────────────────────────
 
-const MEAL_TYPES: { type: MealType; emoji: string; label: string }[] = [
-  { type: 'breakfast', emoji: '🌅', label: 'Breakfast' },
-  { type: 'lunch',     emoji: '🥗', label: 'Lunch' },
-  { type: 'dinner',    emoji: '🍽️', label: 'Dinner' },
-  { type: 'snack',     emoji: '🍎', label: 'Snack' },
+const MEAL_TYPES: { type: MealType; emoji: string; labelKey: string }[] = [
+  { type: 'breakfast', emoji: '🌅', labelKey: 'kitchen.breakfast' },
+  { type: 'lunch',     emoji: '🥗', labelKey: 'kitchen.lunch' },
+  { type: 'dinner',    emoji: '🍽️', labelKey: 'kitchen.dinner' },
+  { type: 'snack',     emoji: '🍎', labelKey: 'selfcare.mealSnack' },
 ];
 
 const TIMEFRAME_OPTIONS = [
-  { months: 1, label: '1 month' },
-  { months: 2, label: '2 months' },
-  { months: 3, label: '3 months' },
-  { months: 6, label: '6 months' },
+  { months: 1, labelKey: 'selfcare.tf1' },
+  { months: 2, labelKey: 'selfcare.tf2' },
+  { months: 3, labelKey: 'selfcare.tf3' },
+  { months: 6, labelKey: 'selfcare.tf6' },
 ];
 
 function calcDailyCalories(currentKg: number, goalKg: number, months: number): number {
@@ -1651,7 +1344,7 @@ One standard portion. Grams = typical serving size. Calories for that portion.`;
       const parsed = JSON.parse(jsonStr.slice(s, e + 1));
       setFoodResult(parsed as FoodLookupResult);
     } catch {
-      setFoodError('Nu am putut găsi informații. Încearcă din nou.');
+      setFoodError(i18n.t('selfcare.couldNotFindFoodInfo'));
     }
     setFoodLookupLoading(false);
   }
@@ -1673,8 +1366,8 @@ One standard portion. Grams = typical serving size. Calories for that portion.`;
     if (!cw || !gw || cw <= 0 || gw <= 0) return;
     const calories = calcDailyCalories(cw, gw, tfInput);
     const diff = Math.abs(cw - gw);
-    const action = gw < cw ? 'lose' : 'gain';
-    setCalcResult(`Your daily calorie goal: ${calories} kcal (to ${action} ${diff.toFixed(1)} kg in ${tfInput} month${tfInput > 1 ? 's' : ''})`);
+    const action = gw < cw ? i18n.t('selfcare.actionLose') : i18n.t('selfcare.actionGain');
+    setCalcResult(i18n.t('selfcare.dailyCalorieGoalResult', { calories, action, diff: diff.toFixed(1), months: tfInput, count: tfInput }));
     persist({ ...data, currentWeight: cw, goalWeight: gw, timeframeMonths: tfInput, dailyGoal: calories });
     setTimeout(() => setShowGoalSetup(false), 2000);
   }
@@ -1708,7 +1401,7 @@ Include exactly 5 meals: breakfast, morning snack, lunch, afternoon snack, dinne
       setAiMeals(parsed.meals as AIMeal[]);
       setAiTotal((parsed.total as number) ?? parsed.meals.reduce((s: number, m: AIMeal) => s + (m.calories ?? 0), 0));
     } catch {
-      setAiError('Could not parse meal plan. Please try again.');
+      setAiError(i18n.t('selfcare.couldNotParseMealPlan'));
     }
     setAiLoading(false);
   }
@@ -1728,12 +1421,12 @@ Include exactly 5 meals: breakfast, morning snack, lunch, afternoon snack, dinne
 
   const kgToLose = data.currentWeight && data.goalWeight ? data.currentWeight - data.goalWeight : null;
   const motivational = kgToLose !== null
-    ? kgToLose > 10 ? '💪 Every small step counts — you\'ve got this!'
-    : kgToLose > 5 ? '🌟 You\'re making amazing progress, keep going!'
-    : kgToLose > 2 ? '🎯 So close to your goal — stay consistent!'
-    : kgToLose > 0 ? '🏆 Almost there! The final stretch is the hardest.'
-    : '✨ You\'ve reached your goal weight — maintain it!'
-    : '🌸 Set your weight goal to get a personalised plan!';
+    ? kgToLose > 10 ? i18n.t('selfcare.motivationalFar')
+    : kgToLose > 5 ? i18n.t('selfcare.motivationalGetting')
+    : kgToLose > 2 ? i18n.t('selfcare.motivationalClose')
+    : kgToLose > 0 ? i18n.t('selfcare.motivationalAlmost')
+    : i18n.t('selfcare.motivationalReached')
+    : i18n.t('selfcare.motivationalSetGoal');
 
   const inp = { borderRadius: 12, padding: '9px 12px', fontSize: 13, background: 'var(--bg-primary)', border: '1px solid var(--border)', color: 'var(--text-primary)', outline: 'none' } as const;
 
@@ -1743,12 +1436,12 @@ Include exactly 5 meals: breakfast, morning snack, lunch, afternoon snack, dinne
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <div style={{ width: 38, height: 38, borderRadius: 14, background: 'var(--lavender-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>🥗</div>
         <div style={{ flex: 1 }}>
-          <p style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-primary)' }}>Calorie Tracker</p>
-          <p style={{ fontSize: 11, color: 'var(--text-secondary)' }}>Daily goal: {data.dailyGoal} kcal</p>
+          <p style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-primary)' }}>{i18n.t('selfcare.calorieTrackerTitle')}</p>
+          <p style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{i18n.t('selfcare.dailyGoalLabel', { goal: data.dailyGoal })}</p>
         </div>
         <button onClick={() => setShowGoalSetup(s => !s)}
           style={{ fontSize: 11, color: 'var(--lavender)', background: 'var(--lavender-soft)', border: 'none', borderRadius: 10, padding: '6px 10px', fontWeight: 600, cursor: 'pointer' }}>
-          ⚖️ Weight Goal
+          {i18n.t('selfcare.weightGoalBtn')}
         </button>
       </div>
 
@@ -1757,26 +1450,26 @@ Include exactly 5 meals: breakfast, morning snack, lunch, afternoon snack, dinne
         {showGoalSetup && (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} style={{ overflow: 'hidden' }}>
             <div style={{ background: 'var(--lavender-soft)', borderRadius: 18, padding: '14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--lavender)', marginBottom: 2 }}>Set Your Weight Goal</p>
+              <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--lavender)', marginBottom: 2 }}>{i18n.t('selfcare.setWeightGoalTitle')}</p>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
                 <div>
-                  <p style={{ fontSize: 10, color: 'var(--text-secondary)', marginBottom: 4 }}>Current weight (kg)</p>
+                  <p style={{ fontSize: 10, color: 'var(--text-secondary)', marginBottom: 4 }}>{i18n.t('selfcare.currentWeightLabel')}</p>
                   <input value={cwInput} onChange={e => setCwInput(e.target.value)} type="number" inputMode="decimal" placeholder="e.g. 72" style={inp} />
                 </div>
                 <div>
-                  <p style={{ fontSize: 10, color: 'var(--text-secondary)', marginBottom: 4 }}>Goal weight (kg)</p>
+                  <p style={{ fontSize: 10, color: 'var(--text-secondary)', marginBottom: 4 }}>{i18n.t('selfcare.goalWeightLabel')}</p>
                   <input value={gwInput} onChange={e => setGwInput(e.target.value)} type="number" inputMode="decimal" placeholder="e.g. 65" style={inp} />
                 </div>
               </div>
               <div>
-                <p style={{ fontSize: 10, color: 'var(--text-secondary)', marginBottom: 4 }}>Timeframe</p>
+                <p style={{ fontSize: 10, color: 'var(--text-secondary)', marginBottom: 4 }}>{i18n.t('selfcare.timeframeLabel')}</p>
                 <div style={{ display: 'flex', gap: 6 }}>
                   {TIMEFRAME_OPTIONS.map(t => (
                     <button key={t.months} onClick={() => setTfInput(t.months)}
                       style={{ flex: 1, padding: '7px 4px', borderRadius: 12, border: '2px solid', borderColor: tfInput === t.months ? 'var(--lavender)' : 'transparent',
                         background: tfInput === t.months ? 'var(--bg-card)' : 'transparent', fontSize: 10, fontWeight: 600,
                         color: tfInput === t.months ? 'var(--lavender)' : 'var(--text-secondary)', cursor: 'pointer' }}>
-                      {t.label}
+                      {i18n.t(t.labelKey)}
                     </button>
                   ))}
                 </div>
@@ -1784,7 +1477,7 @@ Include exactly 5 meals: breakfast, morning snack, lunch, afternoon snack, dinne
               <button onClick={calculateGoal} disabled={!cwInput || !gwInput}
                 style={{ height: 44, borderRadius: 14, border: 'none', background: 'linear-gradient(135deg, var(--lavender) 0%, #9B8CBD 100%)', color: '#fff', fontWeight: 700, fontSize: 14,
                   opacity: cwInput && gwInput ? 1 : 0.5, cursor: 'pointer' }}>
-                Calculate My Goal
+                {i18n.t('selfcare.calculateGoalBtn')}
               </button>
               {calcResult && (
                 <p style={{ fontSize: 12, fontWeight: 600, color: '#4A7A58', background: '#f0fdf4', borderRadius: 10, padding: '8px 12px', border: '1px solid #86efac' }}>
@@ -1800,12 +1493,12 @@ Include exactly 5 meals: breakfast, morning snack, lunch, afternoon snack, dinne
       {(data.currentWeight || data.goalWeight) && (
         <div style={{ background: 'var(--bg-primary)', borderRadius: 16, padding: '12px 14px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-            {data.currentWeight && <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Current: <strong style={{ color: 'var(--text-primary)' }}>{data.currentWeight} kg</strong></span>}
-            {data.goalWeight && <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Goal: <strong style={{ color: 'var(--lavender)' }}>{data.goalWeight} kg</strong></span>}
+            {data.currentWeight && <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{i18n.t('selfcare.currentWeightDisplay', { weight: data.currentWeight })}</span>}
+            {data.goalWeight && <span style={{ fontSize: 12, color: 'var(--lavender)' }}>{i18n.t('selfcare.goalWeightDisplay', { weight: data.goalWeight })}</span>}
           </div>
           {kgToLose !== null && kgToLose > 0 && (
             <p style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4 }}>
-              You need to lose <strong style={{ color: '#ef4444' }}>{kgToLose.toFixed(1)} kg</strong> to reach your goal
+              {i18n.t('selfcare.needToLose', { kg: kgToLose.toFixed(1) })}
             </p>
           )}
           <p style={{ fontSize: 12, color: 'var(--text-secondary)', fontStyle: 'italic' }}>{motivational}</p>
@@ -1818,9 +1511,9 @@ Include exactly 5 meals: breakfast, morning snack, lunch, afternoon snack, dinne
           <div style={{ height: '100%', width: `${pct}%`, borderRadius: 9999, background: barColor, transition: 'width 0.4s' }} />
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)' }}>{consumed} kcal consumed</span>
+          <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)' }}>{i18n.t('selfcare.kcalConsumed', { count: consumed })}</span>
           <span style={{ fontSize: 12, fontWeight: 600, color: remaining < 0 ? '#ef4444' : '#8FA888' }}>
-            {remaining < 0 ? `${Math.abs(remaining)} kcal over` : `${remaining} kcal remaining`}
+            {remaining < 0 ? i18n.t('selfcare.kcalOver', { count: Math.abs(remaining) }) : i18n.t('selfcare.kcalRemaining', { count: remaining })}
           </span>
         </div>
       </div>
@@ -1833,7 +1526,7 @@ Include exactly 5 meals: breakfast, morning snack, lunch, afternoon snack, dinne
             if (meals.length === 0) return null;
             return (
               <div key={mt.type}>
-                <p style={{ fontSize: 10, fontWeight: 700, color: 'var(--lavender)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>{mt.emoji} {mt.label}</p>
+                <p style={{ fontSize: 10, fontWeight: 700, color: 'var(--lavender)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>{mt.emoji} {i18n.t(mt.labelKey)}</p>
                 {meals.map(m => (
                   <div key={m.id} style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-primary)', borderRadius: 12, padding: '7px 10px', marginBottom: 4 }}>
                     <span style={{ flex: 1, fontSize: 13, color: 'var(--text-primary)' }}>{m.name}</span>
@@ -1861,7 +1554,7 @@ Include exactly 5 meals: breakfast, morning snack, lunch, afternoon snack, dinne
                       background: mealType === mt.type ? 'var(--bg-card)' : 'transparent',
                       fontSize: 10, fontWeight: 600,
                       color: mealType === mt.type ? 'var(--lavender)' : 'var(--text-secondary)', cursor: 'pointer' }}>
-                    {mt.emoji}<br />{mt.label}
+                    {mt.emoji}<br />{i18n.t(mt.labelKey)}
                   </button>
                 ))}
               </div>
@@ -1872,7 +1565,7 @@ Include exactly 5 meals: breakfast, morning snack, lunch, afternoon snack, dinne
                   value={foodQuery}
                   onChange={e => { setFoodQuery(e.target.value); setFoodResult(null); setFoodError(''); }}
                   onKeyDown={e => { if (e.key === 'Enter') lookupFood(); }}
-                  placeholder="Ce ai mâncat? (ex: orez cu pui, salată, ou fiert)"
+                  placeholder={i18n.t('selfcare.foodQueryPlaceholder')}
                   style={{ ...inp, flex: 1 }}
                 />
                 <button onClick={lookupFood} disabled={foodLookupLoading || !foodQuery.trim()}
@@ -1903,7 +1596,7 @@ Include exactly 5 meals: breakfast, morning snack, lunch, afternoon snack, dinne
                     style={{ padding: '8px 14px', borderRadius: 12, border: 'none',
                       background: 'linear-gradient(135deg, var(--lavender) 0%, #9B8CBD 100%)',
                       color: '#fff', fontWeight: 700, fontSize: 13, cursor: 'pointer', flexShrink: 0 }}>
-                    + Adaugă
+                    {i18n.t('selfcare.addBtn')}
                   </button>
                 </div>
               )}
@@ -1916,11 +1609,11 @@ Include exactly 5 meals: breakfast, morning snack, lunch, afternoon snack, dinne
       <div style={{ display: 'flex', gap: 8 }}>
         <button onClick={() => setShowForm(f => !f)}
           style={{ flex: 1, height: 42, borderRadius: 14, border: 'none', background: 'linear-gradient(135deg, var(--lavender) 0%, #9B8CBD 100%)', color: '#fff', fontWeight: 600, fontSize: 13, cursor: 'pointer' }}>
-          {showForm ? '✕ Cancel' : '+ Add Meal'}
+          {showForm ? `✕ ${i18n.t('common.cancel')}` : i18n.t('selfcare.addMealBtn')}
         </button>
         <button onClick={getAIMealPlan} disabled={aiLoading}
           style={{ flex: 1, height: 42, borderRadius: 14, border: '1px solid var(--lavender)', background: 'var(--lavender-soft)', color: 'var(--lavender)', fontWeight: 600, fontSize: 12, cursor: 'pointer', opacity: aiLoading ? 0.7 : 1 }}>
-          {aiLoading ? '⏳ Generating...' : '✨ AI Meal Plan'}
+          {aiLoading ? i18n.t('selfcare.generatingEllipsis') : i18n.t('selfcare.aiMealPlanBtn')}
         </button>
       </div>
 
@@ -1932,7 +1625,7 @@ Include exactly 5 meals: breakfast, morning snack, lunch, afternoon snack, dinne
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
             <div style={{ background: 'linear-gradient(135deg, var(--lavender-soft) 0%, var(--peach-soft) 100%)', borderRadius: 18, padding: '14px', border: '1px solid var(--lavender)' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--lavender)' }}>✨ Your AI Meal Plan</p>
+                <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--lavender)' }}>{i18n.t('selfcare.yourAiMealPlan')}</p>
                 <button onClick={() => setAiMeals(null)} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: 14 }}>✕</button>
               </div>
 
@@ -1952,7 +1645,7 @@ Include exactly 5 meals: breakfast, morning snack, lunch, afternoon snack, dinne
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2, flexShrink: 0 }}>
                           <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--lavender)' }}>🔥 {m.calories} kcal</span>
                           {m.grams && <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>⚖️ {m.grams}g</span>}
-                          <span style={{ fontSize: 10, color: 'var(--text-secondary)' }}>👨‍🍳 {isExp ? 'ascunde' : 'rețetă'}</span>
+                          <span style={{ fontSize: 10, color: 'var(--text-secondary)' }}>👨‍🍳 {isExp ? i18n.t('selfcare.recipeToggleHide') : i18n.t('selfcare.recipeToggleShow')}</span>
                         </div>
                       </button>
 
@@ -1965,15 +1658,15 @@ Include exactly 5 meals: breakfast, morning snack, lunch, afternoon snack, dinne
                               {/* Time badges */}
                               {(m.prepTime || m.cookTime) && (
                                 <div style={{ display: 'flex', gap: 8 }}>
-                                  {m.prepTime && <span style={{ fontSize: 11, fontWeight: 600, background: 'var(--lavender-soft)', color: 'var(--lavender)', borderRadius: 9999, padding: '3px 10px' }}>⏱ {m.prepTime} prep</span>}
-                                  {m.cookTime && <span style={{ fontSize: 11, fontWeight: 600, background: '#FFF0E8', color: '#C4784A', borderRadius: 9999, padding: '3px 10px' }}>🔥 {m.cookTime} cook</span>}
+                                  {m.prepTime && <span style={{ fontSize: 11, fontWeight: 600, background: 'var(--lavender-soft)', color: 'var(--lavender)', borderRadius: 9999, padding: '3px 10px' }}>⏱ {i18n.t('selfcare.prepSuffix', { time: m.prepTime })}</span>}
+                                  {m.cookTime && <span style={{ fontSize: 11, fontWeight: 600, background: '#FFF0E8', color: '#C4784A', borderRadius: 9999, padding: '3px 10px' }}>🔥 {i18n.t('selfcare.cookSuffix', { time: m.cookTime })}</span>}
                                 </div>
                               )}
 
                               {/* Ingredients chips */}
                               {m.ingredients && m.ingredients.length > 0 && (
                                 <div>
-                                  <p style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>Ingredients</p>
+                                  <p style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>{i18n.t('kitchen.ingredients')}</p>
                                   <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 5 }}>
                                     {m.ingredients.map((ing, j) => (
                                       <span key={j} style={{ fontSize: 11, background: '#EDF5ED', color: '#4A7A58', borderRadius: 20, padding: '3px 9px', fontWeight: 500 }}>{ing}</span>
@@ -1994,7 +1687,7 @@ Include exactly 5 meals: breakfast, morning snack, lunch, afternoon snack, dinne
                                       }}
                                       style={{ marginTop: 6, fontSize: 11, fontWeight: 600, color: '#4A7A58', background: 'none', border: 'none', padding: '2px 0', cursor: 'pointer', textDecoration: 'underline' }}
                                     >
-                                      🛒 Add to shopping list
+                                      {i18n.t('selfcare.addToShoppingListLink')}
                                     </button>
                                   )}
                                 </div>
@@ -2003,7 +1696,7 @@ Include exactly 5 meals: breakfast, morning snack, lunch, afternoon snack, dinne
                               {/* Steps */}
                               {m.steps && m.steps.length > 0 && (
                                 <div>
-                                  <p style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>How to prepare</p>
+                                  <p style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>{i18n.t('kitchen.howToPrepare')}</p>
                                   <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                                     {m.steps.map((step, j) => (
                                       <div key={j} style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
@@ -2030,13 +1723,13 @@ Include exactly 5 meals: breakfast, morning snack, lunch, afternoon snack, dinne
 
               {/* Total */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', background: 'var(--bg-card)', borderRadius: 12, marginBottom: 10 }}>
-                <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>Total</span>
-                <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--lavender)' }}>{aiTotal} kcal / {data.dailyGoal} kcal goal</span>
+                <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{i18n.t('selfcare.totalLabel')}</span>
+                <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--lavender)' }}>{i18n.t('selfcare.kcalOfGoal', { total: aiTotal, goal: data.dailyGoal })}</span>
               </div>
 
               <button onClick={addAllToToday}
                 style={{ width: '100%', height: 44, borderRadius: 14, border: 'none', background: 'linear-gradient(135deg, var(--sage) 0%, #4A7A58 100%)', color: '#fff', fontWeight: 700, fontSize: 14, cursor: 'pointer', boxShadow: '0 4px 12px rgba(74,122,88,0.3)' }}>
-                ➕ Add all to today's log
+                {i18n.t('selfcare.addAllToTodayLog')}
               </button>
             </div>
           </motion.div>
@@ -2078,12 +1771,13 @@ function WaterRing({ glasses, goal = 8 }: { glasses: number; goal?: number }) {
 }
 
 function WellnessChart({ logs }: { logs: WellnessLog[] }) {
+  const dateLocale = useDateFnsLocale();
   const days = Array.from({ length: 7 }, (_, i) => {
     const d = subDays(new Date(), 6 - i);
     const key = format(d, 'yyyy-MM-dd');
     const log = logs.find(l => l.date === key);
     return {
-      label: format(d, 'EEEEE'), // single letter
+      label: format(d, 'EEEEE', { locale: dateLocale }), // single letter
       mood: log?.mood ?? null,
       sleep: log?.sleepHours ?? null,
       water: log?.water ?? 0,
@@ -2102,7 +1796,7 @@ function WellnessChart({ logs }: { logs: WellnessLog[] }) {
   return (
     <div>
       <div style={{ display: 'flex', gap: 16, marginBottom: 8 }}>
-        {[['var(--lavender)', 'Mood'], ['var(--accent)', 'Sleep'], ['#8FA888', 'Water']].map(([color, label]) => (
+        {[['var(--lavender)', i18n.t('selfcare.legendMoodLabel')], ['var(--accent)', i18n.t('selfcare.legendSleepLabel')], ['#8FA888', i18n.t('selfcare.legendWaterLabel')]].map(([color, label]) => (
           <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
             <div style={{ width: 8, height: 8, borderRadius: '50%', background: color }} />
             <span style={{ fontSize: 10, color: 'var(--text-secondary)' }}>{label}</span>
@@ -2148,6 +1842,8 @@ const MOODS_W = [
 const SLEEP_OPTIONS = [4, 5, 6, 7, 8, 9];
 
 function WellnessTab() {
+  const { t } = useTranslation();
+  const dateLocale = useDateFnsLocale();
   const { user } = useAuth();
   const [data, setData] = useState<WellnessData | null>(null);
   const [mood, setMood] = useState<number | null>(null);
@@ -2218,7 +1914,7 @@ function WellnessTab() {
         background: 'linear-gradient(135deg, var(--lavender-soft) 0%, var(--peach-soft) 100%)',
         border: '1px solid var(--border)',
       }}>
-        <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--lavender)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>Today's affirmation</p>
+        <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--lavender)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>{t('selfcare.todaysAffirmation')}</p>
         <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)', lineHeight: 1.5 }}>{todayAffirmation}</p>
       </div>
 
@@ -2226,7 +1922,7 @@ function WellnessTab() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
         {/* Mood */}
         <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 20, padding: '12px 10px' }}>
-          <p style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8, textAlign: 'center' }}>Mood</p>
+          <p style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8, textAlign: 'center' }}>{t('selfcare.mood')}</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4, alignItems: 'center' }}>
             {MOODS_W.map(m => (
               <button key={m.value} onClick={() => saveToday({ mood: mood === m.value ? null : m.value })}
@@ -2244,7 +1940,7 @@ function WellnessTab() {
 
         {/* Sleep */}
         <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 20, padding: '12px 10px' }}>
-          <p style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8, textAlign: 'center' }}>Sleep</p>
+          <p style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8, textAlign: 'center' }}>{t('selfcare.sleep')}</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
             {SLEEP_OPTIONS.map(h => (
               <button key={h} onClick={() => saveToday({ sleep: sleep === h ? null : h })}
@@ -2262,7 +1958,7 @@ function WellnessTab() {
 
         {/* Water */}
         <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 20, padding: '12px 10px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <p style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6, textAlign: 'center' }}>Water</p>
+          <p style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6, textAlign: 'center' }}>{t('selfcare.waterShort')}</p>
           <WaterRing glasses={water} />
           <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
             <button onClick={() => saveToday({ water: Math.max(0, water - 1) })}
@@ -2275,17 +1971,17 @@ function WellnessTab() {
 
       {/* Weekly Chart */}
       <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 20, padding: '14px 16px' }}>
-        <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>Weekly Overview</p>
+        <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>{t('selfcare.weeklyOverview')}</p>
         <WellnessChart logs={last7Logs} />
       </div>
 
       {/* Journal */}
       <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 24, padding: '16px' }}>
-        <p style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>How are you feeling today?</p>
+        <p style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>{t('selfcare.moodQuestion')}</p>
         <textarea
           value={journalText}
           onChange={e => setJournalText(e.target.value)}
-          placeholder="Write freely — this is your private space..."
+          placeholder={t('selfcare.journalPlaceholder')}
           rows={3}
           style={{
             width: '100%', borderRadius: 14, padding: '10px 12px', fontSize: 13, lineHeight: 1.6,
@@ -2299,23 +1995,23 @@ function WellnessTab() {
             background: 'linear-gradient(135deg, var(--peach) 0%, #D4896A 100%)',
             color: '#fff', fontWeight: 600, fontSize: 14, opacity: journalText.trim() ? 1 : 0.5,
           }}>
-          Save entry
+          {t('selfcare.saveEntry')}
         </button>
 
         {/* Past entries */}
         {data && data.journal.length > 0 && (
           <div style={{ marginTop: 14, display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Recent entries</p>
+            <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t('selfcare.pastEntries')}</p>
             {data.journal.slice(0, 7).map(entry => (
               <div key={entry.id} style={{ background: 'var(--bg-primary)', borderRadius: 14, padding: '10px 12px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
                   <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-secondary)' }}>
-                    {format(new Date(entry.date), 'EEE, d MMM')}
+                    {format(new Date(entry.date), 'EEE, d MMM', { locale: dateLocale })}
                   </span>
                   <div style={{ display: 'flex', gap: 10 }}>
                     <button onClick={() => setExpandedEntry(expandedEntry === entry.id ? null : entry.id)}
                       style={{ fontSize: 11, color: 'var(--accent)', background: 'none', border: 'none', cursor: 'pointer' }}>
-                      {expandedEntry === entry.id ? 'less' : 'more'}
+                      {expandedEntry === entry.id ? t('selfcare.lessToggle') : t('selfcare.moreToggle')}
                     </button>
                     <button onClick={() => deleteJournal(entry.id)}
                       style={{ color: 'var(--text-secondary)', background: 'none', border: 'none', cursor: 'pointer' }}>

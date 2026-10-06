@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { format, parseISO } from 'date-fns';
 import { Badge } from '../ui/Badge';
 import type { Task } from '../../types';
+import { useDateFnsLocale } from '../../hooks/useDateFnsLocale';
 
 function downloadTaskICS(task: Task) {
   const dateStr = task.due_date?.replace(/-/g, '') ?? format(new Date(), 'yyyyMMdd');
@@ -57,6 +58,7 @@ const categoryColor: Record<Task['category'], string> = {
 
 export function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
   const { t } = useTranslation();
+  const dateLocale = useDateFnsLocale();
   const [removing, setRemoving] = useState(false);
 
   function handleDelete() {
@@ -101,11 +103,11 @@ export function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
               </Badge>
               {task.due_date && (
                 <span className="text-xs text-[var(--text-secondary)]">
-                  {format(parseISO(task.due_date), 'MMM d')}{task.time ? ` · ${task.time}` : ''}
+                  {format(parseISO(task.due_date), 'MMM d', { locale: dateLocale })}{task.time ? ` · ${task.time}` : ''}
                 </span>
               )}
               {task.has_reminder && (
-                <span style={{ fontSize: 11, color: 'var(--accent)' }} title="Reminder set">🔔</span>
+                <span style={{ fontSize: 11, color: 'var(--accent)' }} title={t('tasks.reminderSet')}>🔔</span>
               )}
             </div>
             {/* ICS export */}
@@ -118,7 +120,7 @@ export function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
                   border: 'none', borderRadius: 8, padding: '3px 8px', cursor: 'pointer',
                 }}
               >
-                📅 Add to Phone Calendar
+                📅 {t('tasks.addToPhoneCalendar')}
               </button>
             )}
           </div>

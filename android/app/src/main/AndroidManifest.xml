@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <application
         android:allowBackup="true"
@@ -30,6 +31,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="com.soldoutdigital.mommanager" android:host="auth-callback" />
+                <data android:scheme="com.soldoutdigital.mommanager" android:host="payment-callback" />
+                <data android:scheme="com.soldoutdigital.mommanager" android:host="payment-cancel" />
             </intent-filter>
 
         </activity>
@@ -48,4 +51,17 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Android 13+ requires this to post any notification, including local ones. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- @capacitor/local-notifications declares SCHEDULE_EXACT_ALARM in its own
+         manifest (used only when a notification is scheduled with
+         isExactNotification: true). We never schedule exact alarms — every
+         reminder goes through src/lib/notifications.ts with
+         isExactNotification: false + allowWhileIdle: true, since Google Play
+         restricts this permission to apps whose core function requires exact
+         timing. Removing it here overrides the plugin's manifest entry during
+         the Gradle manifest merge so the installed app never declares it. -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" tools:node="remove" />
 </manifest>

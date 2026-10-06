@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { User, Session } from '@supabase/supabase-js';
 import { Capacitor } from '@capacitor/core';
 import { SignInWithApple } from '@capacitor-community/apple-sign-in';
@@ -10,6 +11,10 @@ import type { Profile } from '../types';
 // Custom URL scheme (must match ios/App/App/Info.plist and android AndroidManifest.xml,
 // and be registered in Supabase Dashboard -> Auth -> URL Configuration -> Redirect URLs)
 const GOOGLE_NATIVE_REDIRECT = 'com.soldoutdigital.mommanager://auth-callback';
+
+// Stripe checkout return, on native only — see stripe-checkout edge function.
+const PAYMENT_CALLBACK_HOST = 'com.soldoutdigital.mommanager://payment-callback';
+const PAYMENT_CANCEL_HOST = 'com.soldoutdigital.mommanager://payment-cancel';
 
 function generateNonce(): string {
   const bytes = new Uint8Array(16);
@@ -123,7 +128,7 @@ interface AuthContextType {
   session: Session | null;
   profile: Profile | null;
   loading: boolean;
-  signInWithGoogle: () => Promise<void>;
+  signInWithGoogle: () => Promise<string | null>;
   signInWithApple: () => Promise<string | null>;
   signInWithAppleWeb: () => Promise<string | null>;
   signInWithEmail: (email: string, password: string) => Promise<string | null>;
@@ -141,6 +146,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 // ─────────────────────────────────────────────
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(DEV_BYPASS ? DEV_USER : null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(DEV_BYPASS ? DEV_PROFILE : null);
@@ -206,16 +212,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const listenerPromise = CapacitorApp.addListener('appUrlOpen', async ({ url }) => {
       console.log('[Auth] appUrlOpen received:', url);
       await Browser.close().catch(() => {});
-      if (!url.startsWith(GOOGLE_NATIVE_REDIRECT)) return;
 
-      const code = new URLSearchParams(url.split('?')[1] ?? '').get('code');
-      if (!code) {
-        console.error('[Auth] appUrlOpen: no code param in callback URL');
+      if (url.startsWith(PAYMENT_CALLBACK_HOST)) {
+        // Stripe checkout finished — hand off to SuccessScreen, which verifies
+        // the session server-side before granting anything.
+        const sessionId = new URLSearchParams(url.split('?')[1] ?? '').get('session_id');
+        if (sessionId) navigate(`/success?session_id=${sessionId}`);
         return;
       }
-      const { error } = await supabase.auth.exchangeCodeForSession(code);
-      if (error) console.error('[Auth] exchangeCodeForSession error:', error.message);
-      else console.log('[Auth] exchangeCodeForSession succeeded');
+
+      if (url.startsWith(PAYMENT_CANCEL_HOST)) {
+        // Underlying screen never navigated away — closing the browser above
+        // already returns the user to the paywall, nothing else to do.
+        return;
+      }
+
+      if (!url.startsWith(GOOGLE_NATIVE_REDIRECT)) return;
+
+      // Supabase returns either a PKCE `?code=` (query string) or an
+      // implicit-flow `#access_token=`/`refresh_token=` (URL fragment) —
+      // which one shows up here depends on the project's Auth flow type, so
+      // both must be handled rather than assuming PKCE.
+      const query = new URLSearchParams(url.split('?')[1]?.split('#')[0] ?? '');
+      const fragment = new URLSearchParams(url.split('#')[1] ?? '');
+      const code = query.get('code');
+      const accessToken = fragment.get('access_token');
+      const refreshToken = fragment.get('refresh_token');
+
+      if (code) {
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
+        if (error) console.error('[Auth] exchangeCodeForSession error:', error.message);
+        else console.log('[Auth] exchangeCodeForSession succeeded');
+      } else if (accessToken && refreshToken) {
+        const { error } = await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
+        if (error) console.error('[Auth] setSession error:', error.message);
+        else console.log('[Auth] setSession succeeded');
+      } else {
+        console.error('[Auth] appUrlOpen: no code or access_token in callback URL');
+      }
     });
 
     return () => {
@@ -224,7 +258,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // ── Sign in with Google ──────────────────────────────────────────────────
-  async function signInWithGoogle(): Promise<void> {
+  async function signInWithGoogle(): Promise<string | null> {
     if (Capacitor.isNativePlatform()) {
       console.log('[Auth] signInWithGoogle: native flow, opening in-app browser sheet');
       const { data, error } = await supabase.auth.signInWithOAuth({
@@ -233,17 +267,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
       if (error || !data?.url) {
         console.error('[Auth] signInWithGoogle native error:', error?.message);
-        return;
+        return error?.message ?? 'Could not start Google sign-in.';
       }
       await Browser.open({ url: data.url, presentationStyle: 'popover' });
-      return;
+      // Completion happens asynchronously via the appUrlOpen listener — do not navigate here.
+      return null;
     }
 
-    await supabase.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: window.location.origin },
     });
     // Browser redirects away — session picked up on return via onAuthStateChange
+    return error?.message ?? null;
   }
 
   // ── Sign in with Apple (native on iOS, web OAuth elsewhere) ──────────────

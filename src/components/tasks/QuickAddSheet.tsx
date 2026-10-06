@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Toggle } from '../ui/Toggle';
-import type { CalendarEvent } from '../../types';
+import { ReminderSelect } from '../ui/ReminderSelect';
+import { useNotificationSettings } from '../../hooks/useNotificationSettings';
+import { useNotificationPermissionGate } from '../../context/NotificationPermissionContext';
+import type { CalendarEvent, ReminderMinutes } from '../../types';
 
 interface QuickAddSheetProps {
   open: boolean;
@@ -11,24 +15,28 @@ interface QuickAddSheetProps {
   onSave: (event: CalendarEvent) => void;
 }
 
-const PLANS = [
-  { id: 'mom' as const,    label: 'Mom',    emoji: '🌸', color: 'var(--accent)' },
-  { id: 'kids' as const,   label: 'Kids',   emoji: '🧸', color: 'var(--lavender)' },
-  { id: 'family' as const, label: 'Family', emoji: '🏠', color: 'var(--sage)' },
-];
-
 const DOT_COLORS = ['#C4788A', '#C4B8D8', '#8FA888', '#E8B89A', '#C9A96E', '#6EA8C9'];
 
 export function QuickAddSheet({ open, date, userId, onClose, onSave }: QuickAddSheetProps) {
+  const { t } = useTranslation();
+  const PLANS = [
+    { id: 'mom' as const,    label: t('tasks.planMom'),    emoji: '🌸', color: 'var(--accent)' },
+    { id: 'kids' as const,   label: t('tasks.planKids'),   emoji: '🧸', color: 'var(--lavender)' },
+    { id: 'family' as const, label: t('tasks.planFamily'), emoji: '🏠', color: 'var(--sage)' },
+  ];
+  const { settings } = useNotificationSettings();
+  const { requestIfNeeded } = useNotificationPermissionGate();
   const [title, setTitle] = useState('');
   const [plan, setPlan] = useState<'mom' | 'kids' | 'family'>('mom');
   const [allDay, setAllDay] = useState(true);
   const [timeHH, setTimeHH] = useState('09');
   const [timeMM, setTimeMM] = useState('00');
   const [color, setColor] = useState(DOT_COLORS[0]);
+  const [reminder, setReminder] = useState<ReminderMinutes>(settings.defaultReminderMinutes);
 
-  function handleSave() {
+  async function handleSave() {
     if (!title.trim()) return;
+    const hasReminder = !allDay && reminder !== null;
     const event: CalendarEvent = {
       id: crypto.randomUUID(),
       user_id: userId,
@@ -38,8 +46,10 @@ export function QuickAddSheet({ open, date, userId, onClose, onSave }: QuickAddS
       allDay,
       plan,
       color,
+      reminder_minutes_before: allDay ? null : reminder,
       created_at: new Date().toISOString(),
     };
+    if (hasReminder) await requestIfNeeded();
     onSave(event);
     // Reset
     setTitle('');
@@ -47,6 +57,7 @@ export function QuickAddSheet({ open, date, userId, onClose, onSave }: QuickAddS
     setTimeHH('09');
     setTimeMM('00');
     setColor(DOT_COLORS[0]);
+    setReminder(settings.defaultReminderMinutes);
   }
 
   return (
@@ -87,7 +98,7 @@ export function QuickAddSheet({ open, date, userId, onClose, onSave }: QuickAddS
               autoFocus
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="What's happening?"
+              placeholder={t('tasks.eventTitlePlaceholder')}
               onKeyDown={(e) => e.key === 'Enter' && handleSave()}
               style={{
                 width: '100%',
@@ -123,11 +134,11 @@ export function QuickAddSheet({ open, date, userId, onClose, onSave }: QuickAddS
             {/* Date + All day row */}
             <div className="flex items-center justify-between mb-4 py-3" style={{ borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
               <div>
-                <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 2 }}>Date</p>
+                <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 2 }}>{t('tasks.date')}</p>
                 <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-primary)' }}>{date}</p>
               </div>
               <div className="flex items-center gap-2">
-                <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>All day</span>
+                <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{t('tasks.allDay')}</span>
                 <Toggle checked={allDay} onChange={() => setAllDay((v) => !v)} />
               </div>
             </div>
@@ -135,7 +146,7 @@ export function QuickAddSheet({ open, date, userId, onClose, onSave }: QuickAddS
             {/* Time picker */}
             {!allDay && (
               <div className="flex items-center gap-3 mb-4">
-                <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Time</span>
+                <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{t('tasks.time')}</span>
                 <div className="flex items-center gap-1">
                   <input
                     type="number" min="0" max="23" value={timeHH}
@@ -154,9 +165,16 @@ export function QuickAddSheet({ open, date, userId, onClose, onSave }: QuickAddS
               </div>
             )}
 
+            {/* Reminder */}
+            {!allDay && (
+              <div className="mb-4">
+                <ReminderSelect value={reminder} onChange={setReminder} />
+              </div>
+            )}
+
             {/* Color dots */}
             <div className="flex items-center gap-3 mb-5">
-              <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Color</span>
+              <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{t('tasks.color')}</span>
               <div className="flex gap-2">
                 {DOT_COLORS.map((c) => (
                   <button
@@ -181,14 +199,14 @@ export function QuickAddSheet({ open, date, userId, onClose, onSave }: QuickAddS
               className="w-full py-3.5 rounded-2xl font-semibold text-white mb-2 disabled:opacity-50"
               style={{ background: 'linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%)' }}
             >
-              Save
+              {t('tasks.save')}
             </button>
             <button
               onClick={onClose}
               className="w-full py-2.5 rounded-2xl text-sm font-medium"
               style={{ color: 'var(--text-secondary)' }}
             >
-              Cancel
+              {t('tasks.cancel')}
             </button>
           </motion.div>
         </>

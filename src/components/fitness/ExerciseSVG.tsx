@@ -1,4 +1,5 @@
 import React from 'react';
+import i18n from '../../i18n';
 
 const P = '#C4788A';
 const W = 'rgba(255,255,255,0.90)';
@@ -606,41 +607,49 @@ export type ExerciseInfo = {
   mistakes: string[];
 };
 
-export const EXERCISE_DATA: Record<string, ExerciseInfo> = {
-  'push-up': { component: PushupFigure, muscle: 'Chest & Triceps', mistakes: ['Hips sagging or raised too high', 'Elbows flaring out wide', 'Not reaching full range of motion'] },
-  'pushup': { component: PushupFigure, muscle: 'Chest & Triceps', mistakes: ['Hips sagging or raised too high', 'Elbows flaring out wide', 'Not reaching full range of motion'] },
-  'push up': { component: PushupFigure, muscle: 'Chest & Triceps', mistakes: ['Hips sagging or raised too high', 'Elbows flaring out wide', 'Not reaching full range of motion'] },
-  'squat': { component: SquatFigure, muscle: 'Quads & Glutes', mistakes: ['Knees caving inward', 'Heels rising off the floor', 'Rounding the lower back'] },
-  'lunge': { component: LungeFigure, muscle: 'Quads & Glutes', mistakes: ['Front knee going past the toes', 'Torso leaning too far forward', 'Losing balance — fix gaze straight ahead'] },
-  'plank': { component: PlankFigure, muscle: 'Core & Abs', mistakes: ['Hips too high or sagging', 'Holding breath instead of breathing', 'Head drooping down'] },
-  'deadlift': { component: DeadliftFigure, muscle: 'Hamstrings & Back', mistakes: ['Rounding the lower back', 'Bar drifting away from the body', 'Jerking the bar off the floor'] },
-  'bicep curl': { component: BicepCurlFigure, muscle: 'Biceps', mistakes: ['Swinging the body for momentum', 'Not controlling the lowering phase', 'Elbows moving away from torso'] },
-  'bicep': { component: BicepCurlFigure, muscle: 'Biceps', mistakes: ['Swinging the body for momentum', 'Not controlling the lowering phase', 'Elbows moving away from torso'] },
-  'curl': { component: BicepCurlFigure, muscle: 'Biceps', mistakes: ['Swinging the body for momentum', 'Not controlling the lowering phase', 'Elbows moving away from torso'] },
-  'shoulder press': { component: ShoulderPressFigure, muscle: 'Shoulders & Triceps', mistakes: ['Arching the lower back', 'Not fully extending elbows at top', 'Pressing forward instead of straight up'] },
-  'overhead press': { component: ShoulderPressFigure, muscle: 'Shoulders & Triceps', mistakes: ['Arching the lower back', 'Not fully extending elbows at top', 'Pressing forward instead of straight up'] },
-  'lat pulldown': { component: LatPulldownFigure, muscle: 'Lats & Upper Back', mistakes: ['Leaning back too far', 'Pulling with arms instead of lats', 'Raising shoulders toward ears'] },
-  'glute bridge': { component: GluteBridgeFigure, muscle: 'Glutes & Hamstrings', mistakes: ['Hyperextending the lower back at top', 'Feet too far or close to hips', 'Knees collapsing inward'] },
-  'hip thrust': { component: GluteBridgeFigure, muscle: 'Glutes & Hamstrings', mistakes: ['Hyperextending the lower back at top', 'Feet too far or close to hips', 'Knees collapsing inward'] },
-  'mountain climber': { component: MountainClimberFigure, muscle: 'Core & Cardio', mistakes: ['Hips bouncing up and down', 'Losing the flat back position', 'Moving too fast with poor control'] },
-  'burpee': { component: BurpeeFigure, muscle: 'Full Body', mistakes: ['Not lowering chest to floor on the way down', 'Jumping feet too wide', 'Landing with locked straight knees'] },
-  'tricep dip': { component: TricepDipFigure, muscle: 'Triceps', mistakes: ['Shrugging shoulders toward ears', 'Leaning too far forward', 'Elbows flaring outward'] },
-  'tricep': { component: TricepDipFigure, muscle: 'Triceps', mistakes: ['Shrugging shoulders toward ears', 'Leaning too far forward', 'Elbows flaring outward'] },
-  'dip': { component: TricepDipFigure, muscle: 'Triceps', mistakes: ['Shrugging shoulders toward ears', 'Leaning too far forward', 'Elbows flaring outward'] },
-  'calf raise': { component: CalfRaisesFigure, muscle: 'Calves', mistakes: ['No pause at the top', 'Rolling feet inward/outward', 'Using momentum instead of control'] },
-  'russian twist': { component: RussianTwistFigure, muscle: 'Obliques & Core', mistakes: ['Rounding the back', 'Rotating only the arms not the torso', 'Moving too fast without control'] },
-  'leg raise': { component: LegRaisesFigure, muscle: 'Abs & Hip Flexors', mistakes: ['Lower back arching off the floor', 'Legs dropping too fast', 'Using momentum instead of muscle control'] },
+const EXERCISE_KEYS: Record<string, { component: React.FC; key: string }> = {
+  'push-up': { component: PushupFigure, key: 'pushup' },
+  'pushup': { component: PushupFigure, key: 'pushup' },
+  'push up': { component: PushupFigure, key: 'pushup' },
+  'squat': { component: SquatFigure, key: 'squat' },
+  'lunge': { component: LungeFigure, key: 'lunge' },
+  'plank': { component: PlankFigure, key: 'plank' },
+  'deadlift': { component: DeadliftFigure, key: 'deadlift' },
+  'bicep curl': { component: BicepCurlFigure, key: 'bicepCurl' },
+  'bicep': { component: BicepCurlFigure, key: 'bicepCurl' },
+  'curl': { component: BicepCurlFigure, key: 'bicepCurl' },
+  'shoulder press': { component: ShoulderPressFigure, key: 'shoulderPress' },
+  'overhead press': { component: ShoulderPressFigure, key: 'shoulderPress' },
+  'lat pulldown': { component: LatPulldownFigure, key: 'latPulldown' },
+  'glute bridge': { component: GluteBridgeFigure, key: 'gluteBridge' },
+  'hip thrust': { component: GluteBridgeFigure, key: 'gluteBridge' },
+  'mountain climber': { component: MountainClimberFigure, key: 'mountainClimber' },
+  'burpee': { component: BurpeeFigure, key: 'burpee' },
+  'tricep dip': { component: TricepDipFigure, key: 'tricepDip' },
+  'tricep': { component: TricepDipFigure, key: 'tricepDip' },
+  'dip': { component: TricepDipFigure, key: 'tricepDip' },
+  'calf raise': { component: CalfRaisesFigure, key: 'calfRaise' },
+  'russian twist': { component: RussianTwistFigure, key: 'russianTwist' },
+  'leg raise': { component: LegRaisesFigure, key: 'legRaise' },
 };
+
+function translatedInfo(component: React.FC, key: string): ExerciseInfo {
+  return {
+    component,
+    muscle: i18n.t(`fitness.${key}.muscle`),
+    mistakes: i18n.t(`fitness.${key}.mistakes`, { returnObjects: true }) as string[],
+  };
+}
 
 // ── Keyword lookup ─────────────────────────────────────────────
 export function getExerciseInfo(name: string): ExerciseInfo {
   const lower = name.toLowerCase();
-  for (const [key, data] of Object.entries(EXERCISE_DATA)) {
-    if (lower.includes(key)) return data;
+  for (const [key, data] of Object.entries(EXERCISE_KEYS)) {
+    if (lower.includes(key)) return translatedInfo(data.component, data.key);
   }
   return {
-    component: () => <GenericFigure muscle={name} />,
-    muscle: 'Full Body',
-    mistakes: ['Using too much momentum', 'Not maintaining proper posture', 'Skipping the full range of motion'],
+    component: () => <GenericFigure muscle={i18n.t('fitness.generic.muscle')} />,
+    muscle: i18n.t('fitness.generic.muscle'),
+    mistakes: i18n.t('fitness.generic.mistakes', { returnObjects: true }) as string[],
   };
 }

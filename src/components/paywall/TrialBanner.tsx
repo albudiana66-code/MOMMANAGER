@@ -1,8 +1,10 @@
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useSubscription } from '../../hooks/useSubscription';
 import { motion } from 'framer-motion';
 
 export function TrialBanner() {
+  const { t } = useTranslation();
   const { isFreeTrial, trialDaysLeft, isFree, state } = useSubscription();
   const navigate = useNavigate();
 
@@ -27,8 +29,8 @@ export function TrialBanner() {
       >
         <p className="text-sm" style={{ color: isExpired ? 'var(--accent)' : 'var(--text-primary)' }}>
           {isExpired
-            ? 'Your trial has ended — Choose a plan'
-            : `🌸 ${trialDaysLeft} day${trialDaysLeft !== 1 ? 's' : ''} left in your free trial`}
+            ? t('trialBanner.trialEnded')
+            : t('trialBanner.daysLeft', { days: trialDaysLeft, plural: trialDaysLeft !== 1 ? 's' : '' })}
         </p>
         <button
           onClick={() => navigate('/paywall')}
@@ -40,7 +42,7 @@ export function TrialBanner() {
             fontWeight: 500,
           }}
         >
-          {isExpired ? 'Choose plan' : 'Upgrade'}
+          {isExpired ? t('trialBanner.choosePlan') : t('trialBanner.upgrade')}
         </button>
       </div>
     </motion.div>

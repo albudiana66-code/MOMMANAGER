@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
-  startOfMonth, endOfMonth, eachDayOfInterval,
+  startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, addDays,
   format, getDay, isSameDay, isSameMonth,
   addMonths, subMonths,
 } from 'date-fns';
 import type { Task, CalendarEvent } from '../../types';
+import { useDateFnsLocale } from '../../hooks/useDateFnsLocale';
 
 interface CalendarViewProps {
   events: CalendarEvent[];
@@ -12,8 +13,6 @@ interface CalendarViewProps {
   onDayClick: (date: string) => void;
   selectedDate?: string | null;
 }
-
-const DAY_HEADERS = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
 
 function mondayIndex(date: Date): number {
   return (getDay(date) + 6) % 7;
@@ -28,11 +27,16 @@ const PLAN_DOT: Record<string, string> = {
 export function CalendarView({ events, tasks = [], onDayClick, selectedDate }: CalendarViewProps) {
   const [current, setCurrent] = useState(new Date());
   const today = new Date();
+  const dateLocale = useDateFnsLocale();
 
   const monthStart = startOfMonth(current);
   const monthEnd = endOfMonth(current);
   const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
   const leadingBlanks = mondayIndex(monthStart);
+  const dayHeaders = useMemo(() => {
+    const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
+    return Array.from({ length: 7 }, (_, i) => format(addDays(weekStart, i), 'EEEEE', { locale: dateLocale }));
+  }, [dateLocale]);
 
   function dotsForDay(date: Date) {
     const dateStr = format(date, 'yyyy-MM-dd');
@@ -56,7 +60,7 @@ export function CalendarView({ events, tasks = [], onDayClick, selectedDate }: C
           </svg>
         </button>
         <span style={{ fontSize: 14, fontWeight: 600, letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
-          {format(current, 'MMMM yyyy')}
+          {format(current, 'MMMM yyyy', { locale: dateLocale })}
         </span>
         <button
           onClick={() => setCurrent((d) => addMonths(d, 1))}
@@ -71,8 +75,8 @@ export function CalendarView({ events, tasks = [], onDayClick, selectedDate }: C
 
       {/* Day headers */}
       <div className="grid grid-cols-7 mb-1">
-        {DAY_HEADERS.map((d) => (
-          <div key={d} className="text-center py-1" style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase' as const, color: 'var(--text-muted)' }}>
+        {dayHeaders.map((d, i) => (
+          <div key={i} className="text-center py-1" style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase' as const, color: 'var(--text-muted)' }}>
             {d}
           </div>
         ))}

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { useAIConsent } from '../../context/AIConsentContext';
 import { askAI } from '../../lib/anthropic';
@@ -33,6 +34,36 @@ const AGE_GROUPS = ['0-2 yrs', '3-5 yrs', '6-9 yrs', '10+ yrs'] as const;
 const CATEGORIES = ['Creative', 'Educational', 'Physical', 'Relaxing', 'Outdoor', 'Rainy day'] as const;
 const DURATIONS = ['15 min', '30 min', '1 hour', 'Afternoon'] as const;
 const MATERIALS_OPTIONS = ['None needed', 'Basic', 'Craft supplies', 'Kitchen'] as const;
+
+const AGE_GROUP_KEYS: Record<string, string> = {
+  '0-2 yrs': 'kidsActivities.ageGroups.toddler',
+  '3-5 yrs': 'kidsActivities.ageGroups.young',
+  '6-9 yrs': 'kidsActivities.ageGroups.middle',
+  '10+ yrs': 'kidsActivities.ageGroups.older',
+};
+
+const CATEGORY_KEYS: Record<string, string> = {
+  'Creative': 'kidsActivities.categories.creative',
+  'Educational': 'kidsActivities.categories.educational',
+  'Physical': 'kidsActivities.categories.physical',
+  'Relaxing': 'kidsActivities.categories.relaxing',
+  'Outdoor': 'kidsActivities.categories.outdoor',
+  'Rainy day': 'kidsActivities.categories.rainyDay',
+};
+
+const DURATION_KEYS: Record<string, string> = {
+  '15 min': 'kidsActivities.durations.min15',
+  '30 min': 'kidsActivities.durations.min30',
+  '1 hour': 'kidsActivities.durations.hour1',
+  'Afternoon': 'kidsActivities.durations.afternoon',
+};
+
+const MATERIALS_KEYS: Record<string, string> = {
+  'None needed': 'kidsActivities.materials.none',
+  'Basic': 'kidsActivities.materials.basic',
+  'Craft supplies': 'kidsActivities.materials.craft',
+  'Kitchen': 'kidsActivities.materials.kitchen',
+};
 
 type AgeGroup = typeof AGE_GROUPS[number];
 type Duration = typeof DURATIONS[number];
@@ -74,6 +105,7 @@ function ActivityCard({ activity, onSave, saved }: {
   onSave: () => void;
   saved: boolean;
 }) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const badge = difficultyBadge(activity.difficulty);
 
@@ -132,7 +164,7 @@ function ActivityCard({ activity, onSave, saved }: {
         onClick={() => setExpanded((v) => !v)}
         style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 10, display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500 }}
       >
-        Steps {expanded ? '▲' : '▼'}
+        {t('kidsActivities.stepsLabel')} {expanded ? '▲' : '▼'}
       </button>
 
       <AnimatePresence initial={false}>
@@ -176,7 +208,7 @@ function ActivityCard({ activity, onSave, saved }: {
             cursor: saved ? 'default' : 'pointer',
           }}
         >
-          {saved ? 'Saved ✓' : 'Save ♡'}
+          {saved ? t('kidsActivities.savedLabel') : t('kidsActivities.saveLabel')}
         </button>
       </div>
     </div>
@@ -184,6 +216,7 @@ function ActivityCard({ activity, onSave, saved }: {
 }
 
 export function ActivitiesGenerator() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { requestAiConsent } = useAIConsent();
 
@@ -245,12 +278,12 @@ Return ONLY a valid JSON array, no markdown, no explanation:
 
       const raw = await askAI(prompt, 1000);
       const match = raw.match(/\[[\s\S]*\]/);
-      if (!match) throw new Error('Invalid response format');
+      if (!match) throw new Error(t('kidsActivities.invalidResponse'));
       const clean = match[0].replace(/```json|```/g, '').trim();
       const parsed: GeneratedActivity[] = JSON.parse(clean);
       setActivities(parsed);
     } catch {
-      setError('Could not generate activities. Please try again.');
+      setError(t('kidsActivities.couldNotGenerate'));
     } finally {
       setLoading(false);
     }
@@ -283,47 +316,47 @@ Return ONLY a valid JSON array, no markdown, no explanation:
     <div>
       {/* Section label */}
       <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 12 }}>
-        🧸 Activity Ideas
+        🧸 {t('kidsActivities.activityIdeas')}
       </p>
 
       {/* Filter card */}
       <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 20, padding: 16, marginBottom: 16 }}>
         {/* Age group */}
-        <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8 }}>Age group</p>
+        <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8 }}>{t('kidsActivities.ageGroupLabel')}</p>
         <div className="flex gap-2 flex-wrap mb-4">
           {AGE_GROUPS.map((ag) => (
             <button key={ag} onClick={() => setAgeGroup(ag)} style={ageGroup === ag ? PILL_ON : PILL_OFF}>
-              {ag}
+              {t(AGE_GROUP_KEYS[ag])}
             </button>
           ))}
         </div>
 
         {/* Category (multi) */}
-        <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8 }}>Category <span style={{ fontWeight: 400, color: 'var(--text-muted)' }}>(pick any)</span></p>
+        <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8 }}>{t('kidsActivities.categoryLabel')} <span style={{ fontWeight: 400, color: 'var(--text-muted)' }}>({t('kidsActivities.pickAny')})</span></p>
         <div className="flex gap-2 flex-wrap mb-4">
           {CATEGORIES.map((cat) => (
             <button key={cat} onClick={() => toggleCategory(cat)} style={categories.includes(cat) ? PILL_ON : PILL_OFF}>
-              {cat}
+              {t(CATEGORY_KEYS[cat])}
             </button>
           ))}
         </div>
 
         {/* Duration */}
-        <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8 }}>Duration</p>
+        <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8 }}>{t('kidsActivities.durationLabel')}</p>
         <div className="flex gap-2 flex-wrap mb-4">
           {DURATIONS.map((d) => (
             <button key={d} onClick={() => setDuration(d)} style={duration === d ? PILL_ON : PILL_OFF}>
-              {d}
+              {t(DURATION_KEYS[d])}
             </button>
           ))}
         </div>
 
         {/* Materials */}
-        <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8 }}>Materials</p>
+        <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8 }}>{t('kidsActivities.materialsLabel')}</p>
         <div className="flex gap-2 flex-wrap mb-5">
           {MATERIALS_OPTIONS.map((m) => (
             <button key={m} onClick={() => setMaterials(m)} style={materials === m ? PILL_ON : PILL_OFF}>
-              {m}
+              {t(MATERIALS_KEYS[m])}
             </button>
           ))}
         </div>
@@ -346,10 +379,10 @@ Return ONLY a valid JSON array, no markdown, no explanation:
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{ animation: 'spin 0.8s linear infinite' }}>
                 <path d="M21 12a9 9 0 1 1-6.219-8.56" />
               </svg>
-              Finding activities...
+              {t('kidsActivities.generating')}
             </>
           ) : (
-            'Generate Activities ✨'
+            t('kidsActivities.generateBtn')
           )}
         </button>
 
@@ -384,7 +417,7 @@ Return ONLY a valid JSON array, no markdown, no explanation:
       {savedActivities.length > 0 && (
         <div style={{ marginTop: 8 }}>
           <div className="flex items-center gap-2 mb-3">
-            <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>Saved Activities</p>
+            <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{t('kidsActivities.savedActivitiesLabel')}</p>
             <span style={{
               fontSize: 11, fontWeight: 700, background: 'var(--lavender)', color: '#fff',
               borderRadius: 9999, padding: '2px 7px',

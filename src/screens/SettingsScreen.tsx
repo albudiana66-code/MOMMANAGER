@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 import { Layout } from '../components/layout/Layout';
@@ -9,11 +9,18 @@ import { Button } from '../components/ui/Button';
 import { Select } from '../components/ui/Select';
 import { Toggle } from '../components/ui/Toggle';
 import { Modal } from '../components/ui/Modal';
+import { TrialDisclosure } from '../components/paywall/TrialDisclosure';
+import { NotificationSettingsCard } from '../components/settings/NotificationSettingsCard';
 import { useAuth } from '../context/AuthContext';
 import { useApp } from '../context/AppContext';
 import { useSubscription } from '../hooks/useSubscription';
+import { useOfferingPricing } from '../hooks/useOfferingPricing';
 import { createPortalSession, PRICES } from '../lib/stripe';
-import { isNativeIOS, restoreApplePurchases } from '../lib/iap';
+import { priceLabel } from '../lib/pricing';
+import { classifyPurchaseError, isNativeMobile, restoreNativePurchases } from '../lib/iap';
+import type { IAPPlan } from '../lib/iap';
+import { supabase } from '../context/supabaseAuth';
+import { useDateFnsLocale } from '../hooks/useDateFnsLocale';
 import type { Currency, Language } from '../types';
 
 const LANGUAGES: { value: Language; label: string }[] = [
@@ -38,10 +45,16 @@ const CURRENCIES: { value: Currency; label: string }[] = [
 
 export function SettingsScreen() {
   const { t } = useTranslation();
+  const dateLocale = useDateFnsLocale();
   const navigate = useNavigate();
-  const { profile, signOut, deleteAccount, updateProfile } = useAuth();
+  const { profile, signOut, deleteAccount, updateProfile, refreshProfile } = useAuth();
   const { theme, toggleTheme, currency, setCurrency, language, setLanguage } = useApp();
-  const { plan, isFreeTrial, isStandard, isPro, trialDaysLeft } = useSubscription();
+  const { plan, isFreeTrial, isStandard, isPro, trialDaysLeft, trialEndDate } = useSubscription();
+  // Real, store-localised price for the active plan. On native, shows
+  // nothing (planPrice() returns null) until RevenueCat's own offering has
+  // loaded rather than ever falling back to the hardcoded Stripe display
+  // string — only the web build uses that fallback.
+  const { pricing: nativePricing, loading: nativePricingLoading } = useOfferingPricing();
   const [showSignOut, setShowSignOut] = useState(false);
   const [showDeleteAccount, setShowDeleteAccount] = useState(false);
   const [deleteError, setDeleteError] = useState('');
@@ -60,14 +73,24 @@ export function SettingsScreen() {
     setRestoreLoading(true);
     setRestoreMessage('');
     try {
-      if (isNativeIOS()) {
-        const restored = await restoreApplePurchases();
-        setRestoreMessage(restored ? 'Purchases restored successfully.' : 'No purchases found to restore.');
+      if (isNativeMobile()) {
+        const restoredPlan = await restoreNativePurchases();
+        if (restoredPlan) {
+          const { error } = await supabase.rpc('confirm_native_purchase', { p_plan: restoredPlan });
+          if (error) throw error;
+          await refreshProfile();
+        }
+        setRestoreMessage(restoredPlan ? t('settings.restoreSuccess') : t('settings.restoreNone'));
       } else {
-        setRestoreMessage('Restore is only available on iOS.');
+        setRestoreMessage(t('settings.restoreIOSOnly'));
       }
-    } catch {
-      setRestoreMessage('Could not restore purchases. Please try again.');
+    } catch (err: unknown) {
+      const kind = classifyPurchaseError(err);
+      setRestoreMessage(
+        kind === 'timeout' ? t('paywall.restoreTimedOut')
+        : kind === 'network' ? t('paywall.purchaseNetworkError')
+        : t('settings.restoreError')
+      );
     } finally {
       setRestoreLoading(false);
     }
@@ -94,24 +117,31 @@ export function SettingsScreen() {
     setPortalLoading(true);
     setPortalError('');
     try {
-      const url = await createPortalSession(customerId);
+      const url = await createPortalSession();
       window.location.href = url;
     } catch (e) {
-      setPortalError(e instanceof Error ? e.message : 'Could not open subscription portal.');
+      setPortalError(e instanceof Error ? e.message : t('settings.portalError'));
     } finally {
       setPortalLoading(false);
     }
   }
 
   function planDisplayName() {
-    if (plan === 'standard_monthly' || plan === 'standard_yearly') return 'Standard';
-    if (plan === 'pro_monthly' || plan === 'pro_yearly') return 'Pro';
+    if (plan === 'standard_monthly' || plan === 'standard_yearly') return t('paywall.standardName');
+    if (plan === 'pro_monthly' || plan === 'pro_yearly') return t('paywall.proName');
     return null;
   }
 
   function planPrice() {
-    if (plan && plan in PRICES) return PRICES[plan as keyof typeof PRICES].display;
-    return null;
+    if (!plan || !(plan in PRICES)) return null;
+    if (isNativeMobile()) {
+      // Never fall back to the hardcoded Stripe display string on native —
+      // show nothing (the caller renders a skeleton) until RevenueCat's
+      // own offering has actually loaded.
+      const native = nativePricing[plan as IAPPlan];
+      return native ? priceLabel(native) : null;
+    }
+    return PRICES[plan as keyof typeof PRICES].display;
   }
 
   return (
@@ -173,12 +203,12 @@ export function SettingsScreen() {
 
         {/* AI Assistant consent */}
         <Card>
-          <h3 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-3">AI Assistant</h3>
+          <h3 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-3">{t('settings.aiAssistantTitle')}</h3>
           <div className="flex items-center justify-between">
             <div className="pr-3">
-              <span className="text-sm text-[var(--text-primary)]">Allow AI features</span>
+              <span className="text-sm text-[var(--text-primary)]">{t('settings.allowAiFeatures')}</span>
               <p className="text-xs text-[var(--text-muted)] mt-0.5" style={{ lineHeight: 1.4 }}>
-                Sends your messages and relevant context to Anthropic to generate AI responses.
+                {t('settings.aiFeaturesDescription')}
               </p>
             </div>
             <Toggle
@@ -187,6 +217,9 @@ export function SettingsScreen() {
             />
           </div>
         </Card>
+
+        {/* Notifications */}
+        <NotificationSettingsCard />
 
         {/* Subscription */}
         <div style={{ borderRadius: 24, background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.30)', boxShadow: '0 1px 8px rgba(0,0,0,0.03)', overflow: 'hidden' }}>
@@ -198,14 +231,17 @@ export function SettingsScreen() {
               <div style={{ background: 'var(--accent-soft)', borderRadius: 16, padding: 16, marginBottom: 12 }}>
                 <div className="flex items-center gap-2 mb-2">
                   <span style={{ fontSize: 18 }}>🌸</span>
-                  <p style={{ fontWeight: 600, fontSize: 15, color: 'var(--text-primary)' }}>Free Trial</p>
+                  <p style={{ fontWeight: 600, fontSize: 15, color: 'var(--text-primary)' }}>{t('settings.freeTrialLabel')}</p>
                   <span style={{ marginLeft: 'auto', fontSize: 12, fontWeight: 600, color: 'var(--accent)', background: '#fff', borderRadius: 9999, padding: '2px 10px' }}>
-                    {trialDaysLeft}d left
+                    {trialDaysLeft}{t('settings.daysLeftSuffix')}
                   </span>
                 </div>
                 <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 12 }}>
-                  Unlock all Standard features — upgrade before your trial ends.
+                  {t('settings.unlockAllFeatures')}
                 </p>
+                <div style={{ marginBottom: 12 }}>
+                  <TrialDisclosure variant="free" trialEndDate={trialEndDate} />
+                </div>
                 <button
                   onClick={() => navigate('/paywall')}
                   style={{
@@ -214,7 +250,7 @@ export function SettingsScreen() {
                     color: '#fff', fontWeight: 600, fontSize: 14, cursor: 'pointer',
                   }}
                 >
-                  Upgrade Now
+                  {t('settings.upgradeNow')}
                 </button>
               </div>
             )}
@@ -232,10 +268,12 @@ export function SettingsScreen() {
                     background: isPro ? '#FFF8E6' : 'var(--accent-soft)',
                     color: isPro ? '#B8860B' : 'var(--accent)',
                   }}>
-                    {isPro ? '⭐ PRO' : 'STANDARD'}
+                    {isPro ? `⭐ ${t('paywall.proName').toUpperCase()}` : t('paywall.standardName').toUpperCase()}
                   </span>
                   <span style={{ marginLeft: 'auto', fontSize: 13, color: 'var(--text-secondary)' }}>
-                    {planPrice()}
+                    {isNativeMobile() && nativePricingLoading ? (
+                      <span aria-hidden className="animate-pulse" style={{ display: 'inline-block', width: 60, height: 12, borderRadius: 6, background: 'var(--border)', opacity: 0.5 }} />
+                    ) : planPrice()}
                   </span>
                 </div>
 
@@ -246,10 +284,38 @@ export function SettingsScreen() {
                       <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
                     </svg>
                     <p style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
-                      Renews {format(parseISO(profile.subscription_expires_at), 'MMM d, yyyy')}
+                      {t('settings.renewsOn', { date: format(parseISO(profile.subscription_expires_at), 'MMM d, yyyy', { locale: dateLocale }) })}
                     </p>
                   </div>
                 )}
+
+                {/* What's included */}
+                <div style={{ marginBottom: 12 }}>
+                  <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 8 }}>
+                    {t('settings.whatsIncluded')}
+                  </p>
+                  <div className="flex flex-col gap-1.5">
+                    {(t('paywall.standardFeatures', { returnObjects: true }) as string[]).map((f) => (
+                      <div key={f} className="flex items-start gap-2">
+                        <span style={{ color: 'var(--sage)', fontSize: 12, lineHeight: 1.6 }}>✓</span>
+                        <span style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{f}</span>
+                      </div>
+                    ))}
+                    {isPro && (
+                      <>
+                        <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--accent-gold)', marginTop: 4 }}>
+                          {t('settings.everythingInStandardPlus')}
+                        </p>
+                        {(t('paywall.proExtras', { returnObjects: true }) as string[]).map((f) => (
+                          <div key={f} className="flex items-start gap-2">
+                            <span style={{ color: 'var(--accent-gold)', fontSize: 12, lineHeight: 1.6 }}>✓</span>
+                            <span style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{f}</span>
+                          </div>
+                        ))}
+                      </>
+                    )}
+                  </div>
+                </div>
 
                 {/* Info note */}
                 <div style={{
@@ -261,7 +327,7 @@ export function SettingsScreen() {
                     <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
                   </svg>
                   <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                    Subscriptions purchased on web can be managed below. If you subscribed through the App Store, manage via <strong>iPhone Settings → Apple ID → Subscriptions</strong>.
+                    <Trans i18nKey="settings.managePortalNote" components={{ strong: <strong /> }} />
                   </p>
                 </div>
 
@@ -283,14 +349,14 @@ export function SettingsScreen() {
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{ animation: 'spin 0.8s linear infinite' }}>
                         <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
                       </svg>
-                      Opening portal...
+                      {t('settings.openingPortal')}
                     </>
                   ) : (
                     <>
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                       </svg>
-                      Manage Subscription
+                      {t('settings.manageSubscriptionBtn')}
                     </>
                   )}
                 </button>
@@ -300,7 +366,7 @@ export function SettingsScreen() {
                 )}
 
                 <p style={{ fontSize: 11, color: 'var(--text-muted)', textAlign: 'center', marginTop: 8 }}>
-                  Cancel anytime · Managed by Stripe
+                  {t('settings.cancelAnytimeManaged')}
                 </p>
               </div>
             )}
@@ -309,7 +375,7 @@ export function SettingsScreen() {
             {!isFreeTrial && !isStandard && !isPro && (
               <div style={{ marginBottom: 4 }}>
                 <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 12 }}>
-                  You don't have an active subscription.
+                  {t('settings.noActiveSubscription')}
                 </p>
                 <button
                   onClick={() => navigate('/paywall')}
@@ -319,7 +385,7 @@ export function SettingsScreen() {
                     color: '#fff', fontWeight: 600, fontSize: 14, cursor: 'pointer',
                   }}
                 >
-                  Choose a Plan
+                  {t('settings.choosePlanBtn')}
                 </button>
               </div>
             )}
@@ -329,13 +395,13 @@ export function SettingsScreen() {
 
         {/* Restore Purchases */}
         <Card>
-          <h3 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-3">Purchases</h3>
+          <h3 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-3">{t('settings.purchasesSection')}</h3>
           <button
             onClick={handleRestorePurchases}
             disabled={restoreLoading}
             className="flex items-center justify-between text-sm text-[var(--text-primary)] py-1 w-full disabled:opacity-50"
           >
-            <span>{restoreLoading ? 'Restoring…' : 'Restore Purchases'}</span>
+            <span>{restoreLoading ? t('settings.restoring') : t('settings.restorePurchases')}</span>
             <span className="text-[var(--text-secondary)]">›</span>
           </button>
           {restoreMessage ? (
@@ -345,13 +411,13 @@ export function SettingsScreen() {
 
         {/* Legal */}
         <Card>
-          <h3 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-3">Legal</h3>
+          <h3 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-3">{t('settings.legalSection')}</h3>
           <div className="flex flex-col gap-2">
             <button
               onClick={() => navigate('/terms')}
               className="flex items-center justify-between text-sm text-[var(--text-primary)] py-1"
             >
-              <span>Terms & Conditions</span>
+              <span>{t('settings.termsAndConditions')}</span>
               <span className="text-[var(--text-secondary)]">›</span>
             </button>
             <div className="border-t" style={{ borderColor: 'var(--border)' }} />
@@ -359,7 +425,7 @@ export function SettingsScreen() {
               onClick={() => navigate('/privacy')}
               className="flex items-center justify-between text-sm text-[var(--text-primary)] py-1"
             >
-              <span>Privacy Policy</span>
+              <span>{t('settings.privacyPolicy')}</span>
               <span className="text-[var(--text-secondary)]">›</span>
             </button>
           </div>
@@ -375,7 +441,7 @@ export function SettingsScreen() {
           onClick={() => setShowDeleteAccount(true)}
           style={{ color: 'var(--text-muted)', fontSize: 13, textAlign: 'center', paddingBottom: 8, background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
         >
-          Delete Account
+          {t('settings.deleteAccountLink')}
         </button>
       </div>
 
@@ -393,19 +459,19 @@ export function SettingsScreen() {
       <Modal open={showDeleteAccount} onClose={() => { setShowDeleteAccount(false); setDeleteError(''); }}>
         <div className="text-center flex flex-col items-center gap-4 py-2">
           <span className="text-4xl">⚠️</span>
-          <p className="text-[var(--text-primary)] font-semibold" style={{ fontSize: 17 }}>Delete Account</p>
+          <p className="text-[var(--text-primary)] font-semibold" style={{ fontSize: 17 }}>{t('settings.deleteAccountTitle')}</p>
           <p className="text-[var(--text-secondary)]" style={{ fontSize: 14, lineHeight: 1.5 }}>
-            This will permanently delete your account and all your data. This action cannot be undone.
+            {t('settings.deleteAccountWarning')}
           </p>
           {deleteError ? (
             <p style={{ fontSize: 13, color: '#ef4444' }}>{deleteError}</p>
           ) : null}
           <div className="flex gap-3 w-full">
             <Button variant="secondary" className="flex-1" onClick={() => { setShowDeleteAccount(false); setDeleteError(''); }}>
-              Cancel
+              {t('settings.cancel')}
             </Button>
             <Button variant="danger" className="flex-1" onClick={handleDeleteAccount} disabled={deleteLoading}>
-              {deleteLoading ? 'Deleting…' : 'Delete'}
+              {deleteLoading ? t('settings.deleting') : t('settings.delete')}
             </Button>
           </div>
         </div>

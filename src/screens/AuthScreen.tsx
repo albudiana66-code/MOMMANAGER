@@ -23,10 +23,14 @@ export function AuthScreen() {
   const isWeb = !Capacitor.isNativePlatform();
 
   async function handleGoogleLogin() {
+    setError(null);
     setGoogleLoading(true);
     try {
-      await signInWithGoogle();
-      navigate('/');
+      const err = await signInWithGoogle();
+      if (err) setError(err);
+      else if (isWeb) navigate('/');
+      // On native, the in-app browser sheet completes asynchronously —
+      // onAuthStateChange picks up the session and re-renders once signed in.
     } finally {
       setGoogleLoading(false);
     }
@@ -186,8 +190,12 @@ export function AuthScreen() {
                 <span style={{ color: 'rgba(255,255,255,0.7)' }}>{t('auth.signingIn')}</span>
               ) : (
                 <>
-                  <svg width="18" height="22" viewBox="0 0 814 1000" fill="currentColor">
-                    <path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105.9-57.4-155.5-127.4C46.7 790.7 0 663 0 541.8c0-207.5 135.4-317.3 269-317.3 70.1 0 128.4 46.4 172.5 46.4 42.8 0 109.6-50.1 185.4-50.1zm-13.4-170.8c31.1-36.9 53.1-88.1 53.1-139.3 0-7.1-.6-14.3-1.9-20.1-50.6 1.9-110.8 33.7-147.1 75.8-28.5 32.4-55.1 83.6-55.1 135.5 0 7.8 1.3 15.6 1.9 18.1 3.2.6 8.4 1.3 13.6 1.3 45.4 0 102.5-30.4 135.5-71.3z"/>
+                  {/* Apple HIG: "Match the height of the logo file to the
+                      height of the button. Don't crop the logo file and
+                      don't add vertical padding." — sized to fill nearly
+                      the full 50px button height, not a small padded icon. */}
+                  <svg width="30" height="30" viewBox="6 6 44 44" fill="currentColor">
+                    <path d="M28.2226562,20.3846154 C29.0546875,20.3846154 30.0976562,19.8048315 30.71875,19.0317864 C31.28125,18.3312142 31.6914062,17.352829 31.6914062,16.3744437 C31.6914062,16.2415766 31.6796875,16.1087095 31.65625,16 C30.7304687,16.0362365 29.6171875,16.640178 28.9492187,17.4494596 C28.421875,18.06548 27.9414062,19.0317864 27.9414062,20.0222505 C27.9414062,20.1671964 27.9648438,20.3121424 27.9765625,20.3604577 C28.0351562,20.3725366 28.1289062,20.3846154 28.2226562,20.3846154 Z M25.2929688,35 C26.4296875,35 26.9335938,34.214876 28.3515625,34.214876 C29.7929688,34.214876 30.109375,34.9758423 31.375,34.9758423 C32.6171875,34.9758423 33.4492188,33.792117 34.234375,32.6325493 C35.1132812,31.3038779 35.4765625,29.9993643 35.5,29.9389701 C35.4179688,29.9148125 33.0390625,28.9122695 33.0390625,26.0979021 C33.0390625,23.6579784 34.9140625,22.5588048 35.0195312,22.474253 C33.7773438,20.6382708 31.890625,20.5899555 31.375,20.5899555 C29.9804688,20.5899555 28.84375,21.4596313 28.1289062,21.4596313 C27.3554688,21.4596313 26.3359375,20.6382708 25.1289062,20.6382708 C22.8320312,20.6382708 20.5,22.5950413 20.5,26.2911634 C20.5,28.5861411 21.3671875,31.013986 22.4335938,32.5842339 C23.3476562,33.9129053 24.1445312,35 25.2929688,35 Z" />
                   </svg>
                   {t('auth.signInWithApple')}
                 </>
@@ -236,7 +244,7 @@ export function AuthScreen() {
           {/* Email + password inputs */}
           <input
             type="email"
-            placeholder="Email"
+            placeholder={t('auth.emailPlaceholder')}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full rounded-xl px-4 py-3 text-sm outline-none transition-colors"

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { differenceInYears, parseISO, format } from 'date-fns';
 import { Layout } from '../components/layout/Layout';
@@ -14,7 +15,13 @@ import { useAuth } from '../context/AuthContext';
 import { useAIConsent } from '../context/AIConsentContext';
 import { askAIStream } from '../lib/anthropic';
 import { ActivitiesGenerator } from '../components/kids/ActivitiesGenerator';
-import type { Kid, KidMilestone } from '../types';
+import { useDateFnsLocale } from '../hooks/useDateFnsLocale';
+import { loadActivities, saveActivities, type Activity } from '../lib/kidsStorage';
+import { useNotificationSettings } from '../hooks/useNotificationSettings';
+import { useNotificationPermissionGate } from '../context/NotificationPermissionContext';
+import { ReminderSelect } from '../components/ui/ReminderSelect';
+import type { NotificationDeepLinkState } from '../hooks/useNotificationDeepLink';
+import type { Kid, KidMilestone, ReminderMinutes } from '../types';
 
 const AVATARS = ['👧', '👦', '👶'];
 
@@ -29,8 +36,6 @@ const SCHOOL_DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'] as 
 
 type SchoolMealDay = { main: string; snack: string; drink: string; fruit: string };
 type SchoolMealPlan = Record<string, SchoolMealDay>;
-
-type Activity = { id: string; name: string; day: string; time: string; location: string };
 
 type LunchBoxItem = { id: string; name: string; checked: boolean };
 
@@ -58,21 +63,21 @@ type MealPlanDay = {
 
 type AgeMealPlan = { days: MealPlanDay[] };
 
-const AGE_GROUPS: { key: AgeGroup; emoji: string; label: string; prompt: string }[] = [
+const AGE_GROUPS: { key: AgeGroup; emoji: string; labelKey: string; prompt: string }[] = [
   {
-    key: 'baby', emoji: '👶', label: 'Baby (0-2y)',
+    key: 'baby', emoji: '👶', labelKey: 'kids.ageGroupBaby',
     prompt: 'Create a 7-day weaning meal plan for an 8-month-old baby. Include breakfast, lunch and dinner. Focus on age-appropriate foods, texture progression, allergen introduction. Include portion sizes in teaspoons/tablespoons. No salt, no sugar, no honey.',
   },
   {
-    key: 'toddler', emoji: '🧒', label: 'Toddler (2-4y)',
+    key: 'toddler', emoji: '🧒', labelKey: 'kids.ageGroupToddlerFull',
     prompt: 'Create a varied 7-day meal plan for a 2-4 year old toddler. Include breakfast, snack, lunch, snack, dinner. Focus on nutrients, finger foods, family meals adapted. Calories approx 1000-1400/day.',
   },
   {
-    key: 'preschool', emoji: '🎨', label: 'Pre-School (4-7y)',
+    key: 'preschool', emoji: '🎨', labelKey: 'kids.ageGroupPreschool',
     prompt: 'Create a 7-day meal plan for a 4-7 year old child. Include breakfast, packed lunch ideas, dinner, snacks. Approx 1200-1600 kcal/day. Varied, nutritious, child-friendly.',
   },
   {
-    key: 'school', emoji: '🏫', label: 'School Age (7-10y)',
+    key: 'school', emoji: '🏫', labelKey: 'kids.ageGroupSchool',
     prompt: 'Create a 7-day meal plan for a 7-10 year old. Include breakfast, school packed lunch, after-school snack, dinner. Approx 1400-1800 kcal/day.',
   },
 ];
@@ -105,12 +110,6 @@ function saveMilestonesLocal(kidId: string, ms: KidMilestone[]) {
 function loadSchoolMeals(kidId: string): SchoolMealPlan {
   try { return JSON.parse(localStorage.getItem(`mm_school_meals_${kidId}`) || 'null') || {}; } catch { return {}; }
 }
-function loadActivities(kidId: string): Activity[] {
-  try { return JSON.parse(localStorage.getItem(`mm_activities_${kidId}`) || 'null') || []; } catch { return []; }
-}
-function saveActivities(kidId: string, acts: Activity[]) {
-  localStorage.setItem(`mm_activities_${kidId}`, JSON.stringify(acts));
-}
 function loadLunchBox(kidId: string, date: string): LunchBoxItem[] {
   try { return JSON.parse(localStorage.getItem(`mm_lunchbox_${kidId}_${date}`) || '[]'); } catch { return []; }
 }
@@ -126,6 +125,7 @@ function MilestonesTab({ kid: _kid, milestones, onAddMilestone, onDeleteMileston
   onDeleteMilestone: (id: string) => void;
 }) {
   const { t } = useTranslation();
+  const dateLocale = useDateFnsLocale();
 
   return (
     <div>
@@ -144,7 +144,7 @@ function MilestonesTab({ kid: _kid, milestones, onAddMilestone, onDeleteMileston
               <p className="text-sm font-medium text-[var(--text-primary)]">{m.title}</p>
               <div className="flex items-center gap-2 mt-1">
                 <Badge color={milestoneColors[m.category]}>{t(`kids.${m.category}`)}</Badge>
-                <span className="text-xs text-[var(--text-secondary)]">{format(parseISO(m.date), 'MMM d, yyyy')}</span>
+                <span className="text-xs text-[var(--text-secondary)]">{format(parseISO(m.date), 'MMM d, yyyy', { locale: dateLocale })}</span>
               </div>
               {m.notes && <p className="text-xs text-[var(--text-secondary)] mt-1">{m.notes}</p>}
             </div>
@@ -246,20 +246,25 @@ const WEEK_DAYS_ALL = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', '
 
 function ActivitiesTab({ kid }: { kid: Kid }) {
   const { t } = useTranslation();
+  const { resync } = useNotificationSettings();
+  const { requestIfNeeded } = useNotificationPermissionGate();
   const [activities, setActivities] = useState<Activity[]>(() => loadActivities(kid.id));
   const [showForm, setShowForm] = useState(false);
   const [actName, setActName] = useState('');
-  const [actDay, setActDay] = useState('monday');
+  const [actDay, setActDay] = useState<Activity['day']>('monday');
   const [actTime, setActTime] = useState('');
   const [actLocation, setActLocation] = useState('');
+  const [actReminder, setActReminder] = useState<ReminderMinutes>(30);
 
-  function addActivity() {
+  async function addActivity() {
     if (!actName.trim()) return;
-    const newAct: Activity = { id: crypto.randomUUID(), name: actName.trim(), day: actDay, time: actTime, location: actLocation.trim() };
+    const newAct: Activity = { id: crypto.randomUUID(), name: actName.trim(), day: actDay, time: actTime, location: actLocation.trim(), reminder_minutes_before: actReminder };
     const updated = [...activities, newAct];
     setActivities(updated);
     saveActivities(kid.id, updated);
-    setActName(''); setActTime(''); setActLocation('');
+    if (actTime && actReminder !== null) await requestIfNeeded();
+    resync();
+    setActName(''); setActTime(''); setActLocation(''); setActReminder(30);
     setShowForm(false);
   }
 
@@ -267,6 +272,7 @@ function ActivitiesTab({ kid }: { kid: Kid }) {
     const updated = activities.filter((a) => a.id !== id);
     setActivities(updated);
     saveActivities(kid.id, updated);
+    resync();
   }
 
   const dayOptions = WEEK_DAYS_ALL.map((d) => ({ value: d, label: t(`kitchen.${d}`) }));
@@ -305,10 +311,11 @@ function ActivitiesTab({ kid }: { kid: Kid }) {
       )}
       <Modal open={showForm} onClose={() => setShowForm(false)} title={t('kids.addActivity')}>
         <div className="flex flex-col gap-4">
-          <Input label={t('kids.activityName')} value={actName} onChange={(e) => setActName(e.target.value)} placeholder="Swimming" />
-          <Select label={t('kids.day')} value={actDay} options={dayOptions} onChange={(e) => setActDay(e.target.value)} />
+          <Input label={t('kids.activityName')} value={actName} onChange={(e) => setActName(e.target.value)} placeholder={t('kids.swimmingPlaceholder')} />
+          <Select label={t('kids.day')} value={actDay} options={dayOptions} onChange={(e) => setActDay(e.target.value as Activity['day'])} />
           <Input label={t('kids.time')} type="time" value={actTime} onChange={(e) => setActTime(e.target.value)} />
-          <Input label={t('kids.location')} value={actLocation} onChange={(e) => setActLocation(e.target.value)} placeholder="Sports Centre" />
+          <Input label={t('kids.location')} value={actLocation} onChange={(e) => setActLocation(e.target.value)} placeholder={t('kids.sportsCentrePlaceholder')} />
+          <ReminderSelect value={actReminder} onChange={setActReminder} />
           <div className="flex gap-3">
             <Button variant="secondary" className="flex-1" onClick={() => setShowForm(false)}>{t('kids.cancel')}</Button>
             <Button className="flex-1" onClick={addActivity}>{t('kids.save')}</Button>
@@ -320,9 +327,10 @@ function ActivitiesTab({ kid }: { kid: Kid }) {
 }
 
 // ---------- LUNCH BOX TAB ----------
-const LUNCH_PRESETS = ['🥪 Sandwich', '🍎 Fruit', '💧 Water', '🍪 Snack', '🥕 Veggies', '🧃 Juice', '🧀 Cheese', '🥜 Nuts'];
-
 function LunchBoxTab({ kid }: { kid: Kid }) {
+  const { t } = useTranslation();
+  const dateLocale = useDateFnsLocale();
+  const LUNCH_PRESETS = t('kids.lunchPresets', { returnObjects: true }) as string[];
   const today = format(new Date(), 'yyyy-MM-dd');
   const [items, setItems] = useState<LunchBoxItem[]>(() => loadLunchBox(kid.id, today));
   const [custom, setCustom] = useState('');
@@ -356,9 +364,9 @@ function LunchBoxTab({ kid }: { kid: Kid }) {
   return (
     <div>
       <div className="flex items-center justify-between mb-3">
-        <h4 className="text-sm font-semibold text-[var(--text-secondary)]">🍱 Lunch Box</h4>
+        <h4 className="text-sm font-semibold text-[var(--text-secondary)]">{t('kids.lunchBoxTitle')}</h4>
         <span className="text-xs text-[var(--text-secondary)]">
-          {format(new Date(), 'MMM d')} · {packed}/{items.length} packed
+          {format(new Date(), 'MMM d', { locale: dateLocale })} · {t('kids.itemsPacked', { packed, total: items.length })}
         </span>
       </div>
 
@@ -383,7 +391,7 @@ function LunchBoxTab({ kid }: { kid: Kid }) {
           value={custom}
           onChange={(e) => setCustom(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && addCustom()}
-          placeholder="Add custom item..."
+          placeholder={t('kids.addCustomItemPlaceholder')}
           className="flex-1 rounded-xl px-3 py-2 text-sm placeholder:text-[var(--text-secondary)] outline-none"
           style={{ background: 'var(--bg-primary)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
         />
@@ -398,7 +406,7 @@ function LunchBoxTab({ kid }: { kid: Kid }) {
 
       {/* Items */}
       {items.length === 0 ? (
-        <p className="text-sm text-[var(--text-secondary)] text-center py-4">Add items from presets above</p>
+        <p className="text-sm text-[var(--text-secondary)] text-center py-4">{t('kids.addItemsFromPresets')}</p>
       ) : (
         items.map((item) => (
           <div key={item.id} className="flex items-center gap-3 bg-[var(--bg-card)] rounded-2xl px-4 py-3 mb-2">
@@ -457,25 +465,25 @@ Format as JSON with this exact structure (include ALL fields for each meal):
       "day": "Monday",
       "breakfast": {
         "meal": "...",
-        "description": "...",
+        "description": "max 8 words",
         "prepTime": "5 min",
         "ingredients": ["100g oats", "200ml whole milk"],
-        "steps": ["Step 1...", "Step 2...", "Step 3..."]${isBaby ? ',\n        "textureTip": "Blend until smooth"' : ''}
+        "steps": ["Step 1 (max 8 words)", "Step 2 (max 8 words)"]${isBaby ? ',\n        "textureTip": "Blend until smooth"' : ''}
       },
-      "lunch": { "meal": "...", "description": "...", "prepTime": "...", "ingredients": ["..."], "steps": ["..."]${isBaby ? ', "textureTip": "..."' : ''} },
-      "dinner": { "meal": "...", "description": "...", "prepTime": "...", "ingredients": ["..."], "steps": ["..."]${isBaby ? ', "textureTip": "..."' : ''} },
+      "lunch": { "meal": "...", "description": "max 8 words", "prepTime": "...", "ingredients": ["max 4 items"], "steps": ["max 2 steps, max 8 words each"]${isBaby ? ', "textureTip": "..."' : ''} },
+      "dinner": { "meal": "...", "description": "max 8 words", "prepTime": "...", "ingredients": ["max 4 items"], "steps": ["max 2 steps, max 8 words each"]${isBaby ? ', "textureTip": "..."' : ''} },
       "snacks": ["...", "..."]
     }
   ]
 }
-Include all 7 days (Monday to Sunday). Use UK measurements (grams, ml). Respond ONLY with valid JSON, no extra text.`;
+Include all 7 days (Monday to Sunday). Use UK measurements (grams, ml). Keep every text field extremely short and concise as specified — this is critical to keep the response short. Respond ONLY with valid JSON, no extra text.`;
 
     const MAX_RETRIES = 3;
     let lastError = '';
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
       try {
         let raw = '';
-        await askAIStream(prompt, 4096, i18n.language, (chunk) => { raw += chunk; });
+        await askAIStream(prompt, 8000, i18n.language, (chunk) => { raw += chunk; });
         raw = raw.replace(/```json|```/g, '').trim();
         const start = raw.indexOf('{');
         const end = raw.lastIndexOf('}');
@@ -488,13 +496,13 @@ Include all 7 days (Monday to Sunday). Use UK measurements (grams, ml). Respond 
             return;
           }
         }
-        lastError = 'Could not parse meal plan.';
+        lastError = i18n.t('kids.couldNotParseMealPlan');
       } catch (e) {
-        lastError = e instanceof Error ? e.message : 'Could not generate meal plan.';
+        lastError = e instanceof Error ? e.message : i18n.t('kids.couldNotGenerateMealPlan');
         if (attempt < MAX_RETRIES) await new Promise(r => setTimeout(r, 1000 * attempt));
       }
     }
-    setAiError(`${lastError} Please try again.`);
+    setAiError(`${lastError} ${i18n.t('kids.pleaseTryAgain')}`);
     setGenerating(false);
   }
 
@@ -525,7 +533,7 @@ Include all 7 days (Monday to Sunday). Use UK measurements (grams, ml). Respond 
               border: ageGroup === g.key ? 'none' : '1px solid var(--border)',
             }}
           >
-            {g.emoji} {g.label}
+            {g.emoji} {i18n.t(g.labelKey)}
           </button>
         ))}
       </div>
@@ -534,9 +542,9 @@ Include all 7 days (Monday to Sunday). Use UK measurements (grams, ml). Respond 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <div style={{ background: 'var(--accent-soft)', borderRadius: 12, padding: '6px 12px' }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent)' }}>📅 Week {weekNum} of 4</span>
+            <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent)' }}>{i18n.t('kids.weekOfFour', { week: weekNum })}</span>
           </div>
-          <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>Resets Mondays</span>
+          <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{i18n.t('kids.resetsMondays')}</span>
         </div>
         <button
           onClick={generatePlan}
@@ -548,7 +556,7 @@ Include all 7 days (Monday to Sunday). Use UK measurements (grams, ml). Respond 
             border: 'none', opacity: generating ? 0.7 : 1,
           }}
         >
-          {generating ? '⏳ Generating...' : '🔄 New Menu'}
+          {generating ? i18n.t('kids.generatingEllipsis') : i18n.t('kids.newMenu')}
         </button>
       </div>
 
@@ -561,8 +569,8 @@ Include all 7 days (Monday to Sunday). Use UK measurements (grams, ml). Respond 
       {!plan ? (
         <div style={{ border: '2px dashed var(--border)', borderRadius: 20, padding: '32px 16px', textAlign: 'center', color: 'var(--text-secondary)' }}>
           <div style={{ fontSize: 48, marginBottom: 12 }}>{selectedGroup.emoji}</div>
-          <p style={{ fontWeight: 600, marginBottom: 4, color: 'var(--text-primary)' }}>{selectedGroup.label}</p>
-          <p style={{ fontSize: 13, marginBottom: 20 }}>Tap Generate to create a personalised 7-day meal plan</p>
+          <p style={{ fontWeight: 600, marginBottom: 4, color: 'var(--text-primary)' }}>{i18n.t(selectedGroup.labelKey)}</p>
+          <p style={{ fontSize: 13, marginBottom: 20 }}>{i18n.t('kids.tapGenerateMealPlan')}</p>
           <button
             onClick={generatePlan}
             disabled={generating}
@@ -572,7 +580,7 @@ Include all 7 days (Monday to Sunday). Use UK measurements (grams, ml). Respond 
               color: '#fff', border: 'none',
             }}
           >
-            {generating ? '⏳ Generating...' : '🔄 Generate Meal Plan'}
+            {generating ? i18n.t('kids.generatingEllipsis') : i18n.t('kids.generateMealPlanBtn')}
           </button>
         </div>
       ) : (
@@ -607,7 +615,7 @@ Include all 7 days (Monday to Sunday). Use UK measurements (grams, ml). Respond 
                                 <span style={{ fontSize: 16, flexShrink: 0 }}>{MEAL_EMOJIS[mealKey]}</span>
                                 <div style={{ flex: 1, minWidth: 0 }}>
                                   <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 2 }}>
-                                    <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase' as const, color: 'var(--text-secondary)', letterSpacing: '0.05em' }}>{mealKey}</span>
+                                    <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase' as const, color: 'var(--text-secondary)', letterSpacing: '0.05em' }}>{i18n.t(`kitchen.${mealKey}`)}</span>
                                     {m.prepTime && <span style={{ fontSize: 10, color: 'var(--accent)', fontWeight: 600 }}>· ⏱ {m.prepTime}</span>}
                                   </div>
                                   <p style={{ fontWeight: 600, fontSize: 13, color: 'var(--text-primary)' }}>{m.meal}</p>
@@ -627,14 +635,14 @@ Include all 7 days (Monday to Sunday). Use UK measurements (grams, ml). Respond 
                                       {/* Texture tip for babies */}
                                       {m.textureTip && (
                                         <div style={{ background: '#FFF8E6', borderRadius: 10, padding: '7px 10px' }}>
-                                          <p style={{ fontSize: 11, color: '#B8860B', fontWeight: 600 }}>👶 Texture: {m.textureTip}</p>
+                                          <p style={{ fontSize: 11, color: '#B8860B', fontWeight: 600 }}>👶 {i18n.t('kids.textureLabel')}: {m.textureTip}</p>
                                         </div>
                                       )}
 
                                       {/* Ingredients */}
                                       {m.ingredients && m.ingredients.length > 0 && (
                                         <div>
-                                          <p style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase' as const, letterSpacing: '0.05em', marginBottom: 5 }}>Ingredients</p>
+                                          <p style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase' as const, letterSpacing: '0.05em', marginBottom: 5 }}>{i18n.t('kids.ingredients')}</p>
                                           <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 5 }}>
                                             {m.ingredients.map((ing, j) => (
                                               <span key={j} style={{ fontSize: 11, background: '#EDF5ED', color: '#4A7A58', borderRadius: 20, padding: '3px 9px', fontWeight: 500 }}>{ing}</span>
@@ -646,7 +654,7 @@ Include all 7 days (Monday to Sunday). Use UK measurements (grams, ml). Respond 
                                       {/* Steps */}
                                       {m.steps && m.steps.length > 0 && (
                                         <div>
-                                          <p style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase' as const, letterSpacing: '0.05em', marginBottom: 5 }}>How to prepare</p>
+                                          <p style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase' as const, letterSpacing: '0.05em', marginBottom: 5 }}>{i18n.t('kids.howToPrepare')}</p>
                                           <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
                                             {m.steps.map((step, j) => (
                                               <div key={j} style={{ display: 'flex', gap: 7, alignItems: 'flex-start' }}>
@@ -673,7 +681,7 @@ Include all 7 days (Monday to Sunday). Use UK measurements (grams, ml). Respond 
                           <div style={{ background: 'var(--bg-primary)', borderRadius: 14, padding: '10px 12px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
                               <span style={{ fontSize: 16 }}>🍎</span>
-                              <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase' as const, color: 'var(--text-secondary)', letterSpacing: '0.05em' }}>Snacks</span>
+                              <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase' as const, color: 'var(--text-secondary)', letterSpacing: '0.05em' }}>{i18n.t('kids.snacks')}</span>
                             </div>
                             <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 6 }}>
                               {dayPlan.snacks.map((s, i) => (
@@ -699,6 +707,7 @@ Include all 7 days (Monday to Sunday). Use UK measurements (grams, ml). Respond 
 export function KidsScreen() {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const location = useLocation();
   const [kids, setKids] = useState<Kid[]>([]);
   const [milestones, setMilestones] = useState<Record<string, KidMilestone[]>>({});
   const [selectedKid, setSelectedKid] = useState<Kid | null>(null);
@@ -714,8 +723,12 @@ export function KidsScreen() {
 
   const [mTitle, setMTitle] = useState('');
   const [mDate, setMDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [mTime, setMTime] = useState('');
   const [mCategory, setMCategory] = useState<KidMilestone['category']>('activity');
   const [mNotes, setMNotes] = useState('');
+  const [mReminder, setMReminder] = useState<ReminderMinutes>(30);
+  const { resync } = useNotificationSettings();
+  const { requestIfNeeded } = useNotificationPermissionGate();
 
   function loadMilestonesForKid(kidId: string) {
     setMilestones((prev) => {
@@ -728,10 +741,29 @@ export function KidsScreen() {
     if (!user) return;
     const loaded = loadKids(user.id);
     setKids(loaded);
+
+    // Opened from a tapped notification — find which kid owns the
+    // milestone/activity and jump straight to it.
+    const deepLink = location.state as NotificationDeepLinkState | null;
+    if (deepLink?.notifType === 'milestone' || deepLink?.notifType === 'activity') {
+      for (const kid of loaded) {
+        const owns = deepLink.notifType === 'milestone'
+          ? loadMilestonesLocal(kid.id).some((m) => m.id === deepLink.notifItemId)
+          : loadActivities(kid.id).some((a) => a.id === deepLink.notifItemId);
+        if (owns) {
+          setSelectedKid(kid);
+          setMilestones((prev) => ({ ...prev, [kid.id]: loadMilestonesLocal(kid.id) }));
+          setKidTab(deepLink.notifType === 'milestone' ? 'milestones' : 'activities');
+          return;
+        }
+      }
+    }
+
     if (loaded.length > 0) {
       setSelectedKid(loaded[0]);
       setMilestones((prev) => ({ ...prev, [loaded[0].id]: loadMilestonesLocal(loaded[0].id) }));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   function openKidForm(kid?: Kid) {
@@ -769,13 +801,19 @@ export function KidsScreen() {
     if (selectedKid?.id === id) setSelectedKid(updated[0] ?? null);
   }
 
-  function saveMilestone() {
+  async function saveMilestone() {
     if (!selectedKid || !mTitle.trim()) return;
-    const newM: KidMilestone = { id: crypto.randomUUID(), kid_id: selectedKid.id, title: mTitle.trim(), date: mDate, category: mCategory, notes: mNotes.trim() || undefined };
+    const newM: KidMilestone = {
+      id: crypto.randomUUID(), kid_id: selectedKid.id, title: mTitle.trim(), date: mDate,
+      time: mTime || undefined, category: mCategory, notes: mNotes.trim() || undefined,
+      reminder_minutes_before: mTime ? mReminder : null,
+    };
     const updated = [newM, ...(milestones[selectedKid.id] || [])];
     setMilestones((prev) => ({ ...prev, [selectedKid.id]: updated }));
     saveMilestonesLocal(selectedKid.id, updated);
-    setMTitle(''); setMNotes('');
+    if (mTime && mReminder !== null) await requestIfNeeded();
+    resync();
+    setMTitle(''); setMTime(''); setMNotes(''); setMReminder(30);
     setShowMilestoneForm(false);
   }
 
@@ -783,6 +821,7 @@ export function KidsScreen() {
     const updated = (milestones[kidId] || []).filter((m) => m.id !== milestoneId);
     setMilestones((prev) => ({ ...prev, [kidId]: updated }));
     saveMilestonesLocal(kidId, updated);
+    resync();
   }
 
   const milestoneOptions = [
@@ -793,12 +832,12 @@ export function KidsScreen() {
   ];
 
   const kidTabs: { key: KidTab; label: string }[] = [
-    { key: 'activityGen', label: 'Activity Ideas' },
-    { key: 'mealPlans', label: '🍽️ Meal Plans' },
+    { key: 'activityGen', label: t('kids.activityIdeasTab') },
+    { key: 'mealPlans', label: t('kids.mealPlansTab') },
     { key: 'schoolMeals', label: t('kids.schoolMealsTab') },
     { key: 'activities', label: t('kids.activitiesTab') },
     { key: 'milestones', label: t('kids.milestonesTab') },
-    { key: 'lunchbox', label: 'Lunch Box' },
+    { key: 'lunchbox', label: t('kids.lunchboxTab') },
   ];
 
   return (
@@ -948,9 +987,13 @@ export function KidsScreen() {
       <Modal open={showMilestoneForm} onClose={() => setShowMilestoneForm(false)} title={t('kids.addMilestone')}>
         <div className="flex flex-col gap-4">
           <Input label={t('kids.milestoneTitle')} value={mTitle} onChange={(e) => setMTitle(e.target.value)} placeholder={t('kids.milestoneTitle')} />
-          <Input label={t('kids.milestoneDate')} type="date" value={mDate} onChange={(e) => setMDate(e.target.value)} />
+          <div className="grid grid-cols-2 gap-3">
+            <Input label={t('kids.milestoneDate')} type="date" value={mDate} onChange={(e) => setMDate(e.target.value)} />
+            <Input label={t('tasks.timeOptional')} type="time" value={mTime} onChange={(e) => setMTime(e.target.value)} />
+          </div>
           <Select label={t('kids.milestoneCategory')} value={mCategory} options={milestoneOptions} onChange={(e) => setMCategory(e.target.value as KidMilestone['category'])} />
           <Textarea label={t('kids.notes')} value={mNotes} onChange={(e) => setMNotes(e.target.value)} rows={3} />
+          {mTime && <ReminderSelect value={mReminder} onChange={setMReminder} />}
           <div className="flex gap-3">
             <Button variant="secondary" className="flex-1" onClick={() => setShowMilestoneForm(false)}>{t('kids.cancel')}</Button>
             <Button className="flex-1" onClick={saveMilestone}>{t('kids.save')}</Button>
