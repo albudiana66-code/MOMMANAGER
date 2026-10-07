@@ -6,10 +6,9 @@
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY') ?? '';
 
-// mommanager.app is the verified sending domain in Resend. Reply-to is the
-// .co.uk support address so replies land in the inbox customers already
-// know from the privacy policy/terms, not the sending domain.
-export const FROM = 'Diana at MomManager <hello@mommanager.app>';
+// mommanager.co.uk is the verified sending domain in Resend. Reply-to is
+// the same support address shown in the privacy policy/terms.
+export const FROM = 'Diana at MomManager <hello@mommanager.co.uk>';
 export const REPLY_TO = 'support@mommanager.co.uk';
 
 export interface SendEmailOptions {
