@@ -6,11 +6,10 @@
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY') ?? '';
 
-// mommanager2026@outlook.com is already verified as a sending domain in
-// Resend — neither mommanager.app nor mommanager.co.uk's mailbox is set up
-// for this yet, so we send from here even though reply-to is the .co.uk
-// support address.
-export const FROM = 'Diana at MomManager <mommanager2026@outlook.com>';
+// mommanager.app is the verified sending domain in Resend. Reply-to is the
+// .co.uk support address so replies land in the inbox customers already
+// know from the privacy policy/terms, not the sending domain.
+export const FROM = 'Diana at MomManager <hello@mommanager.app>';
 export const REPLY_TO = 'support@mommanager.co.uk';
 
 export interface SendEmailOptions {

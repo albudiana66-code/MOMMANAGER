@@ -6,6 +6,8 @@
 export const APP_URL = 'https://mommanager.app';
 export const PRIVACY_URL = `${APP_URL}/privacy`;
 export const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
+/** Shown in every footer as the visible contact address — matches resend.ts's REPLY_TO, since reply-to headers aren't always surfaced by mail clients. */
+export const SUPPORT_EMAIL = 'support@mommanager.co.uk';
 
 export interface EmailContent {
   /** Rendered as a single paragraph-per-string block; keep it short. */
@@ -65,6 +67,7 @@ export function renderEmail(content: EmailContent, unsubscribeUrl?: string): Ren
           <tr>
             <td style="padding:20px 32px;text-align:center;border-top:1px solid #F2E4E8;">
               <p style="color:#B0ACBA;font-size:11px;margin:0;line-height:1.6;">
+                Need help? <a href="mailto:${SUPPORT_EMAIL}" style="color:#B0ACBA;text-decoration:underline;">${SUPPORT_EMAIL}</a><br>
                 Sold Out Digital Ltd · Company No. 17217131<br>
                 <a href="${PRIVACY_URL}" style="color:#B0ACBA;text-decoration:underline;">Privacy policy</a>
                 ${unsubscribeUrl ? ` · <a href="${unsubscribeUrl}" style="color:#B0ACBA;text-decoration:underline;">Unsubscribe from these emails</a>` : ''}
@@ -87,6 +90,7 @@ export function renderEmail(content: EmailContent, unsubscribeUrl?: string): Ren
     content.footnoteText ? `\n${content.footnoteText}` : '',
     SIGNATURE_TEXT,
     '---',
+    `Need help? ${SUPPORT_EMAIL}`,
     'Sold Out Digital Ltd · Company No. 17217131',
     `Privacy policy: ${PRIVACY_URL}`,
     unsubscribeUrl ? `Unsubscribe from these emails: ${unsubscribeUrl}` : '',
