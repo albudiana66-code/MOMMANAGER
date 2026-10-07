@@ -6,6 +6,7 @@ import { NotificationPermissionProvider } from './context/NotificationPermission
 import { useSubscription } from './hooks/useSubscription';
 import { useNotificationLifecycle } from './hooks/useNotificationLifecycle';
 import { useNotificationDeepLinkRouter } from './hooks/useNotificationDeepLink';
+import { useRevenueCatIdentity } from './hooks/useRevenueCatIdentity';
 import { AuthScreen } from './screens/AuthScreen';
 import { DashboardScreen } from './screens/DashboardScreen';
 import { PaywallScreen } from './screens/PaywallScreen';
@@ -25,6 +26,7 @@ function AppRoutes() {
   const { hasAccess } = useSubscription();
   useNotificationLifecycle();
   useNotificationDeepLinkRouter();
+  useRevenueCatIdentity();
 
   console.log('[AppRoutes] render — loading:', loading, 'user:', user?.id ?? null, 'hasAccess:', hasAccess);
 

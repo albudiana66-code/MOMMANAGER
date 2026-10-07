@@ -11,6 +11,7 @@ import { Toggle } from '../components/ui/Toggle';
 import { Modal } from '../components/ui/Modal';
 import { TrialDisclosure } from '../components/paywall/TrialDisclosure';
 import { NotificationSettingsCard } from '../components/settings/NotificationSettingsCard';
+import { useEmailPreferences } from '../hooks/useEmailPreferences';
 import { useAuth } from '../context/AuthContext';
 import { useApp } from '../context/AppContext';
 import { useSubscription } from '../hooks/useSubscription';
@@ -55,6 +56,7 @@ export function SettingsScreen() {
   // loaded rather than ever falling back to the hardcoded Stripe display
   // string — only the web build uses that fallback.
   const { pricing: nativePricing, loading: nativePricingLoading } = useOfferingPricing();
+  const { marketingOptIn, setMarketingOptIn } = useEmailPreferences();
   const [showSignOut, setShowSignOut] = useState(false);
   const [showDeleteAccount, setShowDeleteAccount] = useState(false);
   const [deleteError, setDeleteError] = useState('');
@@ -220,6 +222,23 @@ export function SettingsScreen() {
 
         {/* Notifications */}
         <NotificationSettingsCard />
+
+        {/* Email preferences */}
+        <Card>
+          <h3 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-3">{t('settings.emailsTitle')}</h3>
+          <div className="flex items-center justify-between">
+            <div className="pr-3">
+              <span className="text-sm text-[var(--text-primary)]">{t('settings.emailsFromMomManager')}</span>
+              <p className="text-xs text-[var(--text-muted)] mt-0.5" style={{ lineHeight: 1.4 }}>
+                {t('settings.emailsFromMomManagerDescription')}
+              </p>
+            </div>
+            <Toggle
+              checked={marketingOptIn ?? true}
+              onChange={setMarketingOptIn}
+            />
+          </div>
+        </Card>
 
         {/* Subscription */}
         <div style={{ borderRadius: 24, background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.30)', boxShadow: '0 1px 8px rgba(0,0,0,0.03)', overflow: 'hidden' }}>

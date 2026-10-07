@@ -1078,7 +1078,10 @@
     "notifQuietHoursStart": "Start",
     "notifQuietHoursEnd": "End",
     "notifSendTest": "Send test notification",
-    "notifTestSent": "Sent — check in 5 seconds"
+    "notifTestSent": "Sent — check in 5 seconds",
+    "emailsTitle": "Emails",
+    "emailsFromMomManager": "Emails from MomManager",
+    "emailsFromMomManagerDescription": "Tips, onboarding help, and the occasional check-in. We'll always email you about your account, billing, or cancellation regardless of this setting."
   },
   "reminder": {
     "label": "Reminder",

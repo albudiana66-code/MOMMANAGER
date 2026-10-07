@@ -48,6 +48,45 @@ export function ensureRevenueCatConfigured(): Promise<void> {
   return configuredPromise;
 }
 
+/**
+ * Links the signed-in Supabase user to this RevenueCat installation, so
+ * RevenueCat's own `app_user_id` on every webhook event (purchase, renewal,
+ * cancellation...) is the same uuid as `auth.users.id` / `profiles.id` —
+ * without this, the revenuecat-webhook function has no way to know which
+ * user an event is about. Configure always starts anonymous (no appUserID
+ * is known yet at app boot, before auth has resolved); this call is what
+ * actually identifies the user once sign-in completes. Safe to call again
+ * with the same id (e.g. on every app resume) — RevenueCat no-ops if
+ * already logged in as that user. If the installation was anonymous
+ * before this (a trial/purchase started pre-login), RevenueCat transfers
+ * that anonymous user's purchase history onto the now-identified id.
+ */
+export async function identifyRevenueCatUser(userId: string): Promise<void> {
+  if (!isNativeMobile()) return;
+  await ensureRevenueCatConfigured();
+  try {
+    await Purchases.logIn({ appUserID: userId });
+    console.log('[RevenueCat] logIn succeeded for', userId);
+  } catch (err) {
+    console.error('[RevenueCat] logIn failed:', err);
+  }
+}
+
+/**
+ * Clears the identified RevenueCat user on sign-out, reverting to a fresh
+ * anonymous id — otherwise the next person who signs in on this device
+ * would inherit the previous user's RevenueCat identity/entitlements.
+ */
+export async function resetRevenueCatUser(): Promise<void> {
+  if (!isNativeMobile()) return;
+  await ensureRevenueCatConfigured();
+  try {
+    await Purchases.logOut();
+  } catch (err) {
+    console.error('[RevenueCat] logOut failed:', err);
+  }
+}
+
 // How long we wait for the native store sheet (StoreKit / Play Billing) to
 // resolve before giving up and letting the UI recover on its own. Real
 // purchases normally settle in a couple of seconds, but native promises can
