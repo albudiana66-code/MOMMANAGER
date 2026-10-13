@@ -44,7 +44,7 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { status: 204 });
 
   const auth = req.headers.get('Authorization') ?? '';
-  if (!WEBHOOK_SECRET || auth !== WEBHOOK_SECRET) {
+  if (!WEBHOOK_SECRET || auth.trim() !== WEBHOOK_SECRET.trim()) {
     console.error('revenuecat-webhook: rejected — Authorization header mismatch');
     return new Response(JSON.stringify({ error: 'Unauthorized' }), {
       status: 401,
