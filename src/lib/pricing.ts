@@ -25,15 +25,15 @@ export interface NativePlanPrice {
 }
 
 /**
- * The monthly-equivalent amount for a yearly plan, store-formatted. Prefers
- * the SDK's own pricePerMonthString; falls back to price/12 rounded DOWN to
- * 2 decimals (so we never round up and overstate the monthly saving), then
- * formats it with Intl.NumberFormat using the product's own currency code —
- * never a hardcoded "£".
+ * The monthly-equivalent amount for a yearly plan, store-formatted. Always
+ * computed dynamically as price/12, rounded to 2 decimals (standard
+ * rounding, not floored) — never trusts the SDK's own pricePerMonthString,
+ * since that can reflect stale/misconfigured store metadata independent of
+ * the actual billed price. Formats with Intl.NumberFormat using the
+ * product's own currency code — never a hardcoded "£".
  */
 export function formatMonthlyEquivalent(plan: NativePlanPrice): string {
-  if (plan.pricePerMonthString) return plan.pricePerMonthString;
-  const perMonth = Math.floor((plan.price / 12) * 100) / 100;
+  const perMonth = Math.round((plan.price / 12) * 100) / 100;
   return new Intl.NumberFormat(undefined, {
     style: 'currency',
     currency: plan.currencyCode,

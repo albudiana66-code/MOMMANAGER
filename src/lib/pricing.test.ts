@@ -38,16 +38,16 @@ describe('priceLabel', () => {
 });
 
 describe('formatMonthlyEquivalent', () => {
-  it('derives £3.33/month from a £39.99/yr plan, rounded down to 2 decimals', () => {
+  it('derives £3.33/month from a £39.99/yr plan, rounded to 2 decimals', () => {
     expect(formatMonthlyEquivalent(yearlyPlan({ priceString: '£39.99', price: 39.99 }))).toBe('£3.33');
   });
 
-  it('derives £4.99/month from a £59.99/yr plan, rounded down to 2 decimals', () => {
-    expect(formatMonthlyEquivalent(yearlyPlan({ priceString: '£59.99', price: 59.99 }))).toBe('£4.99');
+  it('derives £5.00/month from a £59.99/yr plan, rounded to 2 decimals (not floored to £4.99)', () => {
+    expect(formatMonthlyEquivalent(yearlyPlan({ priceString: '£59.99', price: 59.99 }))).toBe('£5.00');
   });
 
-  it('prefers the SDK-provided pricePerMonthString when present', () => {
-    expect(formatMonthlyEquivalent(yearlyPlan({ pricePerMonthString: '£3.34' }))).toBe('£3.34');
+  it('always self-computes from price, ignoring a stale/incorrect SDK-provided pricePerMonthString', () => {
+    expect(formatMonthlyEquivalent(yearlyPlan({ priceString: '£39.99', price: 39.99, pricePerMonthString: '£3.34' }))).toBe('£3.33');
   });
 
   it('formats using the product currencyCode, not a hardcoded currency', () => {

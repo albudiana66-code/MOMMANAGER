@@ -44,7 +44,10 @@ export function detectCurrency(): Currency {
   } catch {
     // navigator unavailable (SSR/tests) — fall through to default
   }
-  return 'usd';
+  // The app targets UK users first — any unrecognised/undetectable locale
+  // (including non-GB/US/EUR regions, e.g. testing from elsewhere) must
+  // default to GBP, never USD.
+  return 'gbp';
 }
 
 export const PRICES: Record<
