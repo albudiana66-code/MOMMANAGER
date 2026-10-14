@@ -14,6 +14,7 @@ import { Modal } from '../components/ui/Modal';
 import { useAuth } from '../context/AuthContext';
 import { useDateFnsLocale } from '../hooks/useDateFnsLocale';
 import { useNotificationSettings } from '../hooks/useNotificationSettings';
+import { useNotificationPermissionGate } from '../context/NotificationPermissionContext';
 import type { NotificationDeepLinkState } from '../hooks/useNotificationDeepLink';
 import i18n from '../i18n';
 import type { Task, CalendarEvent } from '../types';
@@ -253,6 +254,7 @@ export function TasksScreen() {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [showTaskForm, setShowTaskForm] = useState(false);
   const { resync } = useNotificationSettings();
+  const { requestIfNeeded } = useNotificationPermissionGate();
   const location = useLocation();
 
   useEffect(() => {
@@ -279,7 +281,7 @@ export function TasksScreen() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
-  function handleSaveTask(partial: Partial<Task>) {
+  async function handleSaveTask(partial: Partial<Task>) {
     if (!user) return;
     const newTask: Task = {
       id: crypto.randomUUID(),
@@ -299,15 +301,26 @@ export function TasksScreen() {
     const updated = [newTask, ...tasks];
     setTasks(updated);
     saveTasks(user.id, updated);
+    // A new task with a reminder needs permission granted before it can ever
+    // fire — without this, resync() below would silently no-op forever.
+    const wantsReminder = newTask.due_date && newTask.time
+      && newTask.reminder_minutes_before !== null
+      && (newTask.reminder_minutes_before !== undefined || newTask.has_reminder);
+    if (wantsReminder) await requestIfNeeded();
     resync();
     setShowTaskForm(false);
   }
 
-  function handleSaveEvent(event: CalendarEvent) {
+  async function handleSaveEvent(event: CalendarEvent) {
     if (!user) return;
     const updated = [event, ...events];
     setEvents(updated);
     saveEvents(user.id, updated);
+    // Non-all-day events get a reminder by default (see resolveEventReminderMinutes),
+    // so permission must be requested here too, not just from Settings/Kids.
+    if (!event.allDay && event.time && event.reminder_minutes_before !== null) {
+      await requestIfNeeded();
+    }
     resync();
     setSheetDate(null);
   }
