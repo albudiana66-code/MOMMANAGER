@@ -4,6 +4,9 @@ export interface TemplateResult extends RenderedEmail {
   subject: string;
 }
 
+/** "Come back" CTA target for cancellation / we-miss-you emails — store links aren't configured yet, so this falls back to the marketing site. */
+const COME_BACK_URL = Deno.env.get('APP_STORE_URL') || Deno.env.get('PLAY_STORE_URL') || 'https://mommanager.co.uk';
+
 function firstName(name: string | null | undefined): string {
   return (name || '').trim().split(' ')[0] || 'there';
 }
@@ -154,8 +157,8 @@ export function cancellationEmail(
       `If you have a minute, what could we do better? ${opts.feedbackUrl}`,
       `If you change your mind, you can resubscribe any time.`,
     ],
-    ctaLabel: 'Resubscribe any time',
-    ctaUrl: `${APP_URL}/paywall`,
+    ctaLabel: 'Come back to MomManager',
+    ctaUrl: COME_BACK_URL,
   }, unsubscribeUrlFor(opts.unsubscribeToken));
   return { subject: 'Sorry to see you go 💛', html, text };
 }
@@ -194,7 +197,7 @@ export function weMissYouEmail(name: string | null, unsubscribeToken: string): T
       `If you'd like to pick back up, you can resubscribe any time.`,
     ],
     ctaLabel: 'Come back to MomManager',
-    ctaUrl: `${APP_URL}/paywall`,
+    ctaUrl: COME_BACK_URL,
   }, unsubscribeUrlFor(unsubscribeToken));
   return { subject: 'We miss you 🌸', html, text };
 }
