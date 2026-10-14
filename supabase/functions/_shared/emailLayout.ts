@@ -6,7 +6,7 @@
 export const APP_URL = 'https://mommanager.app';
 export const PRIVACY_URL = `${APP_URL}/privacy`;
 export const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
-export const APP_ICON_URL = 'https://giprbmoteojghxzodpcw.supabase.co/storage/v1/object/public/email-assets/mommanager-icon-64.png';
+export const APP_ICON_URL = 'https://giprbmoteojghxzodpcw.supabase.co/storage/v1/object/public/email-assets/mommanager-logo-header-256.png';
 /** Shown in every footer as the visible contact address — matches resend.ts's REPLY_TO, since reply-to headers aren't always surfaced by mail clients. */
 export const SUPPORT_EMAIL = 'support@mommanager.co.uk';
 
@@ -52,9 +52,8 @@ export function renderEmail(content: EmailContent, unsubscribeUrl?: string): Ren
       <td align="center" style="padding:32px 16px;">
         <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(196,120,138,0.1);">
           <tr>
-            <td style="background:linear-gradient(135deg,#C4788A,#9B6B8A);padding:28px;text-align:center;">
-              <img src="${APP_ICON_URL}" width="64" height="64" alt="MomManager" style="display:block;margin:0 auto 6px;border-radius:14px;">
-              <div style="color:#ffffff;font-size:22px;font-weight:600;letter-spacing:-0.3px;">MomManager</div>
+            <td style="background:#FAF8F5;padding:28px;text-align:center;border-bottom:1px solid #F2E4E8;">
+              <img src="${APP_ICON_URL}" width="84" height="84" alt="MomManager" style="display:block;margin:0 auto;">
             </td>
           </tr>
           <tr>
