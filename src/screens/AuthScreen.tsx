@@ -11,7 +11,7 @@ type Mode = 'signin' | 'signup';
 export function AuthScreen() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { signInWithGoogle, signInWithApple, signInWithAppleWeb, signInWithEmail, signUpWithEmail } = useAuth();
+  const { signInWithGoogle, signInWithApple, signInWithEmail, signUpWithEmail } = useAuth();
   const [mode, setMode] = useState<Mode>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

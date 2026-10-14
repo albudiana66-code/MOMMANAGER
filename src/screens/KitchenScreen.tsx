@@ -1,10 +1,8 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format, addWeeks, startOfWeek, addDays, isToday } from 'date-fns';
 import { Layout } from '../components/layout/Layout';
-import { LuxuryScreenHeader } from '../components/ui/LuxuryScreenHeader';
-import { Modal } from '../components/ui/Modal';
 import { useAuth } from '../context/AuthContext';
 import { useAIConsent } from '../context/AIConsentContext';
 import { askAI } from '../lib/anthropic';
@@ -160,7 +158,8 @@ function CookTimer({ total, onDone }: { total: number; onDone: () => void }) {
   const [done, setDone] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  useEffect(() => { setRemaining(total); setRunning(false); setDone(false); }, [total]);
+  // `total` resetting (new recipe step) is handled by the parent remounting
+  // this component via `key={current}` — no reset effect needed here.
 
   useEffect(() => {
     if (running) {
@@ -231,18 +230,28 @@ function CookTimer({ total, onDone }: { total: number; onDone: () => void }) {
 const CONFETTI_COLORS = ['#C4788A', '#9B8CBD', '#6BAF78', '#FFAB7A', '#4A7A58', '#D4AF37'];
 
 function Confetti() {
-  const pieces = Array.from({ length: 30 }, (_, i) => i);
+  // Randomised exactly once per mount via a lazy useState initializer —
+  // unlike useMemo (which React may discard and recompute at its own
+  // discretion), this is the one React-sanctioned way to do one-time
+  // impure/random initialization without violating render purity.
+  const [pieces] = useState(() => Array.from({ length: 30 }, (_, i) => ({
+    i,
+    left: Math.random() * 100,
+    round: Math.random() > 0.5,
+    duration: 1.5 + Math.random() * 2,
+    delay: Math.random() * 0.5,
+  })));
   return (
     <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }}>
-      {pieces.map((i) => (
-        <div key={i} style={{
+      {pieces.map((p) => (
+        <div key={p.i} style={{
           position: 'absolute',
-          left: `${Math.random() * 100}%`,
+          left: `${p.left}%`,
           top: '-10px',
           width: 8, height: 8,
-          borderRadius: Math.random() > 0.5 ? '50%' : 2,
-          background: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
-          animation: `confettiFall ${1.5 + Math.random() * 2}s ${Math.random() * 0.5}s ease-in forwards`,
+          borderRadius: p.round ? '50%' : 2,
+          background: CONFETTI_COLORS[p.i % CONFETTI_COLORS.length],
+          animation: `confettiFall ${p.duration}s ${p.delay}s ease-in forwards`,
           opacity: 0,
         }} />
       ))}
@@ -267,7 +276,7 @@ function CookMode({ recipe, onClose }: { recipe: GeneratedRecipe | SavedRecipe; 
     else { setCurrent((c) => c + 1); }
   }
   function markDone(i: number) {
-    setDone((prev) => { const n = new Set(prev); n.has(i) ? n.delete(i) : n.add(i); return n; });
+    setDone((prev) => { const n = new Set(prev); if (n.has(i)) n.delete(i); else n.add(i); return n; });
   }
 
   if (complete) {
@@ -345,7 +354,7 @@ function CookMode({ recipe, onClose }: { recipe: GeneratedRecipe | SavedRecipe; 
         {/* Timer */}
         {step.duration && (
           <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <CookTimer total={step.duration} onDone={() => markDone(current)} />
+            <CookTimer key={current} total={step.duration} onDone={() => markDone(current)} />
           </div>
         )}
       </motion.div>
@@ -396,10 +405,10 @@ function RecipeDetailModal({ recipe, initialTab = 'ingredients', onClose, onSave
   const steps = normaliseSteps(recipe.steps as (RecipeStep | string)[]);
 
   function toggleIngredient(i: number) {
-    setCheckedIngredients((p) => { const n = new Set(p); n.has(i) ? n.delete(i) : n.add(i); return n; });
+    setCheckedIngredients((p) => { const n = new Set(p); if (n.has(i)) n.delete(i); else n.add(i); return n; });
   }
   function toggleStep(i: number) {
-    setCheckedSteps((p) => { const n = new Set(p); n.has(i) ? n.delete(i) : n.add(i); return n; });
+    setCheckedSteps((p) => { const n = new Set(p); if (n.has(i)) n.delete(i); else n.add(i); return n; });
   }
 
   function addAllToShop() {
@@ -898,7 +907,7 @@ function ShoppingTab() {
   unchecked.forEach((it) => { grouped[guessCategory(it.name)].push(it); });
 
   function toggleCollapse(cat: string) {
-    setCollapsed((prev) => { const n = new Set(prev); n.has(cat) ? n.delete(cat) : n.add(cat); return n; });
+    setCollapsed((prev) => { const n = new Set(prev); if (n.has(cat)) n.delete(cat); else n.add(cat); return n; });
   }
 
   return (

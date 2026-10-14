@@ -32,7 +32,7 @@ export function useSubscription() {
     if (!isFreeTrial) return 0;
     const exp = profile?.subscription_expires_at || profile?.trial_end;
     if (!exp) return 0;
-    const diff = new Date(exp).getTime() - Date.now();
+    const diff = new Date(exp).getTime() - new Date().getTime();
     return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
   })();
 

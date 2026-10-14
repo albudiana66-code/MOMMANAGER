@@ -110,7 +110,7 @@ export function SettingsScreen() {
   }
 
   async function handleManageSubscription() {
-    const customerId = (profile as any)?.stripe_customer_id;
+    const customerId = profile?.stripe_customer_id;
     if (!customerId) {
       // No Stripe customer yet — open paywall
       navigate('/paywall');

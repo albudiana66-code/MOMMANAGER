@@ -1,8 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { format, startOfMonth, endOfMonth, subMonths, addMonths, getDaysInMonth, getDate } from 'date-fns';
+import { format, startOfMonth, endOfMonth, subMonths, addMonths, getDaysInMonth, getDate, subDays } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Layout } from '../components/layout/Layout';
-import { LuxuryScreenHeader } from '../components/ui/LuxuryScreenHeader';
 import { useAuth } from '../context/AuthContext';
 import { useApp } from '../context/AppContext';
 import { formatCurrency } from '../lib/frankfurter';
@@ -112,11 +111,15 @@ function DonutChart({ slices, total }: { slices: Slice[]; total: number }) {
   const circ = 2 * Math.PI * R;
   const [hovered, setHovered] = useState<TxCategory | null>(null);
 
-  let cumulative = 0;
-  const arcs = slices.map(s => {
+  // Prefix-sum of each slice's starting percentage, computed up front so the
+  // map below stays a pure per-item transform (no running-total mutation).
+  const cumulativeStarts = slices.reduce<number[]>((acc, s, i) => {
+    acc.push(i === 0 ? 0 : acc[i - 1] + slices[i - 1].pct);
+    return acc;
+  }, []);
+  const arcs = slices.map((s, i) => {
     const dash = (s.pct / 100) * circ;
-    const offset = circ - cumulative * circ / 100;
-    cumulative += s.pct;
+    const offset = circ - cumulativeStarts[i] * circ / 100;
     return { ...s, dash, offset };
   });
 
@@ -192,7 +195,12 @@ function OverviewTab({ txs, budgets, saveBudgetsLocal, monthlyBudget, saveMonthl
   const dateLocale = useDateFnsLocale();
   const monthStart = format(startOfMonth(currentMonth), 'yyyy-MM-dd');
   const monthEnd = format(endOfMonth(currentMonth), 'yyyy-MM-dd');
-  const monthTxs = txs.filter(t => t.date >= monthStart && t.date <= monthEnd);
+  // Memoized with a referentially-stable result so the catTotals useMemo
+  // below (keyed on this) can actually skip recomputation across renders.
+  const monthTxs = useMemo(
+    () => txs.filter(t => t.date >= monthStart && t.date <= monthEnd),
+    [txs, monthStart, monthEnd]
+  );
 
   const totalExpense = monthTxs.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
   const totalIncome = monthTxs.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
@@ -565,7 +573,6 @@ function TransactionsTab({ txs, accounts, onDelete, onAdd, currency, currentMont
   const [search, setSearch] = useState('');
   const [filterCat, setFilterCat] = useState<TxCategory | ''>('');
   const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'amount'>('newest');
-  const [swipeId, setSwipeId] = useState<string | null>(null);
 
   const monthStart = format(startOfMonth(currentMonth), 'yyyy-MM-dd');
   const monthEnd = format(endOfMonth(currentMonth), 'yyyy-MM-dd');
@@ -596,7 +603,7 @@ function TransactionsTab({ txs, accounts, onDelete, onAdd, currency, currentMont
 
   function dateLabel(d: string) {
     const today = format(new Date(), 'yyyy-MM-dd');
-    const yesterday = format(new Date(Date.now() - 86400000), 'yyyy-MM-dd');
+    const yesterday = format(subDays(new Date(), 1), 'yyyy-MM-dd');
     if (d === today) return i18n.t('budget.today');
     if (d === yesterday) return i18n.t('budget.yesterday');
     return format(new Date(d + 'T00:00:00'), 'EEEE, d MMM', { locale: dateLocale });
@@ -748,7 +755,7 @@ function normaliseDate(raw: string): string {
   // Try ISO yyyy-MM-dd
   if (/^\d{4}-\d{2}-\d{2}/.test(raw)) return raw.slice(0, 10);
   // Try dd/MM/yyyy or d/M/yyyy
-  const dm = raw.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
+  const dm = raw.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})/);
   if (dm) {
     const y = dm[3].length === 2 ? '20' + dm[3] : dm[3];
     return `${y}-${dm[2].padStart(2,'0')}-${dm[1].padStart(2,'0')}`;
@@ -848,7 +855,7 @@ async function extractTextFromPDF(file: File): Promise<string> {
   for (let i = 1; i <= pdf.numPages; i++) {
     const page = await pdf.getPage(i);
     const content = await page.getTextContent();
-    const pageText = content.items.map((item: any) => item.str).join(' ');
+    const pageText = content.items.map((item) => ('str' in item ? item.str : '')).join(' ');
     fullText += pageText + '\n';
   }
   return fullText;
@@ -859,9 +866,7 @@ function parsePDFText(text: string): ParsedRow[] {
   const lines = text.split(/\n/).map(l => l.trim()).filter(Boolean);
 
   // Patterns for dates: DD/MM/YYYY, DD-MM-YYYY, DD MMM YYYY, DD Mon YY
-  const DATE_RE = /\b(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}|\d{1,2}\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+\d{2,4})\b/i;
-  // Pattern for amounts: £123.45 or 123.45 or 1,234.56 (possibly with - or CR/DR)
-  const AMOUNT_RE = /[£€$]?\s*(\d{1,3}(?:,\d{3})*(?:\.\d{1,2})?)\s*(CR|DR)?/i;
+  const DATE_RE = /\b(\d{1,2}[/-]\d{1,2}[/-]\d{2,4}|\d{1,2}\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+\d{2,4})\b/i;
 
   for (const line of lines) {
     const dateMatch = line.match(DATE_RE);

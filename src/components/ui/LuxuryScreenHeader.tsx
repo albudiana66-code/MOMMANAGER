@@ -265,7 +265,7 @@ function KidsIllustration({ accent }: { accent: string }) {
 }
 
 /* ── SELF-CARE — luxury spa: amber glow, candles, orchids, marble ── */
-function SelfCareIllustration({ accent }: { accent: string }) {
+function SelfCareIllustration({ accent: _accent }: { accent: string }) {
   const glow = '#D4A843';
   return (
     <svg width="220" height="180" viewBox="0 0 220 180" fill="none"

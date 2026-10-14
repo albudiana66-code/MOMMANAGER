@@ -28,7 +28,7 @@ const PRICE_TABLE: Record<string, { productName: string; interval: 'month' | 'ye
   standard_monthly: { productName: 'MomManager Standard', interval: 'month', amounts: { gbp: 4.99, eur: 5.99, usd: 5.99 } },
   standard_yearly:  { productName: 'MomManager Standard', interval: 'year', amounts: { gbp: 39.99, eur: 47.99, usd: 49.99 } },
   pro_monthly:      { productName: 'MomManager Pro', interval: 'month', amounts: { gbp: 7.99, eur: 8.99, usd: 9.99 } },
-  pro_yearly:       { productName: 'MomManager Pro', interval: 'year', amounts: { gbp: 63.99, eur: 71.99, usd: 79.99 } },
+  pro_yearly:       { productName: 'MomManager Pro', interval: 'year', amounts: { gbp: 59.99, eur: 71.99, usd: 79.99 } },
 };
 
 Deno.serve(async (req) => {

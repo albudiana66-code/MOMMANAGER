@@ -1,4 +1,4 @@
-package com.soldoutgigital.mommanager;
+package com.soldoutdigital.mommanager;
 
 import com.getcapacitor.BridgeActivity;
 

@@ -4,7 +4,6 @@ import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { differenceInYears, parseISO, format } from 'date-fns';
 import { Layout } from '../components/layout/Layout';
-import { LuxuryScreenHeader } from '../components/ui/LuxuryScreenHeader';
 import { Modal } from '../components/ui/Modal';
 import { Input, Textarea } from '../components/ui/Input';
 import { Select } from '../components/ui/Select';

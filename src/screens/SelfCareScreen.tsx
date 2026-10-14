@@ -3,12 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { format, subDays } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Layout } from '../components/layout/Layout';
-import { LuxuryScreenHeader } from '../components/ui/LuxuryScreenHeader';
-import { Card } from '../components/ui/Card';
 import { useAuth } from '../context/AuthContext';
 import { useAIConsent } from '../context/AIConsentContext';
 import { askAI } from '../lib/anthropic';
-import { ProGate } from '../components/paywall/ProGate';
 import { useDateFnsLocale } from '../hooks/useDateFnsLocale';
 import i18n from '../i18n';
 

@@ -54,7 +54,7 @@ export const PRICES: Record<
   standard_monthly: { amount: 499,  currency: 'gbp', display: '£4.99/month',  amounts: { gbp: 4.99,  eur: 5.99,  usd: 5.99 } },
   standard_yearly:  { amount: 3999, currency: 'gbp', display: '£39.99/year',  amounts: { gbp: 39.99, eur: 47.99, usd: 49.99 } },
   pro_monthly:      { amount: 799,  currency: 'gbp', display: '£7.99/month',  amounts: { gbp: 7.99,  eur: 8.99,  usd: 9.99 } },
-  pro_yearly:       { amount: 6399, currency: 'gbp', display: '£63.99/year',  amounts: { gbp: 63.99, eur: 71.99, usd: 79.99 } },
+  pro_yearly:       { amount: 5999, currency: 'gbp', display: '£59.99/year',  amounts: { gbp: 59.99, eur: 71.99, usd: 79.99 } },
 };
 
 export function formatAmount(currency: Currency, amount: number): string {
