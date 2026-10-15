@@ -296,7 +296,9 @@
     "savedCheckmark": "Zapisano ✓",
     "savedRecipesCount": "Zapisane przepisy ({{count}})",
     "viewBtn": "Zobacz",
-    "cookBtn": "Gotuj"
+    "cookBtn": "Gotuj",
+    "mealReminderTitle": "Przypomnienie o posiłku",
+    "mealTimeLabel": "Godzina"
   },
   "budget": {
     "title": "Budżet",
@@ -1012,7 +1014,8 @@
     "workoutsThisWeek_few": "{{count}} treningi w tym tygodniu · {{mins}} min łącznie",
     "workoutsThisWeek_many": "{{count}} treningów w tym tygodniu · {{mins}} min łącznie",
     "dailyCalorieGoalResult_few": "Twój dzienny cel kaloryczny: {{calories}} kcal (aby {{action}} {{diff}} kg w {{months}} miesiące)",
-    "dailyCalorieGoalResult_many": "Twój dzienny cel kaloryczny: {{calories}} kcal (aby {{action}} {{diff}} kg w {{months}} miesięcy)"
+    "dailyCalorieGoalResult_many": "Twój dzienny cel kaloryczny: {{calories}} kcal (aby {{action}} {{diff}} kg w {{months}} miesięcy)",
+    "remindDaily": "Przypominaj mi codziennie"
   },
   "settings": {
     "title": "Ustawienia",
@@ -1068,7 +1071,10 @@
     "deleteAccountWarning": "To trwale usunie Twoje konto i wszystkie Twoje dane. Tej czynności nie można cofnąć.",
     "deleteAccountLink": "Usuń konto",
     "deleting": "Usuwanie…",
-    "delete": "Usuń"
+    "delete": "Usuń",
+    "notifCategoryCalendar": "Kalendarz",
+    "notifCategoryTasks": "Zadania",
+    "notifCategoryMeals": "Posiłki"
   },
   "paywall": {
     "monthly": "Miesięcznie",
@@ -1468,5 +1474,45 @@
       "section11Title": "11. Skontaktuj się z nami",
       "section11Body": "W przypadku jakichkolwiek pytań lub żądań związanych z prywatnością, skontaktuj się z nami pod adresem <strong>support@mommanager.co.uk</strong> lub napisz do SoldOut Digital LTD, Wielka Brytania."
     }
+  },
+  "notifications": {
+    "channelName": "Przypomnienia",
+    "channelDescription": "Przypomnienia o kalendarzu, zadaniach, dzieciach, posiłkach i pielęgnacji",
+    "permissionTitle": "Bądź na bieżąco ze swoim dniem",
+    "permissionBody": "Otrzymuj przypomnienia o spotkaniach, posiłkach i czasie dla siebie 🔔",
+    "allow": "Zezwól",
+    "notNow": "Nie teraz",
+    "startsAt": "Zaczyna się o {{time}}",
+    "startsAtIn": "Zaczyna się o {{time}} · za {{duration}}",
+    "dueAt": "Termin o {{time}}",
+    "dueAtIn": "Termin o {{time}} · za {{duration}}",
+    "inMinutes_one": "{{count}} minutę",
+    "inMinutes_few": "{{count}} minuty",
+    "inMinutes_many": "{{count}} minut",
+    "inMinutes_other": "{{count}} minuty",
+    "inHour": "1 godzinę",
+    "inDay": "1 dzień",
+    "kitchenTitle": "MomManager",
+    "tonightMeal": "Dziś wieczorem: {{meal}}",
+    "shoppingTitle": "MomManager",
+    "shoppingReminder": "{{count}} produktów czeka na liście zakupów 🛒",
+    "selfcareTitle": "MomManager",
+    "selfcare1": "Poświęć sobie 5 minut 💛",
+    "selfcare2": "Szklanka wody i głęboki oddech — zasługujesz na to 🌸",
+    "selfcare3": "Rozciągnij się, oddychaj, uśmiechnij się. Zasługujesz na tę chwilę 💆",
+    "selfcare4": "Nawet chwila odpoczynku dziś się liczy 🌿",
+    "selfcare5": "Świetnie sobie radzisz. Poświęć chwilę dla siebie ✨",
+    "testTitle": "MomManager",
+    "testBody": "Powiadomienia działają! 🎉",
+    "routineReminder": "Czas na twoją rutynę 💫"
+  },
+  "reminder": {
+    "label": "Przypomnienie",
+    "none": "Brak",
+    "atTime": "O dokładnej godzinie",
+    "min10": "10 minut wcześniej",
+    "min30": "30 minut wcześniej",
+    "hour1": "1 godzinę wcześniej",
+    "day1": "1 dzień wcześniej"
   }
 }

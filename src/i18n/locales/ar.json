@@ -296,7 +296,9 @@
     "savedCheckmark": "تم الحفظ ✓",
     "savedRecipesCount": "الوصفات المحفوظة ({{count}})",
     "viewBtn": "عرض",
-    "cookBtn": "طهي"
+    "cookBtn": "طهي",
+    "mealReminderTitle": "تذكير بالوجبة",
+    "mealTimeLabel": "الوقت"
   },
   "budget": {
     "title": "الميزانية",
@@ -1020,7 +1022,8 @@
     "dailyCalorieGoalResult_zero": "هدفك السعري اليومي: {{calories}} سعرة (لـ{{action}} {{diff}} كجم)",
     "dailyCalorieGoalResult_two": "هدفك السعري اليومي: {{calories}} سعرة (لـ{{action}} {{diff}} كجم خلال شهرين)",
     "dailyCalorieGoalResult_few": "هدفك السعري اليومي: {{calories}} سعرة (لـ{{action}} {{diff}} كجم خلال {{months}} أشهر)",
-    "dailyCalorieGoalResult_many": "هدفك السعري اليومي: {{calories}} سعرة (لـ{{action}} {{diff}} كجم خلال {{months}} شهرًا)"
+    "dailyCalorieGoalResult_many": "هدفك السعري اليومي: {{calories}} سعرة (لـ{{action}} {{diff}} كجم خلال {{months}} شهرًا)",
+    "remindDaily": "ذكّريني يوميًا"
   },
   "settings": {
     "title": "الإعدادات",
@@ -1076,7 +1079,10 @@
     "deleteAccountWarning": "سيؤدي هذا إلى حذف حسابك وجميع بياناتك نهائيًا. لا يمكن التراجع عن هذا الإجراء.",
     "deleteAccountLink": "حذف الحساب",
     "deleting": "جارٍ الحذف…",
-    "delete": "حذف"
+    "delete": "حذف",
+    "notifCategoryCalendar": "التقويم",
+    "notifCategoryTasks": "المهام",
+    "notifCategoryMeals": "الوجبات"
   },
   "paywall": {
     "monthly": "شهري",
@@ -1476,5 +1482,47 @@
       "section11Title": "11. تواصل معنا",
       "section11Body": "لأي أسئلة أو طلبات متعلقة بالخصوصية، تواصل معنا على <strong>support@mommanager.co.uk</strong> أو اكتب إلى SoldOut Digital LTD، المملكة المتحدة."
     }
+  },
+  "notifications": {
+    "channelName": "التذكيرات",
+    "channelDescription": "تذكيرات بالتقويم والمهام والأطفال والوجبات والعناية الذاتية",
+    "permissionTitle": "تابعي يومك أولاً بأول",
+    "permissionBody": "احصلي على تذكيرات بمواعيدك ووجباتك ووقتك الخاص 🔔",
+    "allow": "السماح",
+    "notNow": "ليس الآن",
+    "startsAt": "يبدأ الساعة {{time}}",
+    "startsAtIn": "يبدأ الساعة {{time}} · خلال {{duration}}",
+    "dueAt": "الموعد النهائي الساعة {{time}}",
+    "dueAtIn": "الموعد النهائي الساعة {{time}} · خلال {{duration}}",
+    "inMinutes_zero": "أقل من دقيقة",
+    "inMinutes_one": "دقيقة واحدة",
+    "inMinutes_two": "دقيقتين",
+    "inMinutes_few": "{{count}} دقائق",
+    "inMinutes_many": "{{count}} دقيقة",
+    "inMinutes_other": "{{count}} دقيقة",
+    "inHour": "ساعة واحدة",
+    "inDay": "يوم واحد",
+    "kitchenTitle": "MomManager",
+    "tonightMeal": "الليلة: {{meal}}",
+    "shoppingTitle": "MomManager",
+    "shoppingReminder": "{{count}} عناصر تنتظرك في قائمة التسوق 🛒",
+    "selfcareTitle": "MomManager",
+    "selfcare1": "خصصي 5 دقائق لنفسك 💛",
+    "selfcare2": "كوب من الماء ونفس عميق — تستحقين ذلك 🌸",
+    "selfcare3": "تمددي، تنفسي، ابتسمي. تستحقين هذه اللحظة 💆",
+    "selfcare4": "حتى القليل من الراحة مهم اليوم 🌿",
+    "selfcare5": "أنتِ تبلين بلاءً رائعًا. خصصي لحظة لنفسك ✨",
+    "testTitle": "MomManager",
+    "testBody": "الإشعارات تعمل! 🎉",
+    "routineReminder": "حان وقت روتينك 💫"
+  },
+  "reminder": {
+    "label": "تذكير",
+    "none": "بدون",
+    "atTime": "في الوقت المحدد",
+    "min10": "قبل 10 دقائق",
+    "min30": "قبل 30 دقيقة",
+    "hour1": "قبل ساعة واحدة",
+    "day1": "قبل يوم واحد"
   }
 }

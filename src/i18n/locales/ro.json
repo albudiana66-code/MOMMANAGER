@@ -296,7 +296,9 @@
     "savedCheckmark": "Salvată ✓",
     "savedRecipesCount": "Rețete salvate ({{count}})",
     "viewBtn": "Vezi",
-    "cookBtn": "Gătește"
+    "cookBtn": "Gătește",
+    "mealReminderTitle": "Memento masă",
+    "mealTimeLabel": "Ora"
   },
   "budget": {
     "title": "Buget",
@@ -1008,7 +1010,8 @@
     "lessToggle": "mai puțin",
     "moreToggle": "mai mult",
     "workoutsThisWeek_few": "{{count}} antrenamente săptămâna aceasta · {{mins}} min total",
-    "dailyCalorieGoalResult_few": "Obiectivul tău caloric zilnic: {{calories}} kcal (pentru a {{action}} {{diff}} kg în {{months}} luni)"
+    "dailyCalorieGoalResult_few": "Obiectivul tău caloric zilnic: {{calories}} kcal (pentru a {{action}} {{diff}} kg în {{months}} luni)",
+    "remindDaily": "Amintește-mi zilnic"
   },
   "settings": {
     "title": "Setări",
@@ -1064,7 +1067,10 @@
     "deleteAccountWarning": "Aceasta va șterge permanent contul tău și toate datele tale. Această acțiune nu poate fi anulată.",
     "deleteAccountLink": "Șterge contul",
     "deleting": "Se șterge…",
-    "delete": "Șterge"
+    "delete": "Șterge",
+    "notifCategoryCalendar": "Calendar",
+    "notifCategoryTasks": "Sarcini",
+    "notifCategoryMeals": "Mese"
   },
   "paywall": {
     "monthly": "Lunar",
@@ -1464,5 +1470,43 @@
       "section11Title": "11. Contactează-ne",
       "section11Body": "Pentru orice întrebări sau solicitări legate de confidențialitate, contactează-ne la <strong>support@mommanager.co.uk</strong> sau scrie la SoldOut Digital LTD, Regatul Unit."
     }
+  },
+  "notifications": {
+    "channelName": "Mementouri",
+    "channelDescription": "Mementouri pentru calendar, sarcini, copii, mese și îngrijire personală",
+    "permissionTitle": "Fii la curent cu ziua ta",
+    "permissionBody": "Primește mementouri pentru întâlniri, mese și timp pentru tine 🔔",
+    "allow": "Permite",
+    "notNow": "Nu acum",
+    "startsAt": "Începe la {{time}}",
+    "startsAtIn": "Începe la {{time}} · peste {{duration}}",
+    "dueAt": "Termen la {{time}}",
+    "dueAtIn": "Termen la {{time}} · peste {{duration}}",
+    "inMinutes_one": "{{count}} minut",
+    "inMinutes_other": "{{count}} minute",
+    "inHour": "1 oră",
+    "inDay": "1 zi",
+    "kitchenTitle": "MomManager",
+    "tonightMeal": "Diseară: {{meal}}",
+    "shoppingTitle": "MomManager",
+    "shoppingReminder": "{{count}} produse te așteaptă pe lista de cumpărături 🛒",
+    "selfcareTitle": "MomManager",
+    "selfcare1": "Acordă-ți 5 minute doar pentru tine 💛",
+    "selfcare2": "Un pahar cu apă și o respirație adâncă — meriți asta 🌸",
+    "selfcare3": "Întinde-te, respiră, zâmbește. Meriți acest moment 💆",
+    "selfcare4": "Chiar și puțină odihnă contează azi 🌿",
+    "selfcare5": "Te descurci grozav. Acordă-ți un moment pentru tine ✨",
+    "testTitle": "MomManager",
+    "testBody": "Notificările funcționează! 🎉",
+    "routineReminder": "E timpul pentru rutina ta 💫"
+  },
+  "reminder": {
+    "label": "Memento",
+    "none": "Fără",
+    "atTime": "La ora exactă",
+    "min10": "Cu 10 minute înainte",
+    "min30": "Cu 30 de minute înainte",
+    "hour1": "Cu 1 oră înainte",
+    "day1": "Cu 1 zi înainte"
   }
 }

@@ -3,7 +3,7 @@ import type { PermissionStatus } from '@capacitor/local-notifications';
 import { isNativeMobile } from './iap';
 import i18n from '../i18n';
 import type { Activity } from './kidsStorage';
-import type { CalendarEvent, Kid, KidMilestone, NotificationSettings, Task } from '../types';
+import type { CalendarEvent, Kid, KidMilestone, NotificationSettings, ReminderMinutes, Task } from '../types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // This is the ONLY place in the app that schedules, cancels, or reacts to
@@ -21,7 +21,8 @@ import type { CalendarEvent, Kid, KidMilestone, NotificationSettings, Task } fro
 // ─────────────────────────────────────────────────────────────────────────────
 
 const CHANNEL_ID = 'reminders';
-const MAX_SCHEDULED = 60;
+/** iOS allows at most 64 pending local notifications per app — always keep the nearest 64. */
+const MAX_SCHEDULED = 64;
 /** How many days ahead to generate the daily kitchen/shopping/self-care reminders. Meal plans are only ever filled in a week or two ahead, so there's nothing to gain from looking further out, and every sync (app open/resume) regenerates this window anyway. */
 const DAILY_LOOKAHEAD_DAYS = 14;
 
@@ -42,6 +43,8 @@ export interface NotificationCandidate {
   isDaily: boolean;
   /** Recurring weekly notification (kids activities) instead of a one-off. */
   recurringWeekday?: number; // Capacitor Weekday: Sunday=1..Saturday=7
+  /** Recurring daily notification (self-care routine reminders) instead of a one-off. */
+  recurringDaily?: boolean;
 }
 
 // ── Stable numeric ids ───────────────────────────────────────────────────────
@@ -248,10 +251,23 @@ export function buildActivityCandidates(activities: Activity[], kidName: string,
   return out;
 }
 
+export interface MealSlotLike {
+  name: string;
+  emoji?: string;
+  /** Optional "HH:mm" clock time set manually on the meal itself — never the AI generator's prep-duration string. */
+  clockTime?: string;
+  /** None by default — meal reminders are opt-in per item. */
+  reminder_minutes_before?: ReminderMinutes;
+}
+
 export interface DayMealPlan {
   date: string; // 'yyyy-MM-dd'
-  dinner?: { name: string; emoji?: string };
+  breakfast?: MealSlotLike;
+  lunch?: MealSlotLike;
+  dinner?: MealSlotLike;
 }
+
+const MEAL_SLOT_KEYS = ['breakfast', 'lunch', 'dinner'] as const;
 
 export function buildKitchenCandidates(meals: DayMealPlan[], reminderTime: string, now: Date): NotificationCandidate[] {
   const out: NotificationCandidate[] = [];
@@ -260,18 +276,45 @@ export function buildKitchenCandidates(meals: DayMealPlan[], reminderTime: strin
     const day = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);
     const dateStr = toDateKey(day);
     const plan = byDate.get(dateStr);
-    if (!plan?.dinner?.name) continue;
-    const at = parseDateTime(dateStr, reminderTime);
-    out.push({
-      key: `kitchen:${dateStr}`,
-      type: 'kitchen',
-      title: i18n.t('notifications.kitchenTitle'),
-      body: i18n.t('notifications.tonightMeal', { meal: `${plan.dinner.emoji ?? ''} ${plan.dinner.name}`.trim() }),
-      route: '/kitchen',
-      itemId: dateStr,
-      at,
-      isDaily: true,
-    });
+    if (!plan) continue;
+
+    // A dinner with its own clock time has opted into the per-item reminder
+    // flow — even if it ends up with no reminder (None chosen), the old
+    // always-on global fallback below must not kick back in for it.
+    const optedIntoPerItemReminders = MEAL_SLOT_KEYS.some((slot) => !!plan[slot]?.clockTime);
+
+    for (const slot of MEAL_SLOT_KEYS) {
+      const meal = plan[slot];
+      // None by default — reminder_minutes_before undefined/null skips it.
+      if (!meal?.name || !meal.clockTime || meal.reminder_minutes_before == null) continue;
+      const at = new Date(parseDateTime(dateStr, meal.clockTime).getTime() - meal.reminder_minutes_before * 60_000);
+      out.push({
+        key: `kitchen:${dateStr}:${slot}`,
+        type: 'kitchen',
+        title: `${meal.emoji ?? ''} ${meal.name}`.trim(),
+        body: startsAtBody(meal.clockTime, meal.reminder_minutes_before),
+        route: '/kitchen',
+        itemId: `${dateStr}:${slot}`,
+        at,
+        isDaily: false,
+      });
+    }
+
+    // Legacy fallback: a dinner with no clock time of its own keeps the old
+    // single daily "tonight's dinner" reminder at the global kitchen time.
+    if (!optedIntoPerItemReminders && plan.dinner?.name) {
+      const at = parseDateTime(dateStr, reminderTime);
+      out.push({
+        key: `kitchen:${dateStr}`,
+        type: 'kitchen',
+        title: i18n.t('notifications.kitchenTitle'),
+        body: i18n.t('notifications.tonightMeal', { meal: `${plan.dinner.emoji ?? ''} ${plan.dinner.name}`.trim() }),
+        route: '/kitchen',
+        itemId: dateStr,
+        at,
+        isDaily: true,
+      });
+    }
   }
   return out;
 }
@@ -325,6 +368,36 @@ export function buildSelfCareCandidates(reminderTime: string, now: Date): Notifi
   return out;
 }
 
+export interface RoutineLike {
+  id: string;
+  title: string;
+  emoji?: string;
+  reminderEnabled?: boolean;
+}
+
+/** One recurring daily notification per routine with its reminder switched on, firing at the global self-care reminder time — separate from (and in addition to) the generic rotating self-care tips below. */
+export function buildRoutineReminderCandidates(routines: RoutineLike[], reminderTime: string, now: Date): NotificationCandidate[] {
+  const out: NotificationCandidate[] = [];
+  const [hour, minute] = reminderTime.split(':').map(Number);
+  for (const routine of routines) {
+    if (!routine.reminderEnabled) continue;
+    const at = new Date(now);
+    at.setHours(hour ?? 0, minute ?? 0, 0, 0);
+    out.push({
+      key: `routine:${routine.id}`,
+      type: 'selfcare',
+      title: `${routine.emoji ?? ''} ${routine.title}`.trim(),
+      body: i18n.t('notifications.routineReminder'),
+      route: '/selfcare',
+      itemId: routine.id,
+      at,
+      isDaily: true,
+      recurringDaily: true,
+    });
+  }
+  return out;
+}
+
 function toDateKey(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
@@ -343,7 +416,7 @@ export function selectScheduledCandidates(
   max: number = MAX_SCHEDULED
 ): NotificationCandidate[] {
   return candidates
-    .filter((c) => c.recurringWeekday !== undefined || c.at.getTime() > now.getTime())
+    .filter((c) => c.recurringWeekday !== undefined || c.recurringDaily || c.at.getTime() > now.getTime())
     .filter((c) => {
       if (!c.isDaily) return true;
       const hhmm = `${String(c.at.getHours()).padStart(2, '0')}:${String(c.at.getMinutes()).padStart(2, '0')}`;
@@ -362,23 +435,34 @@ function toSchedule(c: NotificationCandidate) {
       allowWhileIdle: true,
     };
   }
+  if (c.recurringDaily) {
+    // Omitting `weekday`/`day` from `on` makes this recur every day at this time.
+    return { on: { hour: c.at.getHours(), minute: c.at.getMinutes() }, allowWhileIdle: true };
+  }
   return { at: c.at, allowWhileIdle: true };
 }
 
 async function scheduleAll(candidates: NotificationCandidate[]): Promise<void> {
   await LocalNotifications.cancelAll().catch(() => {});
   if (candidates.length === 0) return;
-  await LocalNotifications.schedule({
+  // isExactNotification defaults to true: on Android 12+ the plugin itself
+  // prompts for the exact-alarm permission the first time it's needed, and
+  // falls back to an inexact alarm (never rejecting the whole call) if the
+  // user declines — exactly the graceful-fallback behaviour we want, with
+  // no USE_EXACT_ALARM involved.
+  const result = await LocalNotifications.schedule({
     notifications: candidates.map((c) => ({
       id: hashNotificationId(c.key),
       title: c.title,
       body: c.body,
       channelId: CHANNEL_ID,
       schedule: toSchedule(c),
-      isExactNotification: false,
       extra: { type: c.type, itemId: c.itemId, route: c.route },
     })),
   });
+  if (result.warning) {
+    console.warn('[notifications] scheduled with a fallback:', result.warning);
+  }
 }
 
 // ── localStorage readers (mirrors the key functions in each screen) ────────
@@ -399,6 +483,9 @@ function loadMilestonesLocal(kidId: string): KidMilestone[] { return readJSON(`m
 function loadActivitiesLocal(kidId: string): Activity[] { return readJSON(`mm_activities_${kidId}`, []); }
 function loadMealsLocal(uid: string): DayMealPlan[] { return readJSON(`mm_meals_${uid}`, []); }
 function loadShoppingLocal(uid: string): ShoppingItemLike[] { return readJSON(`mm_shopping_${uid}`, []); }
+function loadRoutinesLocal(uid: string): RoutineLike[] {
+  return readJSON<{ routines: RoutineLike[] }>(`mm_routines_${uid}`, { routines: [] }).routines ?? [];
+}
 
 /** Pure: assembles every candidate reminder from already-loaded data + settings, with no native calls — this is what the unit tests exercise directly. */
 export function buildAllCandidates(
@@ -411,6 +498,7 @@ export function buildAllCandidates(
     activitiesByKid: Record<string, Activity[]>;
     meals: DayMealPlan[];
     shopping: ShoppingItemLike[];
+    routines: RoutineLike[];
   },
   now: Date
 ): NotificationCandidate[] {
@@ -419,6 +507,8 @@ export function buildAllCandidates(
 
   if (settings.categories.calendar) {
     out.push(...buildEventCandidates(data.events, settings.defaultReminderMinutes));
+  }
+  if (settings.categories.tasks) {
     out.push(...buildTaskCandidates(data.tasks, settings.defaultReminderMinutes));
   }
   if (settings.categories.kids) {
@@ -427,14 +517,13 @@ export function buildAllCandidates(
       out.push(...buildActivityCandidates(data.activitiesByKid[kid.id] ?? [], kid.name, settings.defaultReminderMinutes, now));
     }
   }
-  if (settings.categories.kitchen) {
+  if (settings.categories.meals) {
     out.push(...buildKitchenCandidates(data.meals, settings.kitchenReminderTime, now));
-  }
-  if (settings.categories.shopping) {
     out.push(...buildShoppingCandidates(data.shopping, settings.kitchenReminderTime, now));
   }
   if (settings.categories.selfcare) {
     out.push(...buildSelfCareCandidates(settings.selfcareReminderTime, now));
+    out.push(...buildRoutineReminderCandidates(data.routines, settings.selfcareReminderTime, now));
   }
   return out;
 }
@@ -482,6 +571,7 @@ export async function syncNotifications(userId: string | null, settings: Notific
       activitiesByKid,
       meals: loadMealsLocal(userId),
       shopping: loadShoppingLocal(userId),
+      routines: loadRoutinesLocal(userId),
     },
     now
   );

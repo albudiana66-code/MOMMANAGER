@@ -7,6 +7,8 @@ import { useAuth } from '../context/AuthContext';
 import { useAIConsent } from '../context/AIConsentContext';
 import { askAI } from '../lib/anthropic';
 import { useDateFnsLocale } from '../hooks/useDateFnsLocale';
+import { useNotificationSettings } from '../hooks/useNotificationSettings';
+import { useNotificationPermissionGate } from '../context/NotificationPermissionContext';
 import i18n from '../i18n';
 
 // Maps default step IDs → translation keys so labels are always in the active language
@@ -54,7 +56,8 @@ function getPresetTreatments() {
 type SCTab = 'routines' | 'skincare' | 'wellness';
 
 type RoutineStep = { id: string; label: string; time?: string; completed: boolean };
-type Routine = { id: string; title: string; emoji: string; steps: RoutineStep[]; isDefault: boolean };
+/** reminderEnabled: fires once a day at the global self-care reminder time (Settings) — off by default. */
+type Routine = { id: string; title: string; emoji: string; steps: RoutineStep[]; isDefault: boolean; reminderEnabled?: boolean };
 type RoutineData = { routines: Routine[]; completedDates: string[]; lastReset: string };
 
 type SkincareStep = { id: string; label: string; product: string; completed: boolean };
@@ -500,6 +503,8 @@ function Checkbox({ checked, onChange }: { checked: boolean; onChange: () => voi
 function RoutinesTab() {
   const { user } = useAuth();
   const { t } = useTranslation();
+  const { resync } = useNotificationSettings();
+  const { requestIfNeeded } = useNotificationPermissionGate();
 
   const [data, setData] = useState<RoutineData | null>(null);
   const [showAddSheet, setShowAddSheet] = useState(false);
@@ -543,6 +548,20 @@ function RoutinesTab() {
     }
     setData(updated);
     saveRoutineData(user.id, updated);
+  }
+
+  async function toggleRoutineReminder(routineId: string) {
+    if (!user || !data) return;
+    const routine = data.routines.find((r) => r.id === routineId);
+    const enabling = !routine?.reminderEnabled;
+    const updated: RoutineData = {
+      ...data,
+      routines: data.routines.map((r) => r.id === routineId ? { ...r, reminderEnabled: enabling } : r),
+    };
+    setData(updated);
+    saveRoutineData(user.id, updated);
+    if (enabling) await requestIfNeeded();
+    resync();
   }
 
   function addCustomRoutine() {
@@ -610,6 +629,12 @@ function RoutinesTab() {
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{done}/{total}</span>
+                  <button
+                    onClick={() => toggleRoutineReminder(routine.id)}
+                    aria-label={t('selfcare.remindDaily', 'Remind me daily')}
+                    style={{ padding: 4, color: routine.reminderEnabled ? 'var(--accent)' : 'var(--text-muted)', opacity: routine.reminderEnabled ? 1 : 0.5 }}>
+                    🔔
+                  </button>
                   {!routine.isDefault && (
                     <button onClick={() => deleteRoutine(routine.id)} style={{ padding: 4, color: 'var(--text-secondary)' }}>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">

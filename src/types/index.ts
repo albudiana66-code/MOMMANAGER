@@ -13,18 +13,18 @@ export interface NotificationSettings {
   /** Master switch — off means no category ever fires, regardless of its own toggle. */
   enabled: boolean;
   categories: {
-    /** Calendar events + tasks. */
+    /** Calendar events. */
     calendar: boolean;
+    /** To-do tasks. */
+    tasks: boolean;
     kids: boolean;
-    /** Daily "tonight's dinner" reminder. */
-    kitchen: boolean;
-    /** Daily shopping-list reminder. */
-    shopping: boolean;
+    /** Meal-plan reminders (per-meal, falling back to the daily "tonight's dinner" reminder) + the daily shopping-list reminder. */
+    meals: boolean;
     selfcare: boolean;
   };
-  /** Default reminder offset (minutes before) applied to new/pre-existing calendar, kids, and activity items that haven't chosen their own. */
+  /** Default reminder offset (minutes before) applied to new/pre-existing calendar, kids, and activity items that haven't chosen their own. Meal and self-care reminders default to None instead — they're opted into per-item, not inherited from this. */
   defaultReminderMinutes: 0 | 10 | 30 | 60 | 1440;
-  /** "HH:mm" 24h time the daily meal reminder fires. */
+  /** "HH:mm" 24h time the daily meal reminder fires (fallback when a meal has no clock time of its own) and every self-care routine's reminder fires at. */
   kitchenReminderTime: string;
   /** "HH:mm" 24h time the daily self-care reminder fires. */
   selfcareReminderTime: string;
@@ -41,12 +41,12 @@ export const DEFAULT_NOTIFICATION_SETTINGS: NotificationSettings = {
   enabled: true,
   categories: {
     calendar: true,
+    tasks: true,
     kids: true,
-    kitchen: true,
-    shopping: false,
+    meals: true,
     selfcare: true,
   },
-  defaultReminderMinutes: 30,
+  defaultReminderMinutes: 10,
   kitchenReminderTime: '16:00',
   selfcareReminderTime: '20:30',
   quietHours: {
@@ -55,6 +55,29 @@ export const DEFAULT_NOTIFICATION_SETTINGS: NotificationSettings = {
     end: '07:00',
   },
 };
+
+/**
+ * Coerces whatever is actually stored in profiles.notification_settings into
+ * the current shape — handles both a brand-new user (nothing saved yet) and
+ * a pre-existing saved settings object from before `categories.tasks`/
+ * `categories.meals` existed (back when tasks were bundled under `calendar`
+ * and meals were split into separate `kitchen`/`shopping` toggles).
+ */
+export function normalizeNotificationSettings(raw: Partial<NotificationSettings> | null | undefined): NotificationSettings {
+  if (!raw) return DEFAULT_NOTIFICATION_SETTINGS;
+  const legacyCategories = raw.categories as Partial<NotificationSettings['categories']> & { kitchen?: boolean; shopping?: boolean } | undefined;
+  return {
+    ...DEFAULT_NOTIFICATION_SETTINGS,
+    ...raw,
+    categories: {
+      calendar: legacyCategories?.calendar ?? DEFAULT_NOTIFICATION_SETTINGS.categories.calendar,
+      tasks: legacyCategories?.tasks ?? legacyCategories?.calendar ?? DEFAULT_NOTIFICATION_SETTINGS.categories.tasks,
+      kids: legacyCategories?.kids ?? DEFAULT_NOTIFICATION_SETTINGS.categories.kids,
+      meals: legacyCategories?.meals ?? (legacyCategories?.kitchen || legacyCategories?.shopping) ?? DEFAULT_NOTIFICATION_SETTINGS.categories.meals,
+      selfcare: legacyCategories?.selfcare ?? DEFAULT_NOTIFICATION_SETTINGS.categories.selfcare,
+    },
+  };
+}
 
 export interface Profile {
   id: string;

@@ -296,7 +296,9 @@
     "savedCheckmark": "Збережено ✓",
     "savedRecipesCount": "Збережені рецепти ({{count}})",
     "viewBtn": "Переглянути",
-    "cookBtn": "Готувати"
+    "cookBtn": "Готувати",
+    "mealReminderTitle": "Нагадування про їжу",
+    "mealTimeLabel": "Час"
   },
   "budget": {
     "title": "Бюджет",
@@ -1012,7 +1014,8 @@
     "workoutsThisWeek_few": "{{count}} тренування цього тижня · {{mins}} хв загалом",
     "workoutsThisWeek_many": "{{count}} тренувань цього тижня · {{mins}} хв загалом",
     "dailyCalorieGoalResult_few": "Ваша денна норма калорій: {{calories}} ккал (щоб {{action}} {{diff}} кг за {{months}} місяці)",
-    "dailyCalorieGoalResult_many": "Ваша денна норма калорій: {{calories}} ккал (щоб {{action}} {{diff}} кг за {{months}} місяців)"
+    "dailyCalorieGoalResult_many": "Ваша денна норма калорій: {{calories}} ккал (щоб {{action}} {{diff}} кг за {{months}} місяців)",
+    "remindDaily": "Нагадувати щодня"
   },
   "settings": {
     "title": "Налаштування",
@@ -1068,7 +1071,10 @@
     "deleteAccountWarning": "Це назавжди видалить ваш акаунт і всі ваші дані. Цю дію неможливо скасувати.",
     "deleteAccountLink": "Видалити акаунт",
     "deleting": "Видалення…",
-    "delete": "Видалити"
+    "delete": "Видалити",
+    "notifCategoryCalendar": "Календар",
+    "notifCategoryTasks": "Завдання",
+    "notifCategoryMeals": "Харчування"
   },
   "paywall": {
     "monthly": "Щомісячно",
@@ -1468,5 +1474,45 @@
       "section11Title": "11. Зв'яжіться з нами",
       "section11Body": "З будь-якими питаннями чи запитами щодо конфіденційності зв'яжіться з нами за адресою <strong>support@mommanager.co.uk</strong> або напишіть до SoldOut Digital LTD, Велика Британія."
     }
+  },
+  "notifications": {
+    "channelName": "Нагадування",
+    "channelDescription": "Нагадування про календар, завдання, дітей, харчування та догляд за собою",
+    "permissionTitle": "Будьте в курсі свого дня",
+    "permissionBody": "Отримуйте нагадування про зустрічі, їжу та час для себе 🔔",
+    "allow": "Дозволити",
+    "notNow": "Не зараз",
+    "startsAt": "Починається о {{time}}",
+    "startsAtIn": "Починається о {{time}} · через {{duration}}",
+    "dueAt": "Термін о {{time}}",
+    "dueAtIn": "Термін о {{time}} · через {{duration}}",
+    "inMinutes_one": "{{count}} хвилину",
+    "inMinutes_few": "{{count}} хвилини",
+    "inMinutes_many": "{{count}} хвилин",
+    "inMinutes_other": "{{count}} хвилини",
+    "inHour": "1 годину",
+    "inDay": "1 день",
+    "kitchenTitle": "MomManager",
+    "tonightMeal": "Сьогодні ввечері: {{meal}}",
+    "shoppingTitle": "MomManager",
+    "shoppingReminder": "{{count}} товарів чекають у списку покупок 🛒",
+    "selfcareTitle": "MomManager",
+    "selfcare1": "Приділіть 5 хвилин собі 💛",
+    "selfcare2": "Склянка води і глибокий вдих — ви це заслужили 🌸",
+    "selfcare3": "Потягніться, подихайте, посміхніться. Ви заслуговуєте на цю мить 💆",
+    "selfcare4": "Навіть трохи відпочинку сьогодні важливо 🌿",
+    "selfcare5": "У вас чудово виходить. Приділіть мить собі ✨",
+    "testTitle": "MomManager",
+    "testBody": "Сповіщення працюють! 🎉",
+    "routineReminder": "Час для вашого розпорядку 💫"
+  },
+  "reminder": {
+    "label": "Нагадування",
+    "none": "Немає",
+    "atTime": "Точно у визначений час",
+    "min10": "За 10 хвилин",
+    "min30": "За 30 хвилин",
+    "hour1": "За 1 годину",
+    "day1": "За 1 день"
   }
 }

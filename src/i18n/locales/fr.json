@@ -296,7 +296,9 @@
     "savedCheckmark": "Enregistrée ✓",
     "savedRecipesCount": "Recettes enregistrées ({{count}})",
     "viewBtn": "Voir",
-    "cookBtn": "Cuisiner"
+    "cookBtn": "Cuisiner",
+    "mealReminderTitle": "Rappel de repas",
+    "mealTimeLabel": "Heure"
   },
   "budget": {
     "title": "Budget",
@@ -1004,7 +1006,8 @@
     "weeklyOverview": "Aperçu hebdomadaire",
     "journalPlaceholder": "Écrivez librement — c'est votre espace privé...",
     "lessToggle": "moins",
-    "moreToggle": "plus"
+    "moreToggle": "plus",
+    "remindDaily": "Me le rappeler chaque jour"
   },
   "settings": {
     "title": "Paramètres",
@@ -1060,7 +1063,10 @@
     "deleteAccountWarning": "Cela supprimera définitivement votre compte et toutes vos données. Cette action est irréversible.",
     "deleteAccountLink": "Supprimer le compte",
     "deleting": "Suppression…",
-    "delete": "Supprimer"
+    "delete": "Supprimer",
+    "notifCategoryCalendar": "Calendrier",
+    "notifCategoryTasks": "Tâches",
+    "notifCategoryMeals": "Repas"
   },
   "paywall": {
     "monthly": "Mensuel",
@@ -1460,5 +1466,43 @@
       "section11Title": "11. Nous contacter",
       "section11Body": "Pour toute question ou demande relative à la confidentialité, contactez-nous à <strong>support@mommanager.co.uk</strong> ou écrivez à SoldOut Digital LTD, Royaume-Uni."
     }
+  },
+  "notifications": {
+    "channelName": "Rappels",
+    "channelDescription": "Rappels pour votre calendrier, vos tâches, vos enfants, vos repas et votre bien-être",
+    "permissionTitle": "Restez au top de votre journée",
+    "permissionBody": "Recevez des rappels pour vos rendez-vous, repas et moments pour vous 🔔",
+    "allow": "Autoriser",
+    "notNow": "Plus tard",
+    "startsAt": "Commence à {{time}}",
+    "startsAtIn": "Commence à {{time}} · dans {{duration}}",
+    "dueAt": "À faire à {{time}}",
+    "dueAtIn": "À faire à {{time}} · dans {{duration}}",
+    "inMinutes_one": "{{count}} minute",
+    "inMinutes_other": "{{count}} minutes",
+    "inHour": "1 heure",
+    "inDay": "1 jour",
+    "kitchenTitle": "MomManager",
+    "tonightMeal": "Ce soir : {{meal}}",
+    "shoppingTitle": "MomManager",
+    "shoppingReminder": "{{count}} articles vous attendent sur votre liste de courses 🛒",
+    "selfcareTitle": "MomManager",
+    "selfcare1": "Accordez-vous 5 minutes 💛",
+    "selfcare2": "Un verre d'eau et une grande respiration — vous le méritez 🌸",
+    "selfcare3": "Étirez-vous, respirez, souriez. Vous méritez ce moment 💆",
+    "selfcare4": "Même un petit repos compte aujourd'hui 🌿",
+    "selfcare5": "Vous vous en sortez très bien. Prenez un moment pour vous ✨",
+    "testTitle": "MomManager",
+    "testBody": "Les notifications fonctionnent ! 🎉",
+    "routineReminder": "C'est l'heure de votre routine 💫"
+  },
+  "reminder": {
+    "label": "Rappel",
+    "none": "Aucun",
+    "atTime": "À l'heure exacte",
+    "min10": "10 minutes avant",
+    "min30": "30 minutes avant",
+    "hour1": "1 heure avant",
+    "day1": "1 jour avant"
   }
 }

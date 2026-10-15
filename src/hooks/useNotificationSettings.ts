@@ -1,6 +1,6 @@
 import { useAuth } from '../context/AuthContext';
 import { syncNotifications } from '../lib/notifications';
-import { DEFAULT_NOTIFICATION_SETTINGS, type NotificationSettings } from '../types';
+import { normalizeNotificationSettings, type NotificationSettings } from '../types';
 
 /**
  * The single place every screen reads/writes notification preferences from.
@@ -9,7 +9,7 @@ import { DEFAULT_NOTIFICATION_SETTINGS, type NotificationSettings } from '../typ
  */
 export function useNotificationSettings() {
   const { user, profile, updateProfile } = useAuth();
-  const settings: NotificationSettings = profile?.notification_settings ?? DEFAULT_NOTIFICATION_SETTINGS;
+  const settings: NotificationSettings = normalizeNotificationSettings(profile?.notification_settings);
 
   /** Persists new settings and immediately re-syncs pending notifications to match. */
   async function saveSettings(next: NotificationSettings): Promise<void> {

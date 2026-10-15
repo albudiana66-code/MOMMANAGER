@@ -296,7 +296,9 @@
     "savedCheckmark": "Сохранено ✓",
     "savedRecipesCount": "Сохранённые рецепты ({{count}})",
     "viewBtn": "Смотреть",
-    "cookBtn": "Готовить"
+    "cookBtn": "Готовить",
+    "mealReminderTitle": "Напоминание о еде",
+    "mealTimeLabel": "Время"
   },
   "budget": {
     "title": "Бюджет",
@@ -1012,7 +1014,8 @@
     "workoutsThisWeek_few": "{{count}} тренировки на этой неделе · {{mins}} мин всего",
     "workoutsThisWeek_many": "{{count}} тренировок на этой неделе · {{mins}} мин всего",
     "dailyCalorieGoalResult_few": "Ваша дневная норма калорий: {{calories}} ккал (чтобы {{action}} {{diff}} кг за {{months}} месяца)",
-    "dailyCalorieGoalResult_many": "Ваша дневная норма калорий: {{calories}} ккал (чтобы {{action}} {{diff}} кг за {{months}} месяцев)"
+    "dailyCalorieGoalResult_many": "Ваша дневная норма калорий: {{calories}} ккал (чтобы {{action}} {{diff}} кг за {{months}} месяцев)",
+    "remindDaily": "Напоминать каждый день"
   },
   "settings": {
     "title": "Настройки",
@@ -1068,7 +1071,10 @@
     "deleteAccountWarning": "Это навсегда удалит ваш аккаунт и все ваши данные. Это действие нельзя отменить.",
     "deleteAccountLink": "Удалить аккаунт",
     "deleting": "Удаление…",
-    "delete": "Удалить"
+    "delete": "Удалить",
+    "notifCategoryCalendar": "Календарь",
+    "notifCategoryTasks": "Задачи",
+    "notifCategoryMeals": "Питание"
   },
   "paywall": {
     "monthly": "Ежемесячно",
@@ -1468,5 +1474,45 @@
       "section11Title": "11. Свяжитесь с нами",
       "section11Body": "По любым вопросам или запросам, связанным с конфиденциальностью, свяжитесь с нами по адресу <strong>support@mommanager.co.uk</strong> или напишите в SoldOut Digital LTD, Великобритания."
     }
+  },
+  "notifications": {
+    "channelName": "Напоминания",
+    "channelDescription": "Напоминания о календаре, задачах, детях, питании и уходе за собой",
+    "permissionTitle": "Будьте в курсе своего дня",
+    "permissionBody": "Получайте напоминания о встречах, еде и времени для себя 🔔",
+    "allow": "Разрешить",
+    "notNow": "Не сейчас",
+    "startsAt": "Начало в {{time}}",
+    "startsAtIn": "Начало в {{time}} · через {{duration}}",
+    "dueAt": "Срок в {{time}}",
+    "dueAtIn": "Срок в {{time}} · через {{duration}}",
+    "inMinutes_one": "{{count}} минуту",
+    "inMinutes_few": "{{count}} минуты",
+    "inMinutes_many": "{{count}} минут",
+    "inMinutes_other": "{{count}} минуты",
+    "inHour": "1 час",
+    "inDay": "1 день",
+    "kitchenTitle": "MomManager",
+    "tonightMeal": "Сегодня вечером: {{meal}}",
+    "shoppingTitle": "MomManager",
+    "shoppingReminder": "{{count}} товаров ждут в списке покупок 🛒",
+    "selfcareTitle": "MomManager",
+    "selfcare1": "Удели 5 минут себе 💛",
+    "selfcare2": "Стакан воды и глубокий вдох — вы это заслужили 🌸",
+    "selfcare3": "Потянись, подыши, улыбнись. Ты заслуживаешь этот момент 💆",
+    "selfcare4": "Даже немного отдыха сегодня имеет значение 🌿",
+    "selfcare5": "У тебя отлично получается. Удели момент себе ✨",
+    "testTitle": "MomManager",
+    "testBody": "Уведомления работают! 🎉",
+    "routineReminder": "Время для вашего распорядка 💫"
+  },
+  "reminder": {
+    "label": "Напоминание",
+    "none": "Нет",
+    "atTime": "Точно в срок",
+    "min10": "За 10 минут",
+    "min30": "За 30 минут",
+    "hour1": "За 1 час",
+    "day1": "За 1 день"
   }
 }

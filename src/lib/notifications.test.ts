@@ -2,13 +2,15 @@ import { describe, expect, it } from 'vitest';
 import {
   buildAllCandidates,
   buildEventCandidates,
+  buildKitchenCandidates,
+  buildRoutineReminderCandidates,
   buildTaskCandidates,
   hashNotificationId,
   isTimeWithinQuietHours,
   selectScheduledCandidates,
   type NotificationCandidate,
 } from './notifications';
-import { DEFAULT_NOTIFICATION_SETTINGS, type CalendarEvent, type Kid, type NotificationSettings, type Task } from '../types';
+import { DEFAULT_NOTIFICATION_SETTINGS, normalizeNotificationSettings, type CalendarEvent, type Kid, type NotificationSettings, type Task } from '../types';
 
 const NOW = new Date(2026, 9, 5, 10, 0, 0); // Mon 5 Oct 2026, 10:00 local
 
@@ -49,6 +51,7 @@ function emptyData(overrides: Partial<Parameters<typeof buildAllCandidates>[1]> 
     activitiesByKid: {},
     meals: [],
     shopping: [],
+    routines: [],
     ...overrides,
   };
 }
@@ -185,7 +188,7 @@ describe('buildAllCandidates', () => {
   it('produces nothing for a disabled category even though the data exists', () => {
     const settings: NotificationSettings = {
       ...DEFAULT_NOTIFICATION_SETTINGS,
-      categories: { calendar: false, kids: false, kitchen: false, shopping: false, selfcare: false },
+      categories: { calendar: false, tasks: false, kids: false, meals: false, selfcare: false },
     };
     const out = buildAllCandidates(settings, emptyData({ events: [baseEvent()], tasks: [baseTask({ reminder_minutes_before: 0 })] }), NOW);
     expect(out).toHaveLength(0);
@@ -203,10 +206,77 @@ describe('buildAllCandidates', () => {
   it('still produces the enabled categories alongside a disabled one', () => {
     const settings: NotificationSettings = {
       ...DEFAULT_NOTIFICATION_SETTINGS,
-      categories: { ...DEFAULT_NOTIFICATION_SETTINGS.categories, kitchen: false, shopping: false, selfcare: false },
+      categories: { ...DEFAULT_NOTIFICATION_SETTINGS.categories, meals: false, selfcare: false },
     };
     const out = buildAllCandidates(settings, emptyData({ events: [baseEvent()] }), NOW);
     expect(out.length).toBeGreaterThan(0);
     expect(out.every((c) => c.type === 'event' || c.type === 'task')).toBe(true);
+  });
+
+  it('tasks and calendar are gated independently', () => {
+    const tasksOnly: NotificationSettings = {
+      ...DEFAULT_NOTIFICATION_SETTINGS,
+      categories: { calendar: false, tasks: true, kids: false, meals: false, selfcare: false },
+    };
+    const out = buildAllCandidates(tasksOnly, emptyData({ events: [baseEvent()], tasks: [baseTask({ reminder_minutes_before: 0 })] }), NOW);
+    expect(out.every((c) => c.type === 'task')).toBe(true);
+    expect(out.length).toBeGreaterThan(0);
+  });
+});
+
+describe('buildKitchenCandidates', () => {
+  it('schedules a per-meal reminder when the meal has its own clock time and a chosen offset', () => {
+    const meals = [{ date: '2026-10-05', dinner: { name: 'Lasagne', emoji: '🍝', clockTime: '19:00', reminder_minutes_before: 30 as const } }];
+    const out = buildKitchenCandidates(meals, '16:00', NOW);
+    const match = out.find((c) => c.itemId === '2026-10-05:dinner');
+    expect(match).toBeDefined();
+    expect(match!.at).toEqual(new Date(2026, 9, 5, 18, 30));
+    expect(match!.title).toContain('Lasagne');
+  });
+
+  it('falls back to the global daily dinner reminder when no clock time is set', () => {
+    const meals = [{ date: '2026-10-05', dinner: { name: 'Lasagne', emoji: '🍝' } }];
+    const out = buildKitchenCandidates(meals, '16:00', NOW);
+    const match = out.find((c) => c.itemId === '2026-10-05');
+    expect(match).toBeDefined();
+    expect(match!.at).toEqual(new Date(2026, 9, 5, 16, 0));
+  });
+
+  it('defaults to no reminder for a meal with a clock time but no chosen offset', () => {
+    const meals = [{ date: '2026-10-05', dinner: { name: 'Lasagne', clockTime: '19:00' } }];
+    const out = buildKitchenCandidates(meals, '16:00', NOW);
+    expect(out.find((c) => c.itemId.startsWith('2026-10-05'))).toBeUndefined();
+  });
+});
+
+describe('buildRoutineReminderCandidates', () => {
+  it('produces a recurring daily candidate only for routines with their reminder switched on', () => {
+    const routines = [
+      { id: 'r1', title: 'Morning', emoji: '🌞', reminderEnabled: true },
+      { id: 'r2', title: 'Evening', emoji: '🌙', reminderEnabled: false },
+    ];
+    const out = buildRoutineReminderCandidates(routines, '20:30', NOW);
+    expect(out).toHaveLength(1);
+    expect(out[0].key).toBe('routine:r1');
+    expect(out[0].recurringDaily).toBe(true);
+    expect(out[0].at.getHours()).toBe(20);
+    expect(out[0].at.getMinutes()).toBe(30);
+  });
+});
+
+describe('normalizeNotificationSettings', () => {
+  it('returns the default settings when nothing is saved yet', () => {
+    expect(normalizeNotificationSettings(undefined)).toEqual(DEFAULT_NOTIFICATION_SETTINGS);
+  });
+
+  it('migrates a pre-existing settings object saved before tasks/meals were split out', () => {
+    const legacy = {
+      ...DEFAULT_NOTIFICATION_SETTINGS,
+      categories: { calendar: true, kids: true, kitchen: true, shopping: false, selfcare: true } as unknown as NotificationSettings['categories'],
+    };
+    const normalized = normalizeNotificationSettings(legacy);
+    expect(normalized.categories.calendar).toBe(true);
+    expect(normalized.categories.tasks).toBe(true); // inherited from the old bundled `calendar`
+    expect(normalized.categories.meals).toBe(true); // true because legacy `kitchen` was true
   });
 });

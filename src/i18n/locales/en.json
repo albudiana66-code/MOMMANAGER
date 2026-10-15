@@ -296,7 +296,9 @@
     "savedCheckmark": "Saved ✓",
     "savedRecipesCount": "Saved Recipes ({{count}})",
     "viewBtn": "View",
-    "cookBtn": "Cook"
+    "cookBtn": "Cook",
+    "mealReminderTitle": "Meal reminder",
+    "mealTimeLabel": "Time"
   },
   "budget": {
     "title": "Budget",
@@ -1004,7 +1006,8 @@
           ]
         }
       }
-    }
+    },
+    "remindDaily": "Remind me daily"
   },
   "settings": {
     "title": "Settings",
@@ -1066,7 +1069,7 @@
     "openIOSSettings": "Open Settings",
     "openAndroidSettings": "Open Settings",
     "notifMasterSwitch": "Reminder notifications",
-    "notifCategoryCalendar": "Calendar & tasks",
+    "notifCategoryCalendar": "Calendar",
     "notifCategoryKids": "Kids",
     "notifCategoryKitchen": "Meal plan",
     "notifCategoryShopping": "Shopping list",
@@ -1081,7 +1084,9 @@
     "notifTestSent": "Sent — check in 5 seconds",
     "emailsTitle": "Emails",
     "emailsFromMomManager": "Emails from MomManager",
-    "emailsFromMomManagerDescription": "Tips, onboarding help, and the occasional check-in. We'll always email you about your account, billing, or cancellation regardless of this setting."
+    "emailsFromMomManagerDescription": "Tips, onboarding help, and the occasional check-in. We'll always email you about your account, billing, or cancellation regardless of this setting.",
+    "notifCategoryTasks": "Tasks",
+    "notifCategoryMeals": "Meals"
   },
   "reminder": {
     "label": "Reminder",
@@ -1118,7 +1123,8 @@
     "selfcare4": "Even a tiny bit of rest counts today 🌿",
     "selfcare5": "You're doing great. Take a moment for you ✨",
     "testTitle": "MomManager",
-    "testBody": "Notifications are working! 🎉"
+    "testBody": "Notifications are working! 🎉",
+    "routineReminder": "Time for your routine 💫"
   },
   "paywall": {
     "chooseYourPlan": "Choose your plan",

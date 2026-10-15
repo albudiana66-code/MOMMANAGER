@@ -80,9 +80,9 @@ export function NotificationSettingsCard() {
 
   const CATEGORY_ROWS: { key: CategoryKey; label: string }[] = [
     { key: 'calendar', label: t('settings.notifCategoryCalendar') },
+    { key: 'tasks', label: t('settings.notifCategoryTasks') },
     { key: 'kids', label: t('settings.notifCategoryKids') },
-    { key: 'kitchen', label: t('settings.notifCategoryKitchen') },
-    { key: 'shopping', label: t('settings.notifCategoryShopping') },
+    { key: 'meals', label: t('settings.notifCategoryMeals') },
     { key: 'selfcare', label: t('settings.notifCategorySelfcare') },
   ];
 
@@ -136,7 +136,7 @@ export function NotificationSettingsCard() {
             />
           </div>
 
-          {settings.categories.kitchen && (
+          {settings.categories.meals && (
             <div>
               <label className="text-sm font-medium text-[var(--text-secondary)] mb-1.5 block">{t('settings.notifKitchenTime')}</label>
               <input

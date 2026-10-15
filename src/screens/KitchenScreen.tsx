@@ -8,14 +8,26 @@ import { useAIConsent } from '../context/AIConsentContext';
 import { askAI } from '../lib/anthropic';
 import { useDateFnsLocale } from '../hooks/useDateFnsLocale';
 import { useNotificationSettings } from '../hooks/useNotificationSettings';
+import { useNotificationPermissionGate } from '../context/NotificationPermissionContext';
+import { ReminderSelect } from '../components/ui/ReminderSelect';
+import { Input } from '../components/ui/Input';
 import i18n from '../i18n';
-import type { ShoppingItem } from '../types';
+import type { ReminderMinutes, ShoppingItem } from '../types';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 type KitchenTab = 'meals' | 'shopping' | 'recipes';
 
-type MealSlot = { name: string; emoji: string; time: string };
+type MealSlot = {
+  name: string;
+  emoji: string;
+  /** Prep-duration string from the AI generator, e.g. "30 min" — NOT a clock time. */
+  time: string;
+  /** Optional "HH:mm" clock time the meal itself is planned for — set manually, never by the AI generator. Needed to offset a reminder against. */
+  clockTime?: string;
+  /** None by default — meal reminders are opt-in per item, unlike calendar/tasks. */
+  reminder_minutes_before?: ReminderMinutes;
+};
 type DayPlan = { date: string; breakfast?: MealSlot; lunch?: MealSlot; dinner?: MealSlot };
 
 type RecipeStep = { text: string; emoji: string; duration: number | null };
@@ -585,6 +597,7 @@ function MealsTab() {
   const { user } = useAuth();
   const { requestAiConsent } = useAIConsent();
   const { resync } = useNotificationSettings();
+  const { requestIfNeeded } = useNotificationPermissionGate();
 
   const [weekOffset, setWeekOffset] = useState(0);
   const [plan, setPlan] = useState<DayPlan[]>([]);
@@ -598,6 +611,9 @@ function MealsTab() {
   const [mealRecipe, setMealRecipe] = useState<GeneratedRecipe | null>(null);
   const [mealLoading, setMealLoading] = useState(false);
   const [mealLoadingName, setMealLoadingName] = useState('');
+  const [reminderEdit, setReminderEdit] = useState<{ date: string; slot: 'breakfast' | 'lunch' | 'dinner' } | null>(null);
+  const [reminderClockTime, setReminderClockTime] = useState('');
+  const [reminderMinutes, setReminderMinutes] = useState<ReminderMinutes>(null);
 
   const weekStart = startOfWeek(addWeeks(new Date(), weekOffset), { weekStartsOn: 1 });
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
@@ -661,6 +677,28 @@ Use dates for the week starting ${format(weekStart, 'yyyy-MM-dd')}.`;
   }
 
   function planForDate(ds: string) { return plan.find((d) => d.date === ds); }
+
+  function openReminderEdit(date: string, slot: 'breakfast' | 'lunch' | 'dinner', meal: MealSlot) {
+    setReminderEdit({ date, slot });
+    setReminderClockTime(meal.clockTime ?? '');
+    setReminderMinutes(meal.reminder_minutes_before ?? null);
+  }
+
+  async function saveMealReminder() {
+    if (!user || !reminderEdit) return;
+    const { date, slot } = reminderEdit;
+    const updated = plan.map((d) => {
+      if (d.date !== date) return d;
+      const meal = d[slot];
+      if (!meal) return d;
+      return { ...d, [slot]: { ...meal, clockTime: reminderClockTime || undefined, reminder_minutes_before: reminderMinutes } };
+    });
+    setPlan(updated);
+    save(MEALS_KEY(user.id), updated);
+    if (reminderClockTime && reminderMinutes !== null) await requestIfNeeded();
+    resync();
+    setReminderEdit(null);
+  }
 
   async function openMealRecipe(meal: MealSlot) {
     const consented = await requestAiConsent();
@@ -748,22 +786,33 @@ Return ONLY valid JSON, no markdown:
               </div>
               {(['breakfast', 'lunch', 'dinner'] as const).map((slot) => {
                 const meal = dayPlan?.[slot];
+                const hasReminder = !!meal?.clockTime && meal?.reminder_minutes_before != null;
                 return (
-                  <button key={slot}
-                    onClick={() => meal && openMealRecipe(meal)}
-                    style={{ width: '100%', textAlign: 'left', padding: '6px 8px', borderRadius: 10, marginBottom: 4, background: meal ? 'var(--bg-primary)' : 'transparent', border: meal ? '1px solid var(--border)' : '1px dashed var(--border)', cursor: meal ? 'pointer' : 'default' }}>
-                    {meal ? (
-                      <div className="flex items-center gap-1.5">
-                        <span style={{ fontSize: 14 }}>{meal.emoji}</span>
-                        <div style={{ minWidth: 0 }}>
-                          <p style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{i18n.t(`kitchen.${slot}`)}</p>
-                          <p style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{meal.name}</p>
+                  <div key={slot} style={{ position: 'relative' }}>
+                    <button
+                      onClick={() => meal && openMealRecipe(meal)}
+                      style={{ width: '100%', textAlign: 'left', padding: '6px 8px', borderRadius: 10, marginBottom: 4, background: meal ? 'var(--bg-primary)' : 'transparent', border: meal ? '1px solid var(--border)' : '1px dashed var(--border)', cursor: meal ? 'pointer' : 'default' }}>
+                      {meal ? (
+                        <div className="flex items-center gap-1.5" style={{ paddingRight: 18 }}>
+                          <span style={{ fontSize: 14 }}>{meal.emoji}</span>
+                          <div style={{ minWidth: 0 }}>
+                            <p style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{i18n.t(`kitchen.${slot}`)}</p>
+                            <p style={{ fontSize: 11, fontWeight: 500, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{meal.name}</p>
+                          </div>
                         </div>
-                      </div>
-                    ) : (
-                      <p style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{i18n.t(`kitchen.${slot}`)}</p>
+                      ) : (
+                        <p style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{i18n.t(`kitchen.${slot}`)}</p>
+                      )}
+                    </button>
+                    {meal && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); openReminderEdit(ds, slot, meal); }}
+                        aria-label={i18n.t('reminder.label')}
+                        style={{ position: 'absolute', top: 4, right: 4, width: 18, height: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', color: hasReminder ? 'var(--accent)' : 'var(--text-muted)', opacity: hasReminder ? 1 : 0.5 }}>
+                        🔔
+                      </button>
                     )}
-                  </button>
+                  </div>
                 );
               })}
             </div>
@@ -800,6 +849,22 @@ Return ONLY valid JSON, no markdown:
           </div>
           <button onClick={generateMenu} style={{ width: '100%', height: 52, borderRadius: 16, border: 'none', background: 'linear-gradient(135deg, #FFD4B0 0%, #FFAB7A 100%)', color: '#7A3A10', fontWeight: 600, fontSize: 15, cursor: 'pointer' }}>
             {i18n.t('kitchen.generateMenuBtn')}
+          </button>
+        </div>
+      </BottomSheet>
+
+      <BottomSheet open={!!reminderEdit} onClose={() => setReminderEdit(null)} title={i18n.t('kitchen.mealReminderTitle')}>
+        <div className="flex flex-col gap-4">
+          <Input
+            type="time"
+            label={i18n.t('kitchen.mealTimeLabel')}
+            value={reminderClockTime}
+            onChange={(e) => setReminderClockTime(e.target.value)}
+          />
+          {reminderClockTime && <ReminderSelect value={reminderMinutes} onChange={setReminderMinutes} />}
+          <button onClick={saveMealReminder}
+            style={{ width: '100%', height: 48, borderRadius: 14, border: 'none', background: 'linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%)', color: '#fff', fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>
+            {i18n.t('common.save')}
           </button>
         </div>
       </BottomSheet>

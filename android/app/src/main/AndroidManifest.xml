@@ -56,12 +56,15 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <!-- @capacitor/local-notifications declares SCHEDULE_EXACT_ALARM in its own
-         manifest (used only when a notification is scheduled with
-         isExactNotification: true). We never schedule exact alarms — every
-         reminder goes through src/lib/notifications.ts with
-         isExactNotification: false + allowWhileIdle: true, since Google Play
-         restricts this permission to apps whose core function requires exact
-         timing. Removing it here overrides the plugin's manifest entry during
-         the Gradle manifest merge so the installed app never declares it. -->
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" tools:node="remove" />
+         manifest. Reminders in src/lib/notifications.ts now schedule with
+         isExactNotification: true (the plugin default) so calendar/task/meal
+         reminders fire at the exact minute — the plugin itself prompts for
+         this permission the first time it's needed and gracefully falls back
+         to an inexact alarm if the user declines, so there's no hard
+         dependency on it being granted. Deliberately NOT using
+         USE_EXACT_ALARM (that's reserved by Play policy for alarm-clock /
+         calendar apps whose core function is exact timing, and requires a
+         separate store declaration) — SCHEDULE_EXACT_ALARM is the
+         user-grantable one, consistent with the graceful-fallback design. -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 </manifest>
