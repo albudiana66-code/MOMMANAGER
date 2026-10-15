@@ -445,24 +445,17 @@ function toSchedule(c: NotificationCandidate) {
 async function scheduleAll(candidates: NotificationCandidate[]): Promise<void> {
   await LocalNotifications.cancelAll().catch(() => {});
   if (candidates.length === 0) return;
-  // isExactNotification defaults to true: on Android 12+ the plugin itself
-  // prompts for the exact-alarm permission the first time it's needed, and
-  // falls back to an inexact alarm (never rejecting the whole call) if the
-  // user declines — exactly the graceful-fallback behaviour we want, with
-  // no USE_EXACT_ALARM involved.
-  const result = await LocalNotifications.schedule({
+  await LocalNotifications.schedule({
     notifications: candidates.map((c) => ({
       id: hashNotificationId(c.key),
       title: c.title,
       body: c.body,
       channelId: CHANNEL_ID,
       schedule: toSchedule(c),
+      isExactNotification: false,
       extra: { type: c.type, itemId: c.itemId, route: c.route },
     })),
   });
-  if (result.warning) {
-    console.warn('[notifications] scheduled with a fallback:', result.warning);
-  }
 }
 
 // ── localStorage readers (mirrors the key functions in each screen) ────────
