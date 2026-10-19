@@ -1,4 +1,5 @@
 import { useAuth } from '../context/AuthContext';
+import { useNudgeSubscriptionContext } from './useNudgeSubscriptionContext';
 import { syncNotifications } from '../lib/notifications';
 import { normalizeNotificationSettings, type NotificationSettings } from '../types';
 
@@ -9,17 +10,18 @@ import { normalizeNotificationSettings, type NotificationSettings } from '../typ
  */
 export function useNotificationSettings() {
   const { user, profile, updateProfile } = useAuth();
+  const subscriptionContext = useNudgeSubscriptionContext();
   const settings: NotificationSettings = normalizeNotificationSettings(profile?.notification_settings);
 
   /** Persists new settings and immediately re-syncs pending notifications to match. */
   async function saveSettings(next: NotificationSettings): Promise<void> {
     await updateProfile({ notification_settings: next });
-    await syncNotifications(user?.id ?? null, next);
+    await syncNotifications(user?.id ?? null, next, subscriptionContext);
   }
 
   /** Re-syncs pending notifications against the current settings — call after creating/editing/deleting any reminder-able item. */
   async function resync(): Promise<void> {
-    await syncNotifications(user?.id ?? null, settings);
+    await syncNotifications(user?.id ?? null, settings, subscriptionContext);
   }
 
   return { settings, saveSettings, resync };

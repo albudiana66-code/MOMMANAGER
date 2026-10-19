@@ -1074,7 +1074,11 @@
     "delete": "Видалити",
     "notifCategoryCalendar": "Календар",
     "notifCategoryTasks": "Завдання",
-    "notifCategoryMeals": "Харчування"
+    "notifCategoryMeals": "Харчування",
+    "notifPlanningNudges": "Нагадування про планування",
+    "notifPlanningNudgesDescription": "Легке нагадування, коли потрібно спланувати тиждень, харчування, заняття дітей або догляд за собою.",
+    "notifUpgradeNudges": "Поради та пропозиції",
+    "notifUpgradeNudgesDescription": "Періодичні поради та пропозиції про MomManager Pro. За замовчуванням вимкнено."
   },
   "paywall": {
     "monthly": "Щомісячно",
@@ -1504,7 +1508,19 @@
     "selfcare5": "У вас чудово виходить. Приділіть мить собі ✨",
     "testTitle": "MomManager",
     "testBody": "Сповіщення працюють! 🎉",
-    "routineReminder": "Час для вашого розпорядку 💫"
+    "routineReminder": "Час для вашого розпорядку 💫",
+    "nudgeTitle": "MomManager",
+    "nudgePlanningCalendar": "Сплануйте тиждень за 2 хвилини 📅",
+    "nudgePlanningMeals": "Що на вечерю завтра? Сплануйте зараз 🍝",
+    "nudgePlanningKids": "Потрібна ідея для дітей? Отримайте AI-заняття в один дотик 🧸",
+    "nudgePlanningSelfcare": "5 хвилин лише для вас сьогодні 💆‍♀️",
+    "nudgeUpgradeBudget": "Візьміть фінанси під контроль – бюджет і імпорт банку доступні в Pro 💰",
+    "nudgeUpgradeNutrition": "Отримайте AI-плани харчування для всієї родини з Pro 🥗",
+    "nudgeUpgradeRecap": "Ваш щотижневий AI-підсумок чекає в Pro ✨",
+    "upgradeOptInTitle": "Поради та пропозиції?",
+    "upgradeOptInBody": "Бажаєте періодично отримувати поради та пропозиції про MomManager Pro?",
+    "upgradeOptInYes": "Так",
+    "upgradeOptInNo": "Ні"
   },
   "reminder": {
     "label": "Нагадування",

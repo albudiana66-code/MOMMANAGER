@@ -3,7 +3,11 @@ import type { PermissionStatus } from '@capacitor/local-notifications';
 import { isNativeMobile } from './iap';
 import i18n from '../i18n';
 import type { Activity } from './kidsStorage';
-import type { CalendarEvent, Kid, KidMilestone, NotificationSettings, ReminderMinutes, Task } from '../types';
+import type { CalendarEvent, Kid, KidMilestone, NotificationSettings, ReminderMinutes, SubscriptionPlan, Task } from '../types';
+import { isTimeWithinQuietHours } from './quietHours';
+import { buildNudgeCandidates, readNudgeState, writeNudgeState, type NudgeDataBundle } from './nudges';
+
+export { isTimeWithinQuietHours };
 
 // ─────────────────────────────────────────────────────────────────────────────
 // This is the ONLY place in the app that schedules, cancels, or reacts to
@@ -26,7 +30,7 @@ const MAX_SCHEDULED = 64;
 /** How many days ahead to generate the daily kitchen/shopping/self-care reminders. Meal plans are only ever filled in a week or two ahead, so there's nothing to gain from looking further out, and every sync (app open/resume) regenerates this window anyway. */
 const DAILY_LOOKAHEAD_DAYS = 14;
 
-export type NotificationCategory = 'event' | 'task' | 'milestone' | 'activity' | 'kitchen' | 'shopping' | 'selfcare';
+export type NotificationCategory = 'event' | 'task' | 'milestone' | 'activity' | 'kitchen' | 'shopping' | 'selfcare' | 'nudge';
 
 export interface NotificationCandidate {
   /** Stable string key this candidate's numeric notification id is hashed from. */
@@ -71,22 +75,6 @@ function parseDateTime(date: string, time: string): Date {
   const [h, m] = time.split(':').map(Number);
   const [y, mo, d] = date.split('-').map(Number);
   return new Date(y, (mo ?? 1) - 1, d ?? 1, h ?? 0, m ?? 0, 0, 0);
-}
-
-function minutesOfDay(hhmm: string): number {
-  const [h, m] = hhmm.split(':').map(Number);
-  return (h ?? 0) * 60 + (m ?? 0);
-}
-
-/** Handles the overnight wraparound case (e.g. 21:30–07:00 spans midnight). */
-export function isTimeWithinQuietHours(hhmm: string, quietHours: NotificationSettings['quietHours']): boolean {
-  if (!quietHours.enabled) return false;
-  const t = minutesOfDay(hhmm);
-  const start = minutesOfDay(quietHours.start);
-  const end = minutesOfDay(quietHours.end);
-  if (start === end) return false;
-  if (start < end) return t >= start && t < end;
-  return t >= start || t < end;
 }
 
 function nextWeeklyOccurrence(now: Date, weekdayCapacitor: number, hour: number, minute: number): Date {
@@ -145,23 +133,43 @@ function resolveActivityReminderMinutes(activity: Activity, defaultMinutes: numb
 
 // ── Candidate builders (pure — unit-tested directly) ────────────────────────
 
+/** Minutes-before offsets that are always scheduled for every timed event/task, matching the iPhone Calendar app's two default alerts ("1 hour before" and "at the event's start time") — unconditional, independent of any per-item reminder choice. */
+const MANDATORY_REMINDER_OFFSETS = [60, 0] as const;
+
 export function buildEventCandidates(events: CalendarEvent[], defaultMinutes: number): NotificationCandidate[] {
   const out: NotificationCandidate[] = [];
   for (const e of events) {
     if (e.allDay || !e.time) continue;
-    const minutesBefore = resolveEventReminderMinutes(e, defaultMinutes);
-    if (minutesBefore === null) continue;
-    const at = new Date(parseDateTime(e.date, e.time).getTime() - minutesBefore * 60_000);
-    out.push({
-      key: `event:${e.id}`,
-      type: 'event',
-      title: e.title,
-      body: startsAtBody(e.time, minutesBefore),
-      route: '/tasks',
-      itemId: e.id,
-      at,
-      isDaily: false,
-    });
+    const eventAt = parseDateTime(e.date, e.time);
+
+    for (const minutesBefore of MANDATORY_REMINDER_OFFSETS) {
+      out.push({
+        key: `event:${e.id}:${minutesBefore}`,
+        type: 'event',
+        title: e.title,
+        body: startsAtBody(e.time, minutesBefore),
+        route: '/tasks',
+        itemId: e.id,
+        at: new Date(eventAt.getTime() - minutesBefore * 60_000),
+        isDaily: false,
+      });
+    }
+
+    // A user-chosen custom offset is an extra reminder on top of the two
+    // mandatory ones above — skipped when it would just duplicate one of them.
+    const customMinutes = resolveEventReminderMinutes(e, defaultMinutes);
+    if (customMinutes !== null && !MANDATORY_REMINDER_OFFSETS.includes(customMinutes as 0 | 60)) {
+      out.push({
+        key: `event:${e.id}:custom`,
+        type: 'event',
+        title: e.title,
+        body: startsAtBody(e.time, customMinutes),
+        route: '/tasks',
+        itemId: e.id,
+        at: new Date(eventAt.getTime() - customMinutes * 60_000),
+        isDaily: false,
+      });
+    }
   }
   return out;
 }
@@ -170,19 +178,36 @@ export function buildTaskCandidates(tasks: Task[], defaultMinutes: number): Noti
   const out: NotificationCandidate[] = [];
   for (const task of tasks) {
     if (task.completed || !task.due_date || !task.time) continue;
-    const minutesBefore = resolveTaskReminderMinutes(task);
-    if (minutesBefore === null) continue;
-    const at = new Date(parseDateTime(task.due_date, task.time).getTime() - minutesBefore * 60_000);
-    out.push({
-      key: `task:${task.id}`,
-      type: 'task',
-      title: task.title,
-      body: dueAtBody(task.time, minutesBefore),
-      route: '/tasks',
-      itemId: task.id,
-      at,
-      isDaily: false,
-    });
+    const dueAt = parseDateTime(task.due_date, task.time);
+
+    for (const minutesBefore of MANDATORY_REMINDER_OFFSETS) {
+      out.push({
+        key: `task:${task.id}:${minutesBefore}`,
+        type: 'task',
+        title: task.title,
+        body: dueAtBody(task.time, minutesBefore),
+        route: '/tasks',
+        itemId: task.id,
+        at: new Date(dueAt.getTime() - minutesBefore * 60_000),
+        isDaily: false,
+      });
+    }
+
+    // A user-chosen custom offset (legacy has_reminder, or the explicit
+    // field) is an extra reminder on top of the two mandatory ones above.
+    const customMinutes = resolveTaskReminderMinutes(task);
+    if (customMinutes !== null && !MANDATORY_REMINDER_OFFSETS.includes(customMinutes as 0 | 60)) {
+      out.push({
+        key: `task:${task.id}:custom`,
+        type: 'task',
+        title: task.title,
+        body: dueAtBody(task.time, customMinutes),
+        route: '/tasks',
+        itemId: task.id,
+        at: new Date(dueAt.getTime() - customMinutes * 60_000),
+        isDaily: false,
+      });
+    }
   }
   // defaultMinutes is unused for tasks today (they only use their own/legacy field) —
   // kept as a parameter for symmetry with the other builders and in case a
@@ -479,6 +504,9 @@ function loadShoppingLocal(uid: string): ShoppingItemLike[] { return readJSON(`m
 function loadRoutinesLocal(uid: string): RoutineLike[] {
   return readJSON<{ routines: RoutineLike[] }>(`mm_routines_${uid}`, { routines: [] }).routines ?? [];
 }
+function loadSelfCareCompletedDatesLocal(uid: string): string[] {
+  return readJSON<{ completedDates: string[] }>(`mm_routines_${uid}`, { completedDates: [] }).completedDates ?? [];
+}
 
 /** Pure: assembles every candidate reminder from already-loaded data + settings, with no native calls — this is what the unit tests exercise directly. */
 export function buildAllCandidates(
@@ -521,6 +549,15 @@ export function buildAllCandidates(
   return out;
 }
 
+/** Subscription context the upgrade nudges need — omit it (e.g. a call site with no easy access to the profile) and upgrade nudges simply never fire; planning nudges are unaffected. */
+export interface NudgeSubscriptionContext {
+  plan: SubscriptionPlan;
+  isFreeTrial: boolean;
+  trialStartDate: Date | null;
+}
+
+const NO_UPGRADE_NUDGE_CONTEXT: NudgeSubscriptionContext = { plan: null, isFreeTrial: false, trialStartDate: null };
+
 /**
  * Re-reads the signed-in user's data + settings, cancels every pending
  * MomManager notification, and schedules the fresh list. Call this on app
@@ -529,7 +566,11 @@ export function buildAllCandidates(
  * `userId: null` (e.g. after logout) just clears everything. A safe no-op
  * on web — no native calls, no permission prompts.
  */
-export async function syncNotifications(userId: string | null, settings: NotificationSettings): Promise<void> {
+export async function syncNotifications(
+  userId: string | null,
+  settings: NotificationSettings,
+  subscriptionContext: NudgeSubscriptionContext = NO_UPGRADE_NUDGE_CONTEXT
+): Promise<void> {
   if (!isNativeMobile()) return;
   if (!userId) {
     await LocalNotifications.cancelAll().catch(() => {});
@@ -554,20 +595,40 @@ export async function syncNotifications(userId: string | null, settings: Notific
   }
 
   const now = new Date();
+  const tasks = loadTasksLocal(userId);
+  const events = loadEventsLocal(userId);
+  const meals = loadMealsLocal(userId);
   const candidates = buildAllCandidates(
     settings,
     {
-      tasks: loadTasksLocal(userId),
-      events: loadEventsLocal(userId),
+      tasks,
+      events,
       kids,
       milestonesByKid,
       activitiesByKid,
-      meals: loadMealsLocal(userId),
+      meals,
       shopping: loadShoppingLocal(userId),
       routines: loadRoutinesLocal(userId),
     },
     now
   );
+
+  if (settings.enabled && (settings.planningNudges || settings.upgradeNudges)) {
+    const nudgeState = readNudgeState(userId);
+    const nudgeData: NudgeDataBundle = {
+      events,
+      tasks,
+      meals,
+      kids,
+      activitiesByKid,
+      selfcareCompletedDates: loadSelfCareCompletedDatesLocal(userId),
+      ...subscriptionContext,
+    };
+    const { candidates: nudgeCandidates, nextState } = buildNudgeCandidates(settings, nudgeData, nudgeState, now);
+    candidates.push(...nudgeCandidates);
+    writeNudgeState(userId, nextState);
+  }
+
   const selected = selectScheduledCandidates(candidates, now, settings.quietHours);
   await scheduleAll(selected);
 }
@@ -578,9 +639,21 @@ export async function cancelAllNotifications(): Promise<void> {
   await LocalNotifications.cancelAll().catch(() => {});
 }
 
-/** Fires in 5 seconds so the user can check notifications actually work (Settings "Send test notification" button). */
+/** Number of MomManager notifications currently scheduled with the OS — logged after every schedule call, and surfaced in the debug panel, so a "nothing happened" report can be told apart from "it scheduled but never fired". */
+export async function getPendingNotificationCount(): Promise<number> {
+  if (!isNativeMobile()) return 0;
+  const { notifications } = await LocalNotifications.getPending().catch(() => ({ notifications: [] }));
+  return notifications.length;
+}
+
+/** Fires in 5 seconds so the user can check notifications actually work (Settings "Send test notification" button). Logs the permission status and the resulting pending count so a silent failure (e.g. permission actually denied, or the plugin not reachable) shows up in the console instead of just "nothing happened". */
 export async function scheduleTestNotification(): Promise<void> {
   if (!isNativeMobile()) return;
+  const perm = await checkNotificationPermission();
+  console.log('[Notifications] scheduleTestNotification — permission status:', perm);
+  if (perm !== 'granted') {
+    console.error('[Notifications] scheduleTestNotification — permission not granted, OS will not show it:', perm);
+  }
   await LocalNotifications.schedule({
     notifications: [{
       id: hashNotificationId('test-notification'),
@@ -592,6 +665,8 @@ export async function scheduleTestNotification(): Promise<void> {
       extra: { type: 'test', itemId: 'test', route: '/settings' },
     }],
   });
+  const pendingCount = await getPendingNotificationCount();
+  console.log('[Notifications] scheduleTestNotification — pending notifications after scheduling:', pendingCount);
 }
 
 // ── Permissions ──────────────────────────────────────────────────────────────
@@ -608,6 +683,7 @@ export async function checkNotificationPermission(): Promise<NotificationPermiss
 export async function requestNotificationPermission(): Promise<NotificationPermission> {
   if (!isNativeMobile()) return 'unsupported';
   const status = await LocalNotifications.requestPermissions();
+  console.log('[Notifications] requestNotificationPermission — result:', status.display);
   return status.display as NotificationPermission;
 }
 

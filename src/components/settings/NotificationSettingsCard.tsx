@@ -65,6 +65,14 @@ export function NotificationSettingsCard() {
     saveSettings({ ...settings, quietHours: { ...settings.quietHours, end: value } });
   }
 
+  function setPlanningNudges(value: boolean) {
+    saveSettings({ ...settings, planningNudges: value });
+  }
+
+  function setUpgradeNudges(value: boolean) {
+    saveSettings({ ...settings, upgradeNudges: value, upgradeNudgesAsked: true });
+  }
+
   async function openSystemSettings() {
     await NativeSettings.open({ optionAndroid: AndroidSettings.AppNotification, optionIOS: IOSSettings.AppNotification });
   }
@@ -191,6 +199,23 @@ export function NotificationSettingsCard() {
                 </div>
               </div>
             )}
+          </div>
+
+          <div className="pt-2" style={{ borderTop: '1px solid var(--border)' }}>
+            <div className="flex items-center justify-between mt-2">
+              <div className="pr-3">
+                <span className="text-sm text-[var(--text-primary)] block">{t('settings.notifPlanningNudges')}</span>
+                <span className="text-xs text-[var(--text-secondary)]">{t('settings.notifPlanningNudgesDescription')}</span>
+              </div>
+              <Toggle checked={settings.planningNudges} onChange={setPlanningNudges} />
+            </div>
+            <div className="flex items-center justify-between mt-3">
+              <div className="pr-3">
+                <span className="text-sm text-[var(--text-primary)] block">{t('settings.notifUpgradeNudges')}</span>
+                <span className="text-xs text-[var(--text-secondary)]">{t('settings.notifUpgradeNudgesDescription')}</span>
+              </div>
+              <Toggle checked={settings.upgradeNudges} onChange={setUpgradeNudges} />
+            </div>
           </div>
 
           <Button variant="secondary" size="sm" onClick={sendTest} className="mt-1">

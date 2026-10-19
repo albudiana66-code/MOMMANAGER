@@ -1066,7 +1066,11 @@
     "delete": "Supprimer",
     "notifCategoryCalendar": "Calendrier",
     "notifCategoryTasks": "Tâches",
-    "notifCategoryMeals": "Repas"
+    "notifCategoryMeals": "Repas",
+    "notifPlanningNudges": "Rappels de planification",
+    "notifPlanningNudgesDescription": "Un petit rappel quand votre semaine, vos repas, les activités des enfants ou votre bien-être ont besoin d'être planifiés.",
+    "notifUpgradeNudges": "Conseils et offres",
+    "notifUpgradeNudgesDescription": "Conseils et offres occasionnels sur MomManager Pro. Désactivé par défaut."
   },
   "paywall": {
     "monthly": "Mensuel",
@@ -1494,7 +1498,19 @@
     "selfcare5": "Vous vous en sortez très bien. Prenez un moment pour vous ✨",
     "testTitle": "MomManager",
     "testBody": "Les notifications fonctionnent ! 🎉",
-    "routineReminder": "C'est l'heure de votre routine 💫"
+    "routineReminder": "C'est l'heure de votre routine 💫",
+    "nudgeTitle": "MomManager",
+    "nudgePlanningCalendar": "Planifiez votre semaine en 2 minutes 📅",
+    "nudgePlanningMeals": "Qu'y a-t-il pour le dîner demain ? Planifiez maintenant 🍝",
+    "nudgePlanningKids": "Besoin d'une idée pour les enfants ? Obtenez une activité IA en un geste 🧸",
+    "nudgePlanningSelfcare": "5 minutes rien que pour vous aujourd'hui 💆‍♀️",
+    "nudgeUpgradeBudget": "Prenez le contrôle de vos finances – suivi du budget et import bancaire inclus dans Pro 💰",
+    "nudgeUpgradeNutrition": "Obtenez des plans nutritionnels IA pour toute la famille avec Pro 🥗",
+    "nudgeUpgradeRecap": "Votre récap IA hebdomadaire vous attend dans Pro ✨",
+    "upgradeOptInTitle": "Conseils et offres ?",
+    "upgradeOptInBody": "Souhaitez-vous recevoir occasionnellement des conseils et offres sur MomManager Pro ?",
+    "upgradeOptInYes": "Oui",
+    "upgradeOptInNo": "Non"
   },
   "reminder": {
     "label": "Rappel",

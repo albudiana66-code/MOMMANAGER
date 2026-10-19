@@ -35,6 +35,12 @@ export interface NotificationSettings {
     /** "HH:mm" 24h. */
     end: string;
   };
+  /** "Smart" data-driven planning nudges (empty calendar, no meal planned, etc.) — distinct from the fixed per-item reminders above, which are never subject to the nudge throttling rules (max 1/day, 3-day same-type cooldown, pause after 3 ignored). On by default. */
+  planningNudges: boolean;
+  /** Promotional nudges toward Pro, shown to Standard/trial users only. Off by default — only ever turned on by the user's explicit "Yes" in the opt-in prompt shown the first time notification permission is granted (or by flipping it on later in Settings). */
+  upgradeNudges: boolean;
+  /** Whether the upgrade-nudge opt-in prompt has already been shown once — gates it from reappearing on every permission grant. */
+  upgradeNudgesAsked: boolean;
 }
 
 export const DEFAULT_NOTIFICATION_SETTINGS: NotificationSettings = {
@@ -54,6 +60,9 @@ export const DEFAULT_NOTIFICATION_SETTINGS: NotificationSettings = {
     start: '21:30',
     end: '07:00',
   },
+  planningNudges: true,
+  upgradeNudges: false,
+  upgradeNudgesAsked: false,
 };
 
 /**

@@ -1066,7 +1066,11 @@
     "delete": "Löschen",
     "notifCategoryCalendar": "Kalender",
     "notifCategoryTasks": "Aufgaben",
-    "notifCategoryMeals": "Mahlzeiten"
+    "notifCategoryMeals": "Mahlzeiten",
+    "notifPlanningNudges": "Planungserinnerungen",
+    "notifPlanningNudgesDescription": "Eine sanfte Erinnerung, wenn deine Woche, Mahlzeiten, Aktivitäten der Kinder oder Selbstfürsorge geplant werden müssen.",
+    "notifUpgradeNudges": "Tipps & Angebote",
+    "notifUpgradeNudgesDescription": "Gelegentliche Tipps und Angebote zu MomManager Pro. Standardmäßig deaktiviert."
   },
   "paywall": {
     "monthly": "Monatlich",
@@ -1494,7 +1498,19 @@
     "selfcare5": "Du machst das großartig. Nimm dir einen Moment für dich ✨",
     "testTitle": "MomManager",
     "testBody": "Benachrichtigungen funktionieren! 🎉",
-    "routineReminder": "Zeit für deine Routine 💫"
+    "routineReminder": "Zeit für deine Routine 💫",
+    "nudgeTitle": "MomManager",
+    "nudgePlanningCalendar": "Plane deine Woche in 2 Minuten 📅",
+    "nudgePlanningMeals": "Was gibt's morgen zum Abendessen? Jetzt planen 🍝",
+    "nudgePlanningKids": "Brauchst du eine Idee für die Kinder? Hol dir eine KI-Aktivität mit einem Tipp 🧸",
+    "nudgePlanningSelfcare": "5 Minuten nur für dich heute 💆‍♀️",
+    "nudgeUpgradeBudget": "Behalte deine Finanzen im Griff – Budget-Tracker & Bankimport gibt es in Pro 💰",
+    "nudgeUpgradeNutrition": "Hol dir KI-Ernährungspläne für die ganze Familie mit Pro 🥗",
+    "nudgeUpgradeRecap": "Deine wöchentliche KI-Zusammenfassung wartet in Pro ✨",
+    "upgradeOptInTitle": "Tipps & Angebote?",
+    "upgradeOptInBody": "Möchtest du gelegentlich Tipps und Angebote zu MomManager Pro erhalten?",
+    "upgradeOptInYes": "Ja",
+    "upgradeOptInNo": "Nein"
   },
   "reminder": {
     "label": "Erinnerung",

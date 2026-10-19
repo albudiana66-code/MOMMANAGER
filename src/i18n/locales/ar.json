@@ -1082,7 +1082,11 @@
     "delete": "حذف",
     "notifCategoryCalendar": "التقويم",
     "notifCategoryTasks": "المهام",
-    "notifCategoryMeals": "الوجبات"
+    "notifCategoryMeals": "الوجبات",
+    "notifPlanningNudges": "تذكيرات التخطيط",
+    "notifPlanningNudgesDescription": "تذكير لطيف عندما يحتاج أسبوعك أو وجباتك أو أنشطة الأطفال أو العناية الذاتية إلى التخطيط.",
+    "notifUpgradeNudges": "نصائح وعروض",
+    "notifUpgradeNudgesDescription": "نصائح وعروض بين الحين والآخر حول MomManager Pro. معطّل افتراضيًا."
   },
   "paywall": {
     "monthly": "شهري",
@@ -1514,7 +1518,19 @@
     "selfcare5": "أنتِ تبلين بلاءً رائعًا. خصصي لحظة لنفسك ✨",
     "testTitle": "MomManager",
     "testBody": "الإشعارات تعمل! 🎉",
-    "routineReminder": "حان وقت روتينك 💫"
+    "routineReminder": "حان وقت روتينك 💫",
+    "nudgeTitle": "MomManager",
+    "nudgePlanningCalendar": "خطط أسبوعك في دقيقتين 📅",
+    "nudgePlanningMeals": "ماذا ستطبخين غدًا؟ خططي الآن 🍝",
+    "nudgePlanningKids": "تحتاجين فكرة للأطفال؟ احصلي على نشاط بالذكاء الاصطناعي بلمسة واحدة 🧸",
+    "nudgePlanningSelfcare": "5 دقائق لنفسك فقط اليوم 💆‍♀️",
+    "nudgeUpgradeBudget": "تحكمي في أموالك – متتبع الميزانية واستيراد البنك متاحان في Pro 💰",
+    "nudgeUpgradeNutrition": "احصلي على خطط تغذية بالذكاء الاصطناعي لكل العائلة مع Pro 🥗",
+    "nudgeUpgradeRecap": "ملخصك الأسبوعي بالذكاء الاصطناعي ينتظرك في Pro ✨",
+    "upgradeOptInTitle": "نصائح وعروض؟",
+    "upgradeOptInBody": "هل ترغبين في تلقي نصائح وعروض بين الحين والآخر حول MomManager Pro؟",
+    "upgradeOptInYes": "نعم",
+    "upgradeOptInNo": "لا"
   },
   "reminder": {
     "label": "تذكير",

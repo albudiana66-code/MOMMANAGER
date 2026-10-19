@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { App as CapacitorApp } from '@capacitor/app';
 import { useAuth } from '../context/AuthContext';
 import { useNotificationSettings } from './useNotificationSettings';
+import { useNudgeSubscriptionContext } from './useNudgeSubscriptionContext';
 import { checkNotificationPermission, ensureNotificationChannel, syncNotifications } from '../lib/notifications';
 import { isNativeMobile } from '../lib/iap';
 
@@ -16,22 +17,23 @@ import { isNativeMobile } from '../lib/iap';
 export function useNotificationLifecycle(): void {
   const { user } = useAuth();
   const { settings } = useNotificationSettings();
+  const subscriptionContext = useNudgeSubscriptionContext();
 
   useEffect(() => {
     ensureNotificationChannel();
   }, []);
 
   useEffect(() => {
-    syncNotifications(user?.id ?? null, settings);
-  }, [user, settings]);
+    syncNotifications(user?.id ?? null, settings, subscriptionContext);
+  }, [user, settings, subscriptionContext]);
 
   useEffect(() => {
     if (!isNativeMobile()) return;
     let handle: { remove: () => void } | undefined;
     CapacitorApp.addListener('appStateChange', ({ isActive }) => {
       if (!isActive) return;
-      checkNotificationPermission().then(() => syncNotifications(user?.id ?? null, settings));
+      checkNotificationPermission().then(() => syncNotifications(user?.id ?? null, settings, subscriptionContext));
     }).then((h) => { handle = h; });
     return () => handle?.remove();
-  }, [user, settings]);
+  }, [user, settings, subscriptionContext]);
 }

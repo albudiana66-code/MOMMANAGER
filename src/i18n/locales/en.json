@@ -1086,7 +1086,11 @@
     "emailsFromMomManager": "Emails from MomManager",
     "emailsFromMomManagerDescription": "Tips, onboarding help, and the occasional check-in. We'll always email you about your account, billing, or cancellation regardless of this setting.",
     "notifCategoryTasks": "Tasks",
-    "notifCategoryMeals": "Meals"
+    "notifCategoryMeals": "Meals",
+    "notifPlanningNudges": "Planning reminders",
+    "notifPlanningNudgesDescription": "A gentle nudge when your week, meals, kids' activities or self-care need planning.",
+    "notifUpgradeNudges": "Tips & offers",
+    "notifUpgradeNudgesDescription": "Occasional tips and offers about MomManager Pro. Off by default."
   },
   "reminder": {
     "label": "Reminder",
@@ -1124,7 +1128,19 @@
     "selfcare5": "You're doing great. Take a moment for you ✨",
     "testTitle": "MomManager",
     "testBody": "Notifications are working! 🎉",
-    "routineReminder": "Time for your routine 💫"
+    "routineReminder": "Time for your routine 💫",
+    "nudgeTitle": "MomManager",
+    "nudgePlanningCalendar": "Plan your week in 2 minutes 📅",
+    "nudgePlanningMeals": "What's for dinner tomorrow? Plan it now 🍝",
+    "nudgePlanningKids": "Need an idea for the kids? Get an AI activity in one tap 🧸",
+    "nudgePlanningSelfcare": "5 minutes just for you today 💆‍♀️",
+    "nudgeUpgradeBudget": "Take control of your money – budget tracker & bank import are in Pro 💰",
+    "nudgeUpgradeNutrition": "Get AI nutrition plans for the whole family with Pro 🥗",
+    "nudgeUpgradeRecap": "Your weekly AI recap is waiting in Pro ✨",
+    "upgradeOptInTitle": "Tips & offers?",
+    "upgradeOptInBody": "Would you like occasional tips and offers about MomManager Pro?",
+    "upgradeOptInYes": "Yes",
+    "upgradeOptInNo": "No"
   },
   "paywall": {
     "chooseYourPlan": "Choose your plan",

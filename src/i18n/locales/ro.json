@@ -1070,7 +1070,11 @@
     "delete": "Șterge",
     "notifCategoryCalendar": "Calendar",
     "notifCategoryTasks": "Sarcini",
-    "notifCategoryMeals": "Mese"
+    "notifCategoryMeals": "Mese",
+    "notifPlanningNudges": "Memento-uri de planificare",
+    "notifPlanningNudgesDescription": "Un mic impuls când săptămâna, mesele, activitățile copiilor sau îngrijirea personală au nevoie de planificare.",
+    "notifUpgradeNudges": "Sfaturi și oferte",
+    "notifUpgradeNudgesDescription": "Sfaturi și oferte ocazionale despre MomManager Pro. Dezactivat implicit."
   },
   "paywall": {
     "monthly": "Lunar",
@@ -1498,7 +1502,19 @@
     "selfcare5": "Te descurci grozav. Acordă-ți un moment pentru tine ✨",
     "testTitle": "MomManager",
     "testBody": "Notificările funcționează! 🎉",
-    "routineReminder": "E timpul pentru rutina ta 💫"
+    "routineReminder": "E timpul pentru rutina ta 💫",
+    "nudgeTitle": "MomManager",
+    "nudgePlanningCalendar": "Planifică-ți săptămâna în 2 minute 📅",
+    "nudgePlanningMeals": "Ce gătești mâine? Planifică acum 🍝",
+    "nudgePlanningKids": "Ai nevoie de o idee pentru copii? Primește o activitate AI dintr-un tap 🧸",
+    "nudgePlanningSelfcare": "5 minute doar pentru tine azi 💆‍♀️",
+    "nudgeUpgradeBudget": "Preia controlul banilor – urmărirea bugetului și importul bancar sunt în Pro 💰",
+    "nudgeUpgradeNutrition": "Primește planuri alimentare AI pentru toată familia cu Pro 🥗",
+    "nudgeUpgradeRecap": "Recapitularea ta săptămânală AI te așteaptă în Pro ✨",
+    "upgradeOptInTitle": "Sfaturi și oferte?",
+    "upgradeOptInBody": "Dorești să primești ocazional sfaturi și oferte despre MomManager Pro?",
+    "upgradeOptInYes": "Da",
+    "upgradeOptInNo": "Nu"
   },
   "reminder": {
     "label": "Memento",
