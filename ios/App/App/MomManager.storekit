@@ -1,0 +1,110 @@
+{
+  "identifier" : "94AAD353-2E59-4F8F-9935-66544769E460",
+  "nonRenewingSubscriptions" : [],
+  "products" : [],
+  "settings" : {
+    "_locale" : "en_GB",
+    "_storefront" : "GBR"
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "3A928669-B986-4A2B-B940-1833D26624F4",
+      "localizations" : [],
+      "name" : "Subscription",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [],
+          "codeOffers" : [],
+          "displayPrice" : "4.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "3BFCDCBE-6A98-4511-B439-FC02A3ED5A63",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Standard plan, billed monthly",
+              "displayName" : "Standard Monthly",
+              "locale" : "en_GB"
+            }
+          ],
+          "productID" : "standard_monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Standard Monthly",
+          "subscriptionGroupID" : "3A928669-B986-4A2B-B940-1833D26624F4",
+          "type" : "RecurringSubscription",
+          "winBackOffers" : []
+        },
+        {
+          "adHocOffers" : [],
+          "codeOffers" : [],
+          "displayPrice" : "39.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "59158436-54D6-4B34-9B51-286BBDD7D2DD",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Standard plan, billed yearly",
+              "displayName" : "Standard Yearly",
+              "locale" : "en_GB"
+            }
+          ],
+          "productID" : "standard_yearly",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Standard Yearly",
+          "subscriptionGroupID" : "3A928669-B986-4A2B-B940-1833D26624F4",
+          "type" : "RecurringSubscription",
+          "winBackOffers" : []
+        },
+        {
+          "adHocOffers" : [],
+          "codeOffers" : [],
+          "displayPrice" : "7.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "5ED84A40-6446-4ABE-849A-28AC94E68CDD",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Pro plan, billed monthly",
+              "displayName" : "Pro Monthly",
+              "locale" : "en_GB"
+            }
+          ],
+          "productID" : "pro_monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Pro Monthly",
+          "subscriptionGroupID" : "3A928669-B986-4A2B-B940-1833D26624F4",
+          "type" : "RecurringSubscription",
+          "winBackOffers" : []
+        },
+        {
+          "adHocOffers" : [],
+          "codeOffers" : [],
+          "displayPrice" : "59.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "83E2EEC6-9E18-4C64-8138-BAAC6A4C00A6",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Pro plan, billed yearly",
+              "displayName" : "Pro Yearly",
+              "locale" : "en_GB"
+            }
+          ],
+          "productID" : "pro_yearly",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Pro Yearly",
+          "subscriptionGroupID" : "3A928669-B986-4A2B-B940-1833D26624F4",
+          "type" : "RecurringSubscription",
+          "winBackOffers" : []
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}

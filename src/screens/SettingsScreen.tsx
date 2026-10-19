@@ -11,6 +11,7 @@ import { Toggle } from '../components/ui/Toggle';
 import { Modal } from '../components/ui/Modal';
 import { TrialDisclosure } from '../components/paywall/TrialDisclosure';
 import { NotificationSettingsCard } from '../components/settings/NotificationSettingsCard';
+import { DebugPanel } from '../components/settings/DebugPanel';
 import { useEmailPreferences } from '../hooks/useEmailPreferences';
 import { useAuth } from '../context/AuthContext';
 import { useApp } from '../context/AppContext';
@@ -462,6 +463,8 @@ export function SettingsScreen() {
         >
           {t('settings.deleteAccountLink')}
         </button>
+
+        {import.meta.env.VITE_SHOW_DEBUG_PANEL === 'true' && <DebugPanel />}
       </div>
 
       <Modal open={showSignOut} onClose={() => setShowSignOut(false)}>

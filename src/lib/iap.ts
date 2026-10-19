@@ -180,6 +180,36 @@ export async function restoreNativePurchases(): Promise<IAPPlan | null> {
   return plan ?? null;
 }
 
+export interface OfferingDebugEntry {
+  packageIdentifier: string;
+  productIdentifier: string;
+  priceString: string;
+  currencyCode: string;
+}
+
+/**
+ * Fetches the current RevenueCat offering and returns each package's raw
+ * product id, store-formatted price string, and ISO currency code — the
+ * same fields `useOfferingPricing` uses to render the paywall, exposed here
+ * as a standalone call so the debug panel (and this console log) can prove
+ * what the store is actually returning on a given device, independent of
+ * whatever the paywall itself is currently rendering.
+ */
+export async function fetchOfferingsDebugInfo(): Promise<OfferingDebugEntry[]> {
+  if (!isNativeMobile()) return [];
+  await ensureRevenueCatConfigured();
+  const offerings = await Purchases.getOfferings();
+  const current = offerings.current;
+  const entries: OfferingDebugEntry[] = (current?.availablePackages ?? []).map((p) => ({
+    packageIdentifier: p.identifier,
+    productIdentifier: p.product.identifier,
+    priceString: p.product.priceString,
+    currencyCode: p.product.currencyCode,
+  }));
+  console.log('[RevenueCat] offerings debug —', current?.identifier ?? 'no current offering', entries);
+  return entries;
+}
+
 /**
  * Buckets a thrown purchase/restore error into the categories the paywall UI
  * needs to react to differently — silent for a deliberate cancel, an

@@ -35,7 +35,9 @@ export function Layout({ children, noNav, style, background }: LayoutProps) {
           pointerEvents: 'none',
         }} />
       )}
-      <main className="flex-1" style={{ position: 'relative', zIndex: 1 }}>
+      {/* Edge-to-edge (Android 15+ / iOS notch): keep content clear of the
+          status bar without clipping the fixed background behind it. */}
+      <main className="flex-1" style={{ position: 'relative', zIndex: 1, paddingTop: 'env(safe-area-inset-top, 0px)' }}>
         {children}
       </main>
       {!noNav && <BottomNav />}

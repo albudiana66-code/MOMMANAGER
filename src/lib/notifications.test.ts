@@ -78,20 +78,31 @@ describe('hashNotificationId', () => {
 });
 
 describe('buildEventCandidates', () => {
-  it('schedules an event reminder at time - minutesBefore, per the chosen offset', () => {
-    const [c] = buildEventCandidates([baseEvent({ reminder_minutes_before: 30 })], 30);
-    expect(c.at).toEqual(new Date(2026, 9, 5, 13, 30));
-    expect(c.body).toContain('30 minutes');
-  });
-
-  it('applies the default reminder to a pre-existing event with no reminder field set', () => {
-    const [c] = buildEventCandidates([baseEvent({ reminder_minutes_before: undefined })], 60);
-    expect(c.at).toEqual(new Date(2026, 9, 5, 13, 0));
-  });
-
-  it('never schedules a reminder when the user explicitly chose none', () => {
+  it('always schedules the two mandatory Calendar-app-style alerts: 1 hour before and at the event start time', () => {
     const out = buildEventCandidates([baseEvent({ reminder_minutes_before: null })], 30);
-    expect(out).toHaveLength(0);
+    expect(out).toHaveLength(2);
+    expect(out.map((c) => c.at)).toEqual(
+      expect.arrayContaining([new Date(2026, 9, 5, 13, 0), new Date(2026, 9, 5, 14, 0)])
+    );
+  });
+
+  it('adds a third, user-chosen custom reminder on top of the two mandatory ones', () => {
+    const out = buildEventCandidates([baseEvent({ reminder_minutes_before: 30 })], 30);
+    expect(out).toHaveLength(3);
+    const custom = out.find((c) => c.key.endsWith(':custom'));
+    expect(custom?.at).toEqual(new Date(2026, 9, 5, 13, 30));
+    expect(custom?.body).toContain('30 minutes');
+  });
+
+  it('does not duplicate a custom offset that already matches a mandatory one', () => {
+    const out = buildEventCandidates([baseEvent({ reminder_minutes_before: 60 })], 30);
+    expect(out).toHaveLength(2);
+  });
+
+  it('applies the default reminder as the custom third alert for a pre-existing event with no reminder field set', () => {
+    const out = buildEventCandidates([baseEvent({ reminder_minutes_before: undefined })], 90);
+    expect(out).toHaveLength(3);
+    expect(out.some((c) => c.at.getTime() === new Date(2026, 9, 5, 12, 30).getTime())).toBe(true);
   });
 
   it('skips all-day events and events with no time', () => {
@@ -101,18 +112,32 @@ describe('buildEventCandidates', () => {
 });
 
 describe('buildTaskCandidates', () => {
-  it('honours the legacy has_reminder boolean as "at the exact time"', () => {
-    const [c] = buildTaskCandidates([baseTask({ has_reminder: true, reminder_minutes_before: undefined })], 30);
-    expect(c.at).toEqual(new Date(2026, 9, 5, 9, 0));
+  it('always schedules the two mandatory alerts for a timed, non-completed task regardless of its reminder field', () => {
+    const out = buildTaskCandidates([baseTask({ has_reminder: false, reminder_minutes_before: undefined })], 30);
+    expect(out).toHaveLength(2);
+    expect(out.map((c) => c.at)).toEqual(
+      expect.arrayContaining([new Date(2026, 9, 5, 9, 0), new Date(2026, 9, 5, 8, 0)])
+    );
   });
 
-  it('a task with has_reminder false/absent and no explicit field gets no reminder', () => {
-    expect(buildTaskCandidates([baseTask({ has_reminder: false, reminder_minutes_before: undefined })], 30)).toHaveLength(0);
-    expect(buildTaskCandidates([baseTask({ has_reminder: undefined, reminder_minutes_before: undefined })], 30)).toHaveLength(0);
+  it('honours the legacy has_reminder boolean as an extra "at the exact time" reminder — deduped against the mandatory one', () => {
+    const out = buildTaskCandidates([baseTask({ has_reminder: true, reminder_minutes_before: undefined })], 30);
+    expect(out).toHaveLength(2);
+  });
+
+  it('adds a third, user-chosen custom reminder on top of the two mandatory ones', () => {
+    const out = buildTaskCandidates([baseTask({ reminder_minutes_before: 30 })], 30);
+    expect(out).toHaveLength(3);
+    const custom = out.find((c) => c.key.endsWith(':custom'));
+    expect(custom?.at).toEqual(new Date(2026, 9, 5, 8, 30));
   });
 
   it('skips completed tasks', () => {
     expect(buildTaskCandidates([baseTask({ completed: true, reminder_minutes_before: 0 })], 30)).toHaveLength(0);
+  });
+
+  it('skips tasks with no due date/time', () => {
+    expect(buildTaskCandidates([baseTask({ time: undefined })], 30)).toHaveLength(0);
   });
 });
 

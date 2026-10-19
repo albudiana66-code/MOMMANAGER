@@ -7,6 +7,7 @@ import { StatusBar, Style } from '@capacitor/status-bar';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { ensureRevenueCatConfigured } from './lib/iap';
 import { initNotificationTapHandling } from './lib/notifications';
+import { initDebugBridge } from './lib/debugBridge';
 
 // Polyfill crypto.randomUUID for older Android WebViews (API < 92 / Chrome < 92)
 if (typeof crypto !== 'undefined' && !crypto.randomUUID) {
@@ -42,6 +43,7 @@ if (Capacitor.isNativePlatform()) {
   // router mounts and calls registerDeepLinkHandler() (see
   // useNotificationDeepLink.ts), rather than lost.
   initNotificationTapHandling();
+  initDebugBridge();
 }
 
 createRoot(document.getElementById('root')!).render(
